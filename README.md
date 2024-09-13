@@ -18,6 +18,20 @@ Core Non Functional Requirements:
 * The system should support large volume of items
 * The topK query should be fast (100ms or less)
 
+Diagrams are created using mermaid. Code editor extensions may need to be installed to preview locally.
+
+```mermaid
+graph TD;
+    A-->B;
+    A-->C;
+    B-->D;
+    C-->D;
+```
+
+```mermaid
+  info
+```
+
 ## Project Setup
 
 Please have the following tools installed: 
