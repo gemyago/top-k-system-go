@@ -51,7 +51,11 @@ Planned per shard request rate to ingest item events will be: 5B watched videos 
 
 ### Monitoring
 
-Our target is to process 1.6k rps of events and have counters incremented with few minutes delay max (will use 1 minute). We can periodically (every 30 seconds) submit a heart beat event into our stream and measure the duration it takes to have the heart beat event aggregated. Monitoring and alerting tooling is out of scope for now.
+Our target is to process 1.6k rps of events and have counters incremented with few minutes delay max (will use 1 minute). We can periodically (every 30 seconds) submit a heart beat event into our stream and measure the duration it takes to have the heart beat event aggregated.
+
+The TopK query will be done against in-memory heap, which is going to be very fast and may not need any special monitoring other than request latency. 
+
+A cross shard aggregation latency is out of scope for now.
 
 ## Project Setup
 
