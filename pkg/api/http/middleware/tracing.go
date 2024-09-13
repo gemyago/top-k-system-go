@@ -4,7 +4,7 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/gemyago/golang-backend-boilerplate/pkg/diag"
+	"github.com/gemyago/top-k-system-go/pkg/diag"
 	"github.com/gofrs/uuid/v5"
 )
 

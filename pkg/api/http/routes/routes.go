@@ -5,7 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/gemyago/golang-backend-boilerplate/pkg/diag"
+	"github.com/gemyago/top-k-system-go/pkg/diag"
 )
 
 type router interface {

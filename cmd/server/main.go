@@ -9,9 +9,9 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/gemyago/golang-backend-boilerplate/pkg/api/http/server"
-	"github.com/gemyago/golang-backend-boilerplate/pkg/di"
-	"github.com/gemyago/golang-backend-boilerplate/pkg/diag"
+	"github.com/gemyago/top-k-system-go/pkg/api/http/server"
+	"github.com/gemyago/top-k-system-go/pkg/di"
+	"github.com/gemyago/top-k-system-go/pkg/diag"
 	"github.com/samber/lo"
 	"go.uber.org/dig"
 	"golang.org/x/sys/unix"

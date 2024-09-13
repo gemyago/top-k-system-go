@@ -4,8 +4,8 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/gemyago/golang-backend-boilerplate/pkg/api/http/middleware"
-	"github.com/gemyago/golang-backend-boilerplate/pkg/api/http/routes"
+	"github.com/gemyago/top-k-system-go/pkg/api/http/middleware"
+	"github.com/gemyago/top-k-system-go/pkg/api/http/routes"
 	sloghttp "github.com/samber/slog-http"
 )
 

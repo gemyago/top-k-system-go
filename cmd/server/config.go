@@ -3,7 +3,7 @@ package main
 import (
 	"time"
 
-	"github.com/gemyago/golang-backend-boilerplate/pkg/di"
+	"github.com/gemyago/top-k-system-go/pkg/di"
 	"go.uber.org/dig"
 )
 

@@ -1,4 +1,4 @@
-module github.com/gemyago/golang-backend-boilerplate
+module github.com/gemyago/top-k-system-go
 
 go 1.23
 

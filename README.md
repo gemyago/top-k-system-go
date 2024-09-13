@@ -1,27 +1,22 @@
-# golang-backend-boilerplate
+# top-k-system-go
 
-Basic golang boilerplate for backend projects.
+Example **GoLang** implementation of a system that will allow querying top k most popular items for a given time period (1 hour, 1 day, 1 month or all time). The implementation will use a precise calculation rather than doing a probabilistic/approximate calculation (e.g using [count-min sketch](https://en.wikipedia.org/wiki/Count–min_sketch)).
 
-Key features:
-* http.ServeMux is used as router (pluggable)
-* uber [dig](go.uber.org/dig) is used as DI framework
-* `slog` is used for logs
-* [slog-http](github.com/samber/slog-http) is used to produce access logs
-* [testify](github.com/stretchr/testify) and [mockery](github.com/vektra/mockery) are used for tests
-* [gow](github.com/mitranim/gow) is used to watch and restart tests or server
+The design is inspired by the [Top-K Youtube Videos](https://www.hellointerview.com/learn/system-design/answer-keys/top-k).
 
-To be added:
-* Docker
-* CI/CD (github actions)
-* Examples of APIs
+This is a work in progress
 
-##  Project structure
+## System Design
 
-* [cmd/server](./cmd/server) is a main entrypoint to start API server. Dependencies wire-up is happening here.
-* [pkg/api/http](./pkg/api/http) - includes http routes related stuff
-  * [pkg/api/http/routes](./pkg/api/http/routes) - add new routes here and register in [handler.go](./pkg/api/http/server/handler.go)
-* `pkg/app` - is assumed to include application layer code (e.g business logic). Examples to be added.
-* `pkg/services` - lower level components are supposed to be here (e.g database access layer e.t.c). Examples to be added.
+Core Functional Requirements:
+* It should be possible to query top K items (max 1000) for a given time window.
+* Time windows are: last hour, last day, last month and all time.
+
+Core Non Functional Requirements:
+* Eventual consistency on querying top K items (up to a minute tolerance)
+* The system should support large volume of events that are incrementing popularity of the item (e.g view events or similar)
+* The system should support large volume of items
+* The topK query should be fast (100ms or less)
 
 ## Project Setup
 

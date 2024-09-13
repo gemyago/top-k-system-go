@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/gemyago/golang-backend-boilerplate/pkg/diag"
+	"github.com/gemyago/top-k-system-go/pkg/diag"
 	"github.com/go-faker/faker/v4"
 	"github.com/stretchr/testify/assert"
 )
