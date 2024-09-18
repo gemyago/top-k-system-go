@@ -108,3 +108,11 @@ go run ./cmd/service/
 # Watch mode (double ^C to stop)
 gow run ./cmd/service/
 ```
+
+## Testing
+
+In order to produce test events a command below can be used:
+```sh
+go run ./cmd/local_broker/ send-test-events -n 10
+```
+This will write 10 test events for a randomly generated item. You can optionally use --item-id parameter and specify the itemId to send test events for.
