@@ -73,6 +73,12 @@ make tools
 go get -u ./... && go mod tidy
 ```
 
+Start local services:
+```sh
+docker compose up -d
+```
+This will start kafka broker and kafka-ui on port 8080.
+
 ### Lint and Tests
 
 Run all lint and tests:
