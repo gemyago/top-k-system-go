@@ -73,6 +73,12 @@ make tools
 go get -u ./... && go mod tidy
 ```
 
+Start local services:
+```sh
+docker compose up -d
+```
+This will start kafka broker and kafka-ui on port 8080.
+
 ### Lint and Tests
 
 Run all lint and tests:
@@ -102,3 +108,11 @@ go run ./cmd/service/
 # Watch mode (double ^C to stop)
 gow run ./cmd/service/
 ```
+
+## Testing
+
+In order to produce test events a command below can be used:
+```sh
+go run ./cmd/local_broker/ send-test-events -n 10
+```
+This will write 10 test events for a randomly generated item. You can optionally use --item-id parameter and specify the itemId to send test events for.
