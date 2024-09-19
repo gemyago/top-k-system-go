@@ -9,6 +9,7 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/gemyago/top-k-system-go/pkg/api/http/routes"
 	"github.com/gemyago/top-k-system-go/pkg/api/http/server"
 	"github.com/gemyago/top-k-system-go/pkg/di"
 	"github.com/gemyago/top-k-system-go/pkg/diag"
@@ -37,6 +38,7 @@ func run(opts runOpts) {
 	container := dig.New()
 	mustNoErrors(
 		ProvideConfig(container, opts.cfg),
+		routes.Register(container),
 		di.ProvideAll(container,
 			di.ProvideValue(rootLogger),
 			server.NewHTTPServer,
