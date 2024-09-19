@@ -25,7 +25,7 @@ func newSendTestEventCmd(cmdParams sendTestEventCmdParams) *cobra.Command {
 
 		RootLogger *slog.Logger
 
-		ItemEventsWriter *services.ItemEventsKafkaTopicWriter
+		ItemEventsWriter services.ItemEventsKafkaWriter
 	}
 
 	var itemID string

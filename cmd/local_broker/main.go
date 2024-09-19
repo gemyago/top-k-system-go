@@ -22,7 +22,7 @@ func main() {
 
 	mustNoErrors(
 		di.ProvideAll(container,
-			services.NewItemEventsKafkaTopicWriter,
+			services.NewItemEventsKafkaWriter(),
 		),
 	)
 

@@ -16,3 +16,6 @@ packages:
   github.com/gemyago/top-k-system-go/pkg/app/ingestion:
     interfaces:
       Commands:
+  github.com/gemyago/top-k-system-go/pkg/services:
+    interfaces:
+      KafkaWriter:
