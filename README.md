@@ -77,7 +77,7 @@ Start local services:
 ```sh
 docker compose up -d
 ```
-This will start kafka broker and kafka-ui on port 8080.
+This will start kafka broker and kafka-ui on port 28080.
 
 ### Lint and Tests
 
