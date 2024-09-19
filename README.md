@@ -20,7 +20,7 @@ This is a work in progress
 * The topK query should be fast (100ms or less)
 
 ### APIs:
-* POST /items/events - ingest item event
+* POST /items/events/{itemId} - ingest item event
 * GET /items/top-k?window=all-time&limit=100 - return top 100 items
 
 ### High level conceptual design of the solution
@@ -77,7 +77,7 @@ Start local services:
 ```sh
 docker compose up -d
 ```
-This will start kafka broker and kafka-ui on port 8080.
+This will start kafka broker and kafka-ui on port 28080.
 
 ### Lint and Tests
 

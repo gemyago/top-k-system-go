@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/gemyago/top-k-system-go/pkg/app/ingestion"
 	"github.com/gemyago/top-k-system-go/pkg/di"
 	"github.com/gemyago/top-k-system-go/pkg/services"
 	"github.com/spf13/cobra"
@@ -22,7 +23,12 @@ func main() {
 
 	mustNoErrors(
 		di.ProvideAll(container,
-			services.NewItemEventsKafkaTopicWriter,
+			// app layer
+			ingestion.NewCommands,
+
+			// service layer
+			services.NewTimeProvider,
+			services.NewItemEventsKafkaWriter,
 		),
 	)
 
