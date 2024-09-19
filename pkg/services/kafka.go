@@ -8,6 +8,7 @@ import (
 
 type KafkaWriter interface {
 	WriteMessages(ctx context.Context, msgs ...kafka.Message) error
+	Close() error
 }
 
 type ItemEventsKafkaWriter KafkaWriter

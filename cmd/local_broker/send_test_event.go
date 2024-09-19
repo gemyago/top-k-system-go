@@ -7,6 +7,7 @@ import (
 
 	"github.com/gemyago/top-k-system-go/pkg/app/ingestion"
 	"github.com/gemyago/top-k-system-go/pkg/app/models"
+	"github.com/gemyago/top-k-system-go/pkg/services"
 	"github.com/gofrs/uuid/v5"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
@@ -23,7 +24,11 @@ func newSendTestEventCmd(cmdParams sendTestEventCmdParams) *cobra.Command {
 
 		RootLogger *slog.Logger
 
+		// app layer
 		IngestionCommands ingestion.Commands
+
+		// service layer
+		ItemEventsWriter services.ItemEventsKafkaWriter
 	}
 
 	var itemID string
@@ -41,7 +46,6 @@ func newSendTestEventCmd(cmdParams sendTestEventCmdParams) *cobra.Command {
 					itemID = lo.Must(uuid.NewV4()).String()
 				}
 				now := time.Now()
-				// TODO: We may need a flush mechanism here
 				for range eventsNumber {
 					event := models.ItemEvent{
 						ItemID:     itemID,
@@ -53,6 +57,10 @@ func newSendTestEventCmd(cmdParams sendTestEventCmdParams) *cobra.Command {
 					); err != nil {
 						return fmt.Errorf("failed to write event: %w", err)
 					}
+				}
+
+				if err := params.ItemEventsWriter.Close(); err != nil {
+					return fmt.Errorf("failed to flush pending events: %w", err)
 				}
 
 				logger.InfoContext(
