@@ -1,16 +1,14 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"log/slog"
 	"time"
 
+	"github.com/gemyago/top-k-system-go/pkg/app/ingestion"
 	"github.com/gemyago/top-k-system-go/pkg/app/models"
-	"github.com/gemyago/top-k-system-go/pkg/services"
 	"github.com/gofrs/uuid/v5"
 	"github.com/samber/lo"
-	"github.com/segmentio/kafka-go"
 	"github.com/spf13/cobra"
 	"go.uber.org/dig"
 )
@@ -25,7 +23,7 @@ func newSendTestEventCmd(cmdParams sendTestEventCmdParams) *cobra.Command {
 
 		RootLogger *slog.Logger
 
-		ItemEventsWriter services.ItemEventsKafkaWriter
+		IngestionCommands ingestion.Commands
 	}
 
 	var itemID string
@@ -42,29 +40,18 @@ func newSendTestEventCmd(cmdParams sendTestEventCmdParams) *cobra.Command {
 				if itemID == "" {
 					itemID = lo.Must(uuid.NewV4()).String()
 				}
-				messages := make([]kafka.Message, eventsNumber)
 				now := time.Now()
-				for i := range messages {
+				for range eventsNumber {
 					event := models.ItemEvent{
 						ItemID:     itemID,
 						IngestedAt: now,
 						Count:      1,
 					}
-					serializedEvent, err := json.Marshal(&event)
-					if err != nil {
-						return fmt.Errorf("failed to marshal event: %w", err)
+					if err := params.IngestionCommands.IngestItemEvent(
+						cmd.Context(), &event,
+					); err != nil {
+						return fmt.Errorf("failed to write event: %w", err)
 					}
-					messages[i] = kafka.Message{
-						Key:   []byte(event.ItemID),
-						Value: serializedEvent,
-					}
-				}
-
-				if err := params.ItemEventsWriter.WriteMessages(
-					cmd.Context(),
-					messages...,
-				); err != nil {
-					return fmt.Errorf("failed to write event: %w", err)
 				}
 
 				logger.InfoContext(
