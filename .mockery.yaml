@@ -13,3 +13,6 @@ packages:
           dir: 'pkg/diag'
           filename: "mock_slog_handler.go"
           mockname: MockSlogHandler
+  github.com/gemyago/top-k-system-go/pkg/app/ingestion:
+    interfaces:
+      Commands:

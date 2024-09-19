@@ -20,6 +20,7 @@ $(cover_dir):
 tools:
 	go install github.com/mitranim/gow@latest
 	go install github.com/spf13/cobra-cli@latest
+	go install github.com/vektra/mockery/v2@latest
 
 dist/bin: 
 	go build \
