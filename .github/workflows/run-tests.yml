@@ -19,5 +19,13 @@ jobs:
         go-version-file: 'go.mod'
         cache-dependency-path: 'go.sum'
 
-    - run: make lint
+    - id: golangci-version
+      name: Get golangci version
+      run: echo "value=$(cat .golangci-version)" >> $GITHUB_OUTPUT
+
+    - name: lint
+      uses: golangci/golangci-lint-action@v6
+      with:
+        version: '${{ steps.golangci-version.outputs.value }}'
+
     - run: make test
