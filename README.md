@@ -20,7 +20,7 @@ This is a work in progress
 * The topK query should be fast (100ms or less)
 
 ### APIs:
-* POST /items/events - ingest item event
+* POST /items/events/{itemId} - ingest item event
 * GET /items/top-k?window=all-time&limit=100 - return top 100 items
 
 ### High level conceptual design of the solution
