@@ -18,5 +18,8 @@ func NewItemEventsKafkaWriter() ItemEventsKafkaWriter {
 		Topic:                  "item-events",
 		AllowAutoTopicCreation: true,                         // TODO: for local mode only
 		Addr:                   kafka.TCP("localhost:29092"), // TODO: Configurable
+
+		// TODO: This may need some thinking
+		Async: true,
 	}
 }

@@ -6,6 +6,7 @@ import (
 
 	"github.com/gemyago/top-k-system-go/pkg/app/ingestion"
 	"github.com/gemyago/top-k-system-go/pkg/app/models"
+	"github.com/gemyago/top-k-system-go/pkg/diag"
 	"github.com/gemyago/top-k-system-go/pkg/services"
 	"go.uber.org/dig"
 )
@@ -34,7 +35,7 @@ func NewItemsRoutesGroup(deps ItemsRoutesDeps) Group {
 					IngestedAt: deps.Time.Now(),
 				})
 				if err != nil {
-					logger.ErrorContext(r.Context(), "Failed to ingest item event", slog.String("itemID", itemID))
+					logger.ErrorContext(r.Context(), "Failed to ingest item event", slog.String("itemID", itemID), diag.ErrAttr(err))
 					w.WriteHeader(http.StatusInternalServerError)
 					return
 				}

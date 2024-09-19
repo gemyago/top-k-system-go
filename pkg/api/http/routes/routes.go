@@ -31,5 +31,6 @@ func WriteData(req *http.Request, log *slog.Logger, writer io.Writer, data []byt
 func Register(container *dig.Container) error {
 	return di.ProvideAll(container,
 		NewHealthCheckRoutesGroup,
+		NewItemsRoutesGroup,
 	)
 }

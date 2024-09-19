@@ -41,6 +41,7 @@ func newSendTestEventCmd(cmdParams sendTestEventCmdParams) *cobra.Command {
 					itemID = lo.Must(uuid.NewV4()).String()
 				}
 				now := time.Now()
+				// TODO: We may need a flush mechanism here
 				for range eventsNumber {
 					event := models.ItemEvent{
 						ItemID:     itemID,
