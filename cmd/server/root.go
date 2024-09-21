@@ -18,6 +18,7 @@ import (
 func newRootCmd(container *dig.Container) *cobra.Command {
 	verbose := false
 	logsOutputFile := ""
+	jsonLogs := false
 
 	cmd := &cobra.Command{
 		Use:   "server",
@@ -30,6 +31,12 @@ func newRootCmd(container *dig.Container) *cobra.Command {
 		"",
 		"Produce logs to file instead of stdout. Used for tests only.",
 	)
+	cmd.PersistentFlags().BoolVar(
+		&jsonLogs,
+		"json-logs",
+		false,
+		"Indicates if logs should be in JSON format or text (default)",
+	)
 
 	cmd.PersistentPreRunE = func(_ *cobra.Command, _ []string) error {
 		cfg, err := config.Load()
@@ -41,7 +48,7 @@ func newRootCmd(container *dig.Container) *cobra.Command {
 
 		rootLogger := diag.SetupRootLogger(
 			diag.NewRootLoggerOpts().
-				WithJSONLogs(true).
+				WithJSONLogs(jsonLogs).
 				WithLogLevel(logLevel).
 				WithOptionalOutputFile(logsOutputFile),
 		)
