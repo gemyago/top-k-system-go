@@ -76,8 +76,16 @@ func newHTTPServerCmd(container *dig.Container) *cobra.Command {
 		Use:   "http",
 		Short: "Command to start http server",
 	}
+	noop := false
+	cmd.Flags().BoolVar(
+		&noop,
+		"noop",
+		false,
+		"Do not start. Just setup deps and exit. Useful for testing if setup is all working.",
+	)
 	cmd.PreRunE = func(_ *cobra.Command, _ []string) error {
 		return errors.Join(
+			// http related dependencies
 			routes.Register(container),
 			di.ProvideAll(
 				container,
@@ -87,7 +95,10 @@ func newHTTPServerCmd(container *dig.Container) *cobra.Command {
 		)
 	}
 	cmd.RunE = func(_ *cobra.Command, _ []string) error {
-		return container.Invoke(run)
+		return container.Invoke(func(params runParams) {
+			params.noopHTTPListen = noop
+			run(params)
+		})
 	}
 	return cmd
 }

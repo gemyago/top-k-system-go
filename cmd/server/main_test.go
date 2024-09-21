@@ -1,30 +1,19 @@
 package main
 
-// func TestMain(t *testing.T) {
-// 	cfg := lo.Must(config.Load())
-// 	t.Run("run", func(t *testing.T) {
-// 		t.Run("should initialize the app", func(t *testing.T) {
-// 			assert.NotPanics(t, func() {
-// 				run(runOpts{
-// 					rootLogger:     diag.RootTestLogger(),
-// 					noopHTTPListen: true,
-// 					cfg:            cfg,
-// 				})
-// 			})
-// 		})
-// 	})
+import (
+	"testing"
 
-// 	t.Run("mustNoErrors", func(t *testing.T) {
-// 		t.Run("should not panic if no errors", func(t *testing.T) {
-// 			assert.NotPanics(t, func() {
-// 				mustNoErrors(nil, nil, nil)
-// 			})
-// 		})
+	"github.com/stretchr/testify/require"
+)
 
-// 		t.Run("should panic if error", func(t *testing.T) {
-// 			assert.Panics(t, func() {
-// 				mustNoErrors(nil, nil, errors.New(faker.Sentence()))
-// 			})
-// 		})
-// 	})
-// }
+func TestMain(t *testing.T) {
+	t.Run("http", func(t *testing.T) {
+		t.Run("should initialize http app", func(t *testing.T) {
+			rootCmd := setupCommands()
+			rootCmd.SetArgs([]string{"http", "--noop"})
+			require.NotPanics(t, func() {
+				executeRootCommand(rootCmd)
+			})
+		})
+	})
+}
