@@ -17,12 +17,19 @@ import (
 
 func newRootCmd(container *dig.Container) *cobra.Command {
 	verbose := false
+	logsOutputFile := ""
 
 	cmd := &cobra.Command{
 		Use:   "server",
 		Short: "Command to start the server",
 	}
 	cmd.PersistentFlags().BoolVar(&verbose, "verbose", false, "Produce logs with debug level")
+	cmd.PersistentFlags().StringVar(
+		&logsOutputFile,
+		"logs-file",
+		"",
+		"Produce logs to file instead of stdout. Used for tests only.",
+	)
 
 	cmd.PersistentPreRunE = func(_ *cobra.Command, _ []string) error {
 		cfg, err := config.Load()
@@ -35,7 +42,8 @@ func newRootCmd(container *dig.Container) *cobra.Command {
 		rootLogger := diag.SetupRootLogger(
 			diag.NewRootLoggerOpts().
 				WithJSONLogs(true).
-				WithLogLevel(logLevel),
+				WithLogLevel(logLevel).
+				WithOptionalOutputFile(logsOutputFile),
 		)
 
 		err = errors.Join(
