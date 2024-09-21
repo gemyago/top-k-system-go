@@ -10,17 +10,26 @@ import (
 //go:embed *.json
 var resources embed.FS
 
-func Load() (*viper.Viper, error) {
-	defaultCfg, err := resources.Open("default.json")
+func mergeResourceCfg(cfg *viper.Viper, resourceName string) error {
+	resourceStream, err := resources.Open(resourceName)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read default config: %w", err)
+		return fmt.Errorf("failed to read default config: %w", err)
 	}
+	defer resourceStream.Close()
 
+	if err = cfg.MergeConfig(resourceStream); err != nil {
+		return fmt.Errorf("failed to load default config: %w", err)
+	}
+	return nil
+}
+
+func Load() (*viper.Viper, error) {
 	cfg := viper.New()
 	cfg.SetConfigType("json")
 
-	if err = cfg.MergeConfig(defaultCfg); err != nil {
-		return nil, fmt.Errorf("failed to load default config: %w", err)
+	if err := mergeResourceCfg(cfg, "default.json"); err != nil {
+		return nil, err
 	}
+
 	return cfg, nil
 }
