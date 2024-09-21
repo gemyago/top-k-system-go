@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/segmentio/kafka-go"
+	"go.uber.org/dig"
 )
 
 type KafkaWriter interface {
@@ -13,12 +14,20 @@ type KafkaWriter interface {
 
 type ItemEventsKafkaWriter KafkaWriter
 
-func NewItemEventsKafkaWriter() ItemEventsKafkaWriter {
+type ItemEventsKafkaWriterDeps struct {
+	dig.In
+
+	KafkaTopic                  string `name:"config.kafka.itemEventsTopic"`
+	KafkaAddress                string `name:"config.kafka.address"`
+	KafkaAllowAutoTopicCreation bool   `name:"config.kafka.allowAutoTopicCreation"`
+}
+
+func NewItemEventsKafkaWriter(deps ItemEventsKafkaWriterDeps) ItemEventsKafkaWriter {
 	// TODO: Need to close on shutdown to make sure pending events got flushed
 	return &kafka.Writer{
-		Topic:                  "item-events",
-		AllowAutoTopicCreation: true,                         // TODO: for local mode only
-		Addr:                   kafka.TCP("localhost:29092"), // TODO: Configurable
+		Topic:                  deps.KafkaTopic,
+		AllowAutoTopicCreation: deps.KafkaAllowAutoTopicCreation,
+		Addr:                   kafka.TCP(deps.KafkaAddress),
 
 		// TODO: This may need some thinking
 		Async: true,

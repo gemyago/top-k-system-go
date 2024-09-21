@@ -5,5 +5,10 @@
     "readHeaderTimeout": "2s",
     "readTimeout": "2s",
     "writeTimeout": "8s"
+  },
+  "kafka": {
+    "address": "localhost:29092",
+    "itemEventsTopic": "item-events",
+    "allowAutoTopicCreation": false
   }
 }
