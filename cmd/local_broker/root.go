@@ -1,41 +1,75 @@
 package main
 
 import (
+	"errors"
+	"fmt"
 	"log/slog"
 
+	"github.com/gemyago/top-k-system-go/config"
+	"github.com/gemyago/top-k-system-go/pkg/app/ingestion"
 	"github.com/gemyago/top-k-system-go/pkg/di"
 	"github.com/gemyago/top-k-system-go/pkg/diag"
+	"github.com/gemyago/top-k-system-go/pkg/services"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"go.uber.org/dig"
 )
 
-type rootCmdParams struct {
-	container *dig.Container
-
-	childCommands []*cobra.Command
-}
-
-func newRootCmd(params rootCmdParams) *cobra.Command {
+func newRootCmd(container *dig.Container) *cobra.Command {
 	verbose := false
+	logsOutputFile := ""
+	jsonLogs := false
+
 	cmd := &cobra.Command{
 		Use:   "local-broker",
 		Short: "Commands to setup and interact with local broker",
 	}
 	cmd.PersistentFlags().BoolVar(&verbose, "verbose", false, "Produce logs with debug level")
+	cmd.PersistentFlags().StringVar(
+		&logsOutputFile,
+		"logs-file",
+		"",
+		"Produce logs to file instead of stdout. Used for tests only.",
+	)
+	cmd.PersistentFlags().BoolVar(
+		&jsonLogs,
+		"json-logs",
+		false,
+		"Indicates if logs should be in JSON format or text (default)",
+	)
 	cmd.PersistentPreRunE = func(_ *cobra.Command, _ []string) error {
+		cfg, err := config.Load()
+		if err != nil {
+			return err
+		}
+
 		logLevel := lo.If(verbose, slog.LevelDebug).Else(slog.LevelInfo)
 
 		rootLogger := diag.SetupRootLogger(
 			diag.NewRootLoggerOpts().
-				WithJSONLogs(true).
-				WithLogLevel(logLevel),
+				WithJSONLogs(jsonLogs).
+				WithLogLevel(logLevel).
+				WithOptionalOutputFile(logsOutputFile),
 		)
 
-		return params.container.Provide(di.ProvideValue(rootLogger).Constructor)
-	}
-	for _, child := range params.childCommands {
-		cmd.AddCommand(child)
+		err = errors.Join(
+			config.Provide(container, cfg),
+			di.ProvideAll(container,
+				di.ProvideValue(rootLogger),
+
+				// app layer
+				ingestion.NewCommands,
+
+				// service layer
+				services.NewTimeProvider,
+				services.NewItemEventsKafkaWriter,
+			),
+		)
+		if err != nil {
+			return fmt.Errorf("failed to inject dependencies: %w", err)
+		}
+
+		return nil
 	}
 	return cmd
 }

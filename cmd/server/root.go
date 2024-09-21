@@ -37,7 +37,6 @@ func newRootCmd(container *dig.Container) *cobra.Command {
 		false,
 		"Indicates if logs should be in JSON format or text (default)",
 	)
-
 	cmd.PersistentPreRunE = func(_ *cobra.Command, _ []string) error {
 		cfg, err := config.Load()
 		if err != nil {
