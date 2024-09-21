@@ -1,129 +1,39 @@
 package main
 
 import (
-	"context"
-	"flag"
-	"fmt"
-	"log/slog"
-	"net/http"
-	"os/signal"
-	"time"
-
-	"github.com/gemyago/top-k-system-go/config"
-	"github.com/gemyago/top-k-system-go/pkg/api/http/routes"
-	"github.com/gemyago/top-k-system-go/pkg/api/http/server"
-	"github.com/gemyago/top-k-system-go/pkg/app/ingestion"
-	"github.com/gemyago/top-k-system-go/pkg/di"
-	"github.com/gemyago/top-k-system-go/pkg/diag"
-	"github.com/gemyago/top-k-system-go/pkg/services"
-	"github.com/samber/lo"
-	"github.com/spf13/viper"
 	"go.uber.org/dig"
-	"golang.org/x/sys/unix"
 )
 
-func mustNoErrors(errs ...error) {
-	for i, err := range errs {
-		if err != nil {
-			panic(fmt.Sprintf("Error %d: %v", i, err))
-		}
-	}
-}
+// func main() { // coverage-ignore
+// 	port := flag.Int("port", 8080, "Port to listen on")
+// 	jsonLogs := flag.Bool("json-logs", false, "Indicates if logs should be in JSON format or text (default)")
+// 	logLevel := flag.String("log-level", slog.LevelDebug.String(), "Log level can be DEBUG, INFO, WARN and ERROR")
+// 	noop := flag.Bool("noop", false, "Do not start. Just setup deps and exit. Useful for testing if setup is all working.")
+// 	flag.Parse()
 
-type runOpts struct {
-	rootLogger     *slog.Logger
-	noopHTTPListen bool
-	cfg            *viper.Viper
-}
+// 	cfg := lo.Must(config.Load())
 
-func run(opts runOpts) {
-	rootLogger := opts.rootLogger
-	rootCtx := context.Background()
+// 	var logLevelVal slog.Level
+// 	lo.Must0(logLevelVal.UnmarshalText([]byte(*logLevel)))
+// 	rootLogger := diag.SetupRootLogger(
+// 		diag.NewRootLoggerOpts().
+// 			WithJSONLogs(*jsonLogs).
+// 			WithLogLevel(logLevelVal),
+// 	)
+// 	run(runOpts{
+// 		rootLogger:     rootLogger,
+// 		noopHTTPListen: *noop,
+// 		cfg:            cfg,
+// 	})
+// }
+
+func main() {
 	container := dig.New()
-	mustNoErrors(
-		config.Provide(container, opts.cfg),
-		routes.Register(container),
-		di.ProvideAll(container,
-			di.ProvideValue(rootLogger),
-			server.NewHTTPServer,
-			server.NewRootHandler,
-
-			// app layer
-			ingestion.NewCommands,
-
-			// service layer
-			services.NewTimeProvider,
-			services.NewItemEventsKafkaWriter,
-		),
+	rootCmd := newRootCmd(container)
+	rootCmd.AddCommand(
+		newHTTPServerCmd(container),
 	)
-
-	lo.Must0(container.Invoke(func(httpServer *http.Server) {
-		listenersErrors := make(chan error, 1)
-		go func() {
-			// data.Str("addr", httpServer.Addr)
-			// data.Str("idleTimeout", httpServer.IdleTimeout.String())
-			// data.Str("readHeaderTimeout", httpServer.ReadHeaderTimeout.String())
-			// data.Str("readTimeout", httpServer.ReadTimeout.String())
-			// data.Str("writeTimeout", httpServer.WriteTimeout.String())
-			rootLogger.InfoContext(rootCtx, "Starting http listener",
-				slog.String("addr", httpServer.Addr),
-				slog.String("idleTimeout", httpServer.IdleTimeout.String()),
-				slog.String("readHeaderTimeout", httpServer.ReadHeaderTimeout.String()),
-				slog.String("readTimeout", httpServer.ReadTimeout.String()),
-				slog.String("writeTimeout", httpServer.WriteTimeout.String()),
-			)
-			if opts.noopHTTPListen {
-				rootLogger.InfoContext(rootCtx, "NOOP: Exiting now")
-				listenersErrors <- nil
-			} else {
-				listenersErrors <- httpServer.ListenAndServe()
-			}
-		}()
-
-		signalCtx, cancel := signal.NotifyContext(rootCtx, unix.SIGINT, unix.SIGTERM)
-		defer cancel()
-
-		select {
-		case err := <-listenersErrors:
-			if err != nil {
-				rootLogger.ErrorContext(rootCtx, "Listener error", "err", err)
-			} else {
-				rootLogger.InfoContext(rootCtx, "Listener stopped")
-			}
-		case <-signalCtx.Done():
-			rootLogger.InfoContext(rootCtx, "Trying to shut down gracefully")
-			ts := time.Now()
-
-			if err := httpServer.Shutdown(rootCtx); err != nil {
-				rootLogger.ErrorContext(rootCtx, "HTTP server stop failed", "err", err)
-			}
-
-			rootLogger.InfoContext(rootCtx, "Service stopped",
-				slog.Duration("duration", time.Since(ts)),
-			)
-		}
-	}))
-}
-
-func main() { // coverage-ignore
-	// port := flag.Int("port", 8080, "Port to listen on")
-	jsonLogs := flag.Bool("json-logs", false, "Indicates if logs should be in JSON format or text (default)")
-	logLevel := flag.String("log-level", slog.LevelDebug.String(), "Log level can be DEBUG, INFO, WARN and ERROR")
-	noop := flag.Bool("noop", false, "Do not start. Just setup deps and exit. Useful for testing if setup is all working.")
-	flag.Parse()
-
-	cfg := lo.Must(config.Load())
-
-	var logLevelVal slog.Level
-	lo.Must0(logLevelVal.UnmarshalText([]byte(*logLevel)))
-	rootLogger := diag.SetupRootLogger(
-		diag.NewRootLoggerOpts().
-			WithJSONLogs(*jsonLogs).
-			WithLogLevel(logLevelVal),
-	)
-	run(runOpts{
-		rootLogger:     rootLogger,
-		noopHTTPListen: *noop,
-		cfg:            cfg,
-	})
+	if err := rootCmd.Execute(); err != nil {
+		panic(err)
+	}
 }
