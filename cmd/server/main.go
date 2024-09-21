@@ -9,6 +9,7 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/gemyago/top-k-system-go/config"
 	"github.com/gemyago/top-k-system-go/pkg/api/http/routes"
 	"github.com/gemyago/top-k-system-go/pkg/api/http/server"
 	"github.com/gemyago/top-k-system-go/pkg/app/ingestion"
@@ -16,6 +17,7 @@ import (
 	"github.com/gemyago/top-k-system-go/pkg/diag"
 	"github.com/gemyago/top-k-system-go/pkg/services"
 	"github.com/samber/lo"
+	"github.com/spf13/viper"
 	"go.uber.org/dig"
 	"golang.org/x/sys/unix"
 )
@@ -31,7 +33,7 @@ func mustNoErrors(errs ...error) {
 type runOpts struct {
 	rootLogger     *slog.Logger
 	noopHTTPListen bool
-	cfg            *config
+	cfg            *viper.Viper
 }
 
 func run(opts runOpts) {
@@ -39,7 +41,7 @@ func run(opts runOpts) {
 	rootCtx := context.Background()
 	container := dig.New()
 	mustNoErrors(
-		ProvideConfig(container, opts.cfg),
+		config.Provide(container, opts.cfg),
 		routes.Register(container),
 		di.ProvideAll(container,
 			di.ProvideValue(rootLogger),
@@ -64,7 +66,6 @@ func run(opts runOpts) {
 			// data.Str("readTimeout", httpServer.ReadTimeout.String())
 			// data.Str("writeTimeout", httpServer.WriteTimeout.String())
 			rootLogger.InfoContext(rootCtx, "Starting http listener",
-				slog.Int("port", opts.cfg.httpPort),
 				slog.String("addr", httpServer.Addr),
 				slog.String("idleTimeout", httpServer.IdleTimeout.String()),
 				slog.String("readHeaderTimeout", httpServer.ReadHeaderTimeout.String()),
@@ -105,11 +106,13 @@ func run(opts runOpts) {
 }
 
 func main() { // coverage-ignore
-	port := flag.Int("port", 8080, "Port to listen on")
+	// port := flag.Int("port", 8080, "Port to listen on")
 	jsonLogs := flag.Bool("json-logs", false, "Indicates if logs should be in JSON format or text (default)")
 	logLevel := flag.String("log-level", slog.LevelDebug.String(), "Log level can be DEBUG, INFO, WARN and ERROR")
 	noop := flag.Bool("noop", false, "Do not start. Just setup deps and exit. Useful for testing if setup is all working.")
 	flag.Parse()
+
+	cfg := lo.Must(config.Load())
 
 	var logLevelVal slog.Level
 	lo.Must0(logLevelVal.UnmarshalText([]byte(*logLevel)))
@@ -118,13 +121,6 @@ func main() { // coverage-ignore
 			WithJSONLogs(*jsonLogs).
 			WithLogLevel(logLevelVal),
 	)
-	cfg := &config{
-		httpPort:              *port,
-		httpIdleTimeout:       0,
-		httpReadHeaderTimeout: 2 * time.Second, //nolint:mnd // sensible default value
-		httpReadTimeout:       0,
-		httpWriteTimeout:      0,
-	}
 	run(runOpts{
 		rootLogger:     rootLogger,
 		noopHTTPListen: *noop,

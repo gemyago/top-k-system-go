@@ -15,11 +15,11 @@ type HTTPServerParams struct {
 	RootLogger *slog.Logger
 
 	// config
-	Port              int           `name:"config/http-server/port"`
-	IdleTimeout       time.Duration `name:"config/http-server/idle-timeout"`
-	ReadHeaderTimeout time.Duration `name:"config/http-server/read-header-timeout"`
-	ReadTimeout       time.Duration `name:"config/http-server/read-timeout"`
-	WriteTimeout      time.Duration `name:"config/http-server/write-timeout"`
+	Port              int           `name:"config.httpServer.port"`
+	IdleTimeout       time.Duration `name:"config.httpServer.idleTimeout"`
+	ReadHeaderTimeout time.Duration `name:"config.httpServer.readHeaderTimeout"`
+	ReadTimeout       time.Duration `name:"config.httpServer.readTimeout"`
+	WriteTimeout      time.Duration `name:"config.httpServer.writeTimeout"`
 
 	Handler http.Handler
 }
