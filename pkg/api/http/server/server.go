@@ -1,11 +1,13 @@
 package server
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 	"net/http"
 	"time"
 
+	"github.com/gemyago/top-k-system-go/pkg/di"
 	"go.uber.org/dig"
 )
 
@@ -24,10 +26,17 @@ type HTTPServerParams struct {
 	Handler http.Handler
 }
 
+type HTTPServerOut struct {
+	dig.Out
+
+	Server          *http.Server
+	ShutdownHandler di.ProcessShutdownHandler `group:"shutdown-handlers"`
+}
+
 // NewHTTPServer constructor factory for general use *http.Server.
-func NewHTTPServer(params HTTPServerParams) *http.Server {
+func NewHTTPServer(params HTTPServerParams) HTTPServerOut {
 	address := fmt.Sprintf("[::]:%d", params.Port)
-	return &http.Server{
+	srv := &http.Server{
 		Addr:              address,
 		IdleTimeout:       params.IdleTimeout,
 		ReadHeaderTimeout: params.ReadHeaderTimeout,
@@ -35,5 +44,13 @@ func NewHTTPServer(params HTTPServerParams) *http.Server {
 		WriteTimeout:      params.WriteTimeout,
 		Handler:           params.Handler,
 		ErrorLog:          slog.NewLogLogger(params.RootLogger.Handler(), slog.LevelError),
+	}
+
+	return HTTPServerOut{
+		Server: srv,
+		ShutdownHandler: di.ProcessShutdownHandlerFunc(func(ctx context.Context) error {
+			params.RootLogger.InfoContext(ctx, "Shutting down HTTP server")
+			return srv.Shutdown(ctx)
+		}),
 	}
 }

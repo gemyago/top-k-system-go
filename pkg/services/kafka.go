@@ -2,7 +2,9 @@ package services
 
 import (
 	"context"
+	"log/slog"
 
+	"github.com/gemyago/top-k-system-go/pkg/di"
 	"github.com/segmentio/kafka-go"
 	"go.uber.org/dig"
 )
@@ -17,19 +19,35 @@ type ItemEventsKafkaWriter KafkaWriter
 type ItemEventsKafkaWriterDeps struct {
 	dig.In
 
+	RootLogger *slog.Logger
+
 	KafkaTopic                  string `name:"config.kafka.itemEventsTopic"`
 	KafkaAddress                string `name:"config.kafka.address"`
 	KafkaAllowAutoTopicCreation bool   `name:"config.kafka.allowAutoTopicCreation"`
 }
 
-func NewItemEventsKafkaWriter(deps ItemEventsKafkaWriterDeps) ItemEventsKafkaWriter {
-	// TODO: Need to close on shutdown to make sure pending events got flushed
-	return &kafka.Writer{
+type ItemEventsKafkaWriterOut struct {
+	dig.Out
+
+	Writer          ItemEventsKafkaWriter
+	ShutdownHandler di.ProcessShutdownHandler `group:"shutdown-handlers"`
+}
+
+func NewItemEventsKafkaWriter(deps ItemEventsKafkaWriterDeps) ItemEventsKafkaWriterOut {
+	writer := &kafka.Writer{
 		Topic:                  deps.KafkaTopic,
 		AllowAutoTopicCreation: deps.KafkaAllowAutoTopicCreation,
 		Addr:                   kafka.TCP(deps.KafkaAddress),
 
 		// TODO: This may need some thinking
 		Async: true,
+	}
+
+	return ItemEventsKafkaWriterOut{
+		Writer: writer,
+		ShutdownHandler: di.ProcessShutdownHandlerFunc(func(ctx context.Context) error {
+			deps.RootLogger.InfoContext(ctx, "Closing item events topic writer")
+			return writer.Close()
+		}),
 	}
 }

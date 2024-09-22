@@ -13,14 +13,16 @@ import (
 	"github.com/gemyago/top-k-system-go/pkg/di"
 	"github.com/spf13/cobra"
 	"go.uber.org/dig"
+	"golang.org/x/sync/errgroup"
 	"golang.org/x/sys/unix"
 )
 
 type runParams struct {
 	dig.In `ignore-unexported:"true"`
 
-	RootLogger *slog.Logger
-	HTTPServer *http.Server
+	RootLogger       *slog.Logger
+	HTTPServer       *http.Server
+	ShutdownHandlers []di.ProcessShutdownHandler `group:"shutdown-handlers"`
 
 	noopHTTPListen bool
 }
@@ -61,8 +63,16 @@ func run(params runParams) {
 		rootLogger.InfoContext(rootCtx, "Trying to shut down gracefully")
 		ts := time.Now()
 
-		if err := httpServer.Shutdown(rootCtx); err != nil {
-			rootLogger.ErrorContext(rootCtx, "HTTP server stop failed", "err", err)
+		grp := errgroup.Group{}
+		for _, h := range params.ShutdownHandlers {
+			grp.Go(func() error {
+				return h.Shutdown(rootCtx)
+			})
+		}
+
+		// Not much we can do at this stage, so just logging
+		if err := grp.Wait(); err != nil {
+			rootLogger.ErrorContext(rootCtx, "Graceful shutdown failed", "err", err)
 		}
 
 		rootLogger.InfoContext(rootCtx, "Service stopped",
