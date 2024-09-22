@@ -19,6 +19,7 @@ func newRootCmd(container *dig.Container) *cobra.Command {
 	verbose := false
 	logsOutputFile := ""
 	jsonLogs := false
+	env := ""
 
 	cmd := &cobra.Command{
 		Use:   "server",
@@ -37,8 +38,15 @@ func newRootCmd(container *dig.Container) *cobra.Command {
 		false,
 		"Indicates if logs should be in JSON format or text (default)",
 	)
+	cmd.PersistentFlags().StringVarP(
+		&env,
+		"env",
+		"e",
+		"",
+		"Env that the process is running in.",
+	)
 	cmd.PersistentPreRunE = func(_ *cobra.Command, _ []string) error {
-		cfg, err := config.Load()
+		cfg, err := config.Load(config.NewLoadOpts().WithEnv(env))
 		if err != nil {
 			return err
 		}
