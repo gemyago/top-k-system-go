@@ -28,7 +28,6 @@ type LoadOpts struct {
 }
 
 func (opts *LoadOpts) WithEnv(val string) *LoadOpts {
-	fmt.Println("with env", val)
 	if val != "" {
 		opts.env = val
 	}
