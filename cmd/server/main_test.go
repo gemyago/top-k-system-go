@@ -1,38 +1,17 @@
 package main
 
 import (
-	"errors"
 	"testing"
 
-	"github.com/gemyago/top-k-system-go/pkg/diag"
-	"github.com/go-faker/faker/v4"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestMain(t *testing.T) {
-	t.Run("run", func(t *testing.T) {
-		t.Run("should initialize the app", func(t *testing.T) {
-			assert.NotPanics(t, func() {
-				run(runOpts{
-					rootLogger:     diag.RootTestLogger(),
-					noopHTTPListen: true,
-					cfg:            &config{},
-				})
-			})
-		})
-	})
-
-	t.Run("mustNoErrors", func(t *testing.T) {
-		t.Run("should not panic if no errors", func(t *testing.T) {
-			assert.NotPanics(t, func() {
-				mustNoErrors(nil, nil, nil)
-			})
-		})
-
-		t.Run("should panic if error", func(t *testing.T) {
-			assert.Panics(t, func() {
-				mustNoErrors(nil, nil, errors.New(faker.Sentence()))
-			})
+	t.Run("http", func(t *testing.T) {
+		t.Run("should initialize http app", func(t *testing.T) {
+			rootCmd := setupCommands()
+			rootCmd.SetArgs([]string{"http", "--noop", "--logs-file", "../../test.log"})
+			require.NoError(t, rootCmd.Execute())
 		})
 	})
 }

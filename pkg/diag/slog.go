@@ -78,6 +78,18 @@ func (opts *RootLoggerOpts) WithOutput(output io.Writer) *RootLoggerOpts {
 	return opts
 }
 
+func (opts *RootLoggerOpts) WithOptionalOutputFile(outputFile string) *RootLoggerOpts {
+	if outputFile == "" {
+		return opts
+	}
+	f, err := os.OpenFile(outputFile, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0o666)
+	if err != nil {
+		panic(err)
+	}
+	opts.output = f
+	return opts
+}
+
 func NewRootLoggerOpts() *RootLoggerOpts {
 	return &RootLoggerOpts{
 		output: os.Stdout,

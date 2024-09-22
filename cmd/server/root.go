@@ -22,8 +22,8 @@ func newRootCmd(container *dig.Container) *cobra.Command {
 	env := ""
 
 	cmd := &cobra.Command{
-		Use:   "local-broker",
-		Short: "Commands to setup and interact with local broker",
+		Use:   "server",
+		Short: "Command to start the server",
 	}
 	cmd.PersistentFlags().BoolVar(&verbose, "verbose", false, "Produce logs with debug level")
 	cmd.PersistentFlags().StringVar(
