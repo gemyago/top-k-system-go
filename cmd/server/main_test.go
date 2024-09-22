@@ -11,9 +11,7 @@ func TestMain(t *testing.T) {
 		t.Run("should initialize http app", func(t *testing.T) {
 			rootCmd := setupCommands()
 			rootCmd.SetArgs([]string{"http", "--noop", "--logs-file", "../../test.log"})
-			require.NotPanics(t, func() {
-				executeRootCommand(rootCmd)
-			})
+			require.NoError(t, rootCmd.Execute())
 		})
 	})
 }

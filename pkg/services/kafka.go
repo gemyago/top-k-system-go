@@ -44,10 +44,7 @@ func NewItemEventsKafkaWriter(deps ItemEventsKafkaWriterDeps) ItemEventsKafkaWri
 	}
 
 	return ItemEventsKafkaWriterOut{
-		Writer: writer,
-		ShutdownHandler: di.ProcessShutdownHandlerFunc(func(ctx context.Context) error {
-			deps.RootLogger.InfoContext(ctx, "Closing item events topic writer")
-			return writer.Close()
-		}),
+		Writer:          writer,
+		ShutdownHandler: di.MakeProcessShutdownHandlerNoContext("Item Events Topic Writer", writer.Close),
 	}
 }

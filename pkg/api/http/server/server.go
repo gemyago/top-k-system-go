@@ -1,7 +1,6 @@
 package server
 
 import (
-	"context"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -47,10 +46,7 @@ func NewHTTPServer(params HTTPServerParams) HTTPServerOut {
 	}
 
 	return HTTPServerOut{
-		Server: srv,
-		ShutdownHandler: di.ProcessShutdownHandlerFunc(func(ctx context.Context) error {
-			params.RootLogger.InfoContext(ctx, "Shutting down HTTP server")
-			return srv.Shutdown(ctx)
-		}),
+		Server:          srv,
+		ShutdownHandler: di.MakeProcessShutdownHandler("HTTP Server", srv.Shutdown),
 	}
 }

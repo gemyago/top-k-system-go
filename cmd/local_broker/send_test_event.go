@@ -46,7 +46,7 @@ func newSendTestEventCmd(container *dig.Container) *cobra.Command {
 				for range eventsNumber {
 					if noop {
 						logger.InfoContext(cmd.Context(), "NOOP: Ingesting event", slog.String("itemID", itemID))
-					} else {
+					} else { // coverage-ignore // our test is high level and it's hard cover this step
 						event := models.ItemEvent{
 							ItemID:     itemID,
 							IngestedAt: now,

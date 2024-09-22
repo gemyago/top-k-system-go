@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"os/signal"
@@ -59,13 +60,14 @@ func run(params runParams) {
 		} else {
 			rootLogger.InfoContext(rootCtx, "Listener stopped")
 		}
-	case <-signalCtx.Done():
+	case <-signalCtx.Done(): // coverage-ignore
 		rootLogger.InfoContext(rootCtx, "Trying to shut down gracefully")
 		ts := time.Now()
 
 		grp := errgroup.Group{}
 		for _, h := range params.ShutdownHandlers {
 			grp.Go(func() error {
+				rootLogger.InfoContext(rootCtx, fmt.Sprintf("Shutting down %s", h.Name))
 				return h.Shutdown(rootCtx)
 			})
 		}

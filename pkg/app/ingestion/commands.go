@@ -27,7 +27,7 @@ type commands struct {
 
 func (c *commands) IngestItemEvent(ctx context.Context, evt *models.ItemEvent) error {
 	msgValue, err := json.Marshal(evt)
-	if err != nil {
+	if err != nil { // coverage-ignore // unrealistic to simulate this error
 		return fmt.Errorf("failed to marshal event: %w", err)
 	}
 

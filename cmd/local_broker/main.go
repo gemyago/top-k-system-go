@@ -14,12 +14,9 @@ func setupCommands() *cobra.Command {
 	return rootCmd
 }
 
-func executeRootCommand(rootCmd *cobra.Command) {
+func main() { // coverage-ignore
+	rootCmd := setupCommands()
 	if err := rootCmd.Execute(); err != nil {
 		panic(err)
 	}
-}
-
-func main() { // coverage-ignore
-	executeRootCommand(setupCommands())
 }

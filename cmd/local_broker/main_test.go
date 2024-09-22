@@ -8,12 +8,10 @@ import (
 
 func TestMain(t *testing.T) {
 	t.Run("send-test-events", func(t *testing.T) {
-		t.Run("should initialize deps app", func(t *testing.T) {
+		t.Run("should send events in noop mode", func(t *testing.T) {
 			rootCmd := setupCommands()
 			rootCmd.SetArgs([]string{"send-test-events", "--noop", "--logs-file", "../../test.log"})
-			require.NotPanics(t, func() {
-				executeRootCommand(rootCmd)
-			})
+			require.NoError(t, rootCmd.Execute())
 		})
 	})
 }
