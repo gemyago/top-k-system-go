@@ -25,6 +25,7 @@ type ItemEventsAggregatorDeps struct {
 
 	// config
 	FlushInterval time.Duration `name:"config.aggregator.flushInterval"`
+	Verbose       bool          `name:"config.aggregator.verbose"`
 
 	// app layer
 	AggregatorModel ItemEventsAggregatorModel
@@ -58,6 +59,9 @@ func (a *itemEventsAggregator) BeginAggregating(ctx context.Context) error {
 			if res.err != nil {
 				a.logger.ErrorContext(ctx, "failed to fetch message", diag.ErrAttr(res.err))
 			} else {
+				if a.Verbose {
+					a.logger.DebugContext(ctx, "Aggregating item event", slog.String("itemID", res.event.ItemID))
+				}
 				a.AggregatorModel.aggregateItemEvent(res.offset, res.event)
 			}
 		case <-ctx.Done():
