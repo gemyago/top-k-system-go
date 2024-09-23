@@ -2,6 +2,8 @@ package aggregation
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 
 	"github.com/gemyago/top-k-system-go/pkg/app/models"
 	"github.com/gemyago/top-k-system-go/pkg/services"
@@ -33,6 +35,8 @@ type ItemEventsAggregatorModelDeps struct {
 type itemEventsAggregatorModel struct {
 	lastAggregatedOffset int64
 	aggregatedItems      map[string]int64
+
+	deps ItemEventsAggregatorModelDeps
 }
 
 // aggregateItemEvent method is not thread safe, should be only called from a single
@@ -44,7 +48,27 @@ func (m *itemEventsAggregatorModel) aggregateItemEvent(offset int64, evt *models
 }
 
 func (m *itemEventsAggregatorModel) fetchMessages(ctx context.Context) <-chan fetchMessageResult {
-	panic("not implemented")
+	resultsChan := make(chan fetchMessageResult)
+	go func() {
+		for {
+			msg, err := m.deps.ItemEventsReader.FetchMessage(ctx)
+			if err != nil {
+				resultsChan <- fetchMessageResult{err: fmt.Errorf("failed to fetch messages: %w", err)}
+				// TODO: If EOF just stop the loop
+				// review usage to make sure it will not break anything
+			} else {
+				var itemEvent models.ItemEvent
+				if err = json.Unmarshal(msg.Value, &itemEvent); err != nil {
+					resultsChan <- fetchMessageResult{err: fmt.Errorf("failed to unmarshal message: %w", err)}
+				}
+				resultsChan <- fetchMessageResult{
+					event:  &itemEvent,
+					offset: msg.Offset,
+				}
+			}
+		}
+	}()
+	return resultsChan
 }
 
 func (m *itemEventsAggregatorModel) flushMessages(ctx context.Context) error {
@@ -52,9 +76,10 @@ func (m *itemEventsAggregatorModel) flushMessages(ctx context.Context) error {
 }
 
 func NewItemEventsAggregatorModel(
-	deps ItemEventsAggregatorDeps,
+	deps ItemEventsAggregatorModelDeps,
 ) ItemEventsAggregatorModel {
 	return &itemEventsAggregatorModel{
 		aggregatedItems: make(map[string]int64),
+		deps:            deps,
 	}
 }
