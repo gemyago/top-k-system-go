@@ -58,9 +58,6 @@ func (m *itemEventsAggregatorModel) fetchMessages(ctx context.Context) <-chan fe
 	resultsChan := make(chan fetchMessageResult)
 	go func() {
 		for {
-			if m.deps.Verbose {
-				m.logger.DebugContext(ctx, "Waiting for next item message")
-			}
 			msg, err := m.deps.ItemEventsReader.FetchMessage(ctx)
 			if err != nil {
 				resultsChan <- fetchMessageResult{err: fmt.Errorf("failed to fetch messages: %w", err)}
