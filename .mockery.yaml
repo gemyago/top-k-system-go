@@ -19,6 +19,7 @@ packages:
   github.com/gemyago/top-k-system-go/pkg/app/aggregation:
     interfaces:
       Counters:
+      ItemEventsAggregatorModel:
   github.com/gemyago/top-k-system-go/pkg/services:
     interfaces:
       KafkaReader:
