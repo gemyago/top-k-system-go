@@ -17,20 +17,22 @@ import (
 
 func TestItemEventsAggregator(t *testing.T) {
 	type itemEventsAggregatorMockDeps struct {
-		deps        ItemEventsAggregatorDeps
-		flushTicker *time.Ticker
+		deps            ItemEventsAggregatorDeps
+		flushTickerChan chan time.Time
 	}
 
 	newMockDeps := func(t *testing.T) itemEventsAggregatorMockDeps {
-		flushTicker := &time.Ticker{}
+		flushTickerChan := make(chan time.Time)
+		flushTicker := &time.Ticker{C: flushTickerChan}
 		flushInterval := time.Duration(rand.Int63n(1000))
 		return itemEventsAggregatorMockDeps{
+			flushTickerChan: flushTickerChan,
 			deps: ItemEventsAggregatorDeps{
 				RootLogger:       diag.RootTestLogger(),
 				AggregatorModel:  NewMockItemEventsAggregatorModel(t),
 				Counters:         NewMockCounters(t),
 				ItemEventsReader: services.NewMockKafkaReader(t),
-				FlushInterval:    time.Duration(rand.Int63n(1000)),
+				FlushInterval:    flushInterval,
 				TickerFactory: func(d time.Duration) *time.Ticker {
 					assert.Equal(t, flushInterval, d)
 					return flushTicker
@@ -108,6 +110,28 @@ func TestItemEventsAggregator(t *testing.T) {
 			cancel()
 			gotErr := <-exit
 			assert.NoError(t, gotErr)
+		})
+		t.Run("should flush messages on timer", func(t *testing.T) {
+			deps := newMockDeps(t)
+			ctx, cancel := context.WithCancel(context.Background())
+			aggregator := NewItemEventsAggregator(deps.deps)
+
+			mockModel, _ := deps.deps.AggregatorModel.(*MockItemEventsAggregatorModel)
+
+			fetchResultChan := make(chan fetchMessageResult)
+			mockModel.EXPECT().fetchMessages(ctx).Return(fetchResultChan)
+			mockModel.EXPECT().flushMessages(ctx).Return(nil)
+
+			exit := make(chan error)
+			go func() {
+				exit <- aggregator.BeginAggregating(ctx)
+			}()
+			deps.flushTickerChan <- time.Now()
+
+			cancel()
+			gotErr := <-exit
+			require.NoError(t, gotErr)
+			mockModel.AssertExpectations(t)
 		})
 	})
 }

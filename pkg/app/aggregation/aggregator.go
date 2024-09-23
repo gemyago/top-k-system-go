@@ -47,8 +47,15 @@ func (a *itemEventsAggregator) RestoreState(_ context.Context, _ ItemEventsAggre
 
 func (a *itemEventsAggregator) BeginAggregating(ctx context.Context) error {
 	messagesChan := a.AggregatorModel.fetchMessages(ctx)
+	flushTimer := a.ItemEventsAggregatorDeps.TickerFactory(a.FlushInterval)
 	for {
 		select {
+		case <-flushTimer.C:
+			// TODO: Potentially Better error handling here
+			// Like if 3 events in a row then panic or something
+			if err := a.AggregatorModel.flushMessages(ctx); err != nil {
+				a.logger.ErrorContext(ctx, "failed to flush aggregated messages", diag.ErrAttr(err))
+			}
 		case res := <-messagesChan:
 			// TODO: Potentially Better error handling here
 			if res.err != nil {
