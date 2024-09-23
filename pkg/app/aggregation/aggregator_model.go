@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 
 	"github.com/gemyago/top-k-system-go/pkg/app/models"
 	"github.com/gemyago/top-k-system-go/pkg/services"
@@ -25,6 +26,11 @@ type ItemEventsAggregatorModel interface {
 type ItemEventsAggregatorModelDeps struct {
 	dig.In
 
+	RootLogger *slog.Logger
+
+	// config
+	Verbose bool `name:"config.aggregator.verbose"`
+
 	// app layer
 	Counters
 
@@ -35,6 +41,7 @@ type ItemEventsAggregatorModelDeps struct {
 type itemEventsAggregatorModel struct {
 	lastAggregatedOffset int64
 	aggregatedItems      map[string]int64
+	logger               *slog.Logger
 
 	deps ItemEventsAggregatorModelDeps
 }
@@ -51,6 +58,9 @@ func (m *itemEventsAggregatorModel) fetchMessages(ctx context.Context) <-chan fe
 	resultsChan := make(chan fetchMessageResult)
 	go func() {
 		for {
+			if m.deps.Verbose {
+				m.logger.DebugContext(ctx, "Waiting for next item message")
+			}
 			msg, err := m.deps.ItemEventsReader.FetchMessage(ctx)
 			if err != nil {
 				resultsChan <- fetchMessageResult{err: fmt.Errorf("failed to fetch messages: %w", err)}
@@ -79,6 +89,7 @@ func NewItemEventsAggregatorModel(
 	deps ItemEventsAggregatorModelDeps,
 ) ItemEventsAggregatorModel {
 	return &itemEventsAggregatorModel{
+		logger:          deps.RootLogger.WithGroup("item-events-aggregator-model"),
 		aggregatedItems: make(map[string]int64),
 		deps:            deps,
 	}
