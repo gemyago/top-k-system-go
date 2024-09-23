@@ -18,4 +18,5 @@ packages:
       Commands:
   github.com/gemyago/top-k-system-go/pkg/services:
     interfaces:
+      KafkaReader:
       KafkaWriter:
