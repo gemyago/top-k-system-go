@@ -18,7 +18,7 @@ import (
 	"golang.org/x/sys/unix"
 )
 
-type runParams struct {
+type runHTTPServerParams struct {
 	dig.In `ignore-unexported:"true"`
 
 	RootLogger       *slog.Logger
@@ -28,7 +28,7 @@ type runParams struct {
 	noopHTTPListen bool
 }
 
-func run(params runParams) {
+func runHTTPServer(params runHTTPServerParams) {
 	rootLogger := params.RootLogger
 	httpServer := params.HTTPServer
 	rootCtx := context.Background()
@@ -107,9 +107,9 @@ func newHTTPServerCmd(container *dig.Container) *cobra.Command {
 		)
 	}
 	cmd.RunE = func(_ *cobra.Command, _ []string) error {
-		return container.Invoke(func(params runParams) {
+		return container.Invoke(func(params runHTTPServerParams) {
 			params.noopHTTPListen = noop
-			run(params)
+			runHTTPServer(params)
 		})
 	}
 	return cmd
