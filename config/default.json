@@ -1,4 +1,5 @@
 {
+  "defaultLogLevel": "INFO",
   "httpServer": {
     "port": 8080,
     "idleTimeout": "60s",

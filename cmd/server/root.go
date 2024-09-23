@@ -12,13 +12,11 @@ import (
 	"github.com/gemyago/top-k-system-go/pkg/di"
 	"github.com/gemyago/top-k-system-go/pkg/diag"
 	"github.com/gemyago/top-k-system-go/pkg/services"
-	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"go.uber.org/dig"
 )
 
 func newRootCmd(container *dig.Container) *cobra.Command {
-	verbose := false
 	logsOutputFile := ""
 	jsonLogs := false
 	env := ""
@@ -27,7 +25,7 @@ func newRootCmd(container *dig.Container) *cobra.Command {
 		Use:   "server",
 		Short: "Command to start the server",
 	}
-	cmd.PersistentFlags().BoolVar(&verbose, "verbose", false, "Produce logs with debug level")
+	cmd.PersistentFlags().StringP("log-level", "l", "", "Produce logs with given level. Default is env specific.")
 	cmd.PersistentFlags().StringVar(
 		&logsOutputFile,
 		"logs-file",
@@ -53,7 +51,14 @@ func newRootCmd(container *dig.Container) *cobra.Command {
 			return err
 		}
 
-		logLevel := lo.If(verbose, slog.LevelDebug).Else(slog.LevelInfo)
+		if err = cfg.BindPFlag("defaultLogLevel", cmd.PersistentFlags().Lookup("log-level")); err != nil {
+			return err
+		}
+
+		var logLevel slog.Level
+		if err = logLevel.UnmarshalText([]byte(cfg.GetString("defaultLogLevel"))); err != nil {
+			return err
+		}
 
 		rootLogger := diag.SetupRootLogger(
 			diag.NewRootLoggerOpts().
