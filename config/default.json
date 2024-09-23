@@ -10,5 +10,9 @@
     "address": "localhost:29092",
     "itemEventsTopic": "item-events",
     "allowAutoTopicCreation": false
+  },
+  "aggregator": {
+    "flushInterval": "60s",
+    "verbose": false
   }
 }

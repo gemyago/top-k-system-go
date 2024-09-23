@@ -1,5 +1,8 @@
 {
   "kafka": {
     "allowAutoTopicCreation": true
+  },
+  "aggregator": {
+    "verbose": true
   }
 }

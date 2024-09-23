@@ -11,6 +11,7 @@ import (
 
 	"github.com/gemyago/top-k-system-go/pkg/api/http/routes"
 	"github.com/gemyago/top-k-system-go/pkg/api/http/server"
+	"github.com/gemyago/top-k-system-go/pkg/app/aggregation"
 	"github.com/gemyago/top-k-system-go/pkg/di"
 	"github.com/spf13/cobra"
 	"go.uber.org/dig"
@@ -21,11 +22,14 @@ import (
 type runHTTPServerParams struct {
 	dig.In `ignore-unexported:"true"`
 
-	RootLogger       *slog.Logger
-	HTTPServer       *http.Server
+	RootLogger *slog.Logger
+
+	HTTPServer           *http.Server
+	ItemEventsAggregator aggregation.ItemEventsAggregator
+
 	ShutdownHandlers []di.ProcessShutdownHandler `group:"shutdown-handlers"`
 
-	noopHTTPListen bool
+	noop bool
 }
 
 func runHTTPServer(params runHTTPServerParams) {
@@ -33,8 +37,11 @@ func runHTTPServer(params runHTTPServerParams) {
 	httpServer := params.HTTPServer
 	rootCtx := context.Background()
 
-	listenersErrors := make(chan error, 1)
-	go func() {
+	signalCtx, cancel := signal.NotifyContext(rootCtx, unix.SIGINT, unix.SIGTERM)
+	defer cancel()
+
+	grp, errGrpCtx := errgroup.WithContext(signalCtx)
+	grp.Go(func() error {
 		rootLogger.InfoContext(rootCtx, "Starting http listener",
 			slog.String("addr", httpServer.Addr),
 			slog.String("idleTimeout", httpServer.IdleTimeout.String()),
@@ -42,23 +49,32 @@ func runHTTPServer(params runHTTPServerParams) {
 			slog.String("readTimeout", httpServer.ReadTimeout.String()),
 			slog.String("writeTimeout", httpServer.WriteTimeout.String()),
 		)
-		if params.noopHTTPListen {
-			rootLogger.InfoContext(rootCtx, "NOOP: Exiting now")
-			listenersErrors <- nil
-		} else {
-			listenersErrors <- httpServer.ListenAndServe()
+		if params.noop {
+			rootLogger.InfoContext(errGrpCtx, "NOOP: Exiting now")
+			return nil
 		}
+		return httpServer.ListenAndServe()
+	})
+	grp.Go(func() error {
+		rootLogger.InfoContext(errGrpCtx, "Starting item events aggregator")
+		if params.noop {
+			rootLogger.InfoContext(errGrpCtx, "NOOP: Exiting now")
+			return nil
+		}
+		return params.ItemEventsAggregator.BeginAggregating(errGrpCtx)
+	})
+
+	grpErrs := make(chan error)
+	go func() {
+		grpErrs <- grp.Wait()
 	}()
 
-	signalCtx, cancel := signal.NotifyContext(rootCtx, unix.SIGINT, unix.SIGTERM)
-	defer cancel()
-
 	select {
-	case err := <-listenersErrors:
+	case err := <-grpErrs:
 		if err != nil {
-			rootLogger.ErrorContext(rootCtx, "Listener error", "err", err)
+			rootLogger.ErrorContext(rootCtx, "Server error", "err", err)
 		} else {
-			rootLogger.InfoContext(rootCtx, "Listener stopped")
+			rootLogger.InfoContext(rootCtx, "Server stopped")
 		}
 	case <-signalCtx.Done(): // coverage-ignore
 		rootLogger.InfoContext(rootCtx, "Trying to shut down gracefully")
@@ -108,7 +124,7 @@ func newHTTPServerCmd(container *dig.Container) *cobra.Command {
 	}
 	cmd.RunE = func(_ *cobra.Command, _ []string) error {
 		return container.Invoke(func(params runHTTPServerParams) {
-			params.noopHTTPListen = noop
+			params.noop = noop
 			runHTTPServer(params)
 		})
 	}

@@ -4,8 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"time"
 
 	"github.com/gemyago/top-k-system-go/config"
+	"github.com/gemyago/top-k-system-go/pkg/app/aggregation"
 	"github.com/gemyago/top-k-system-go/pkg/app/ingestion"
 	"github.com/gemyago/top-k-system-go/pkg/di"
 	"github.com/gemyago/top-k-system-go/pkg/diag"
@@ -67,10 +69,15 @@ func newRootCmd(container *dig.Container) *cobra.Command {
 
 				// app layer
 				ingestion.NewCommands,
+				aggregation.NewItemEventsAggregator,
+				aggregation.NewItemEventsAggregatorModel,
+				aggregation.NewCounters,
 
 				// service layer
 				services.NewTimeProvider,
+				services.NewItemEventsKafkaReader,
 				services.NewItemEventsKafkaWriter,
+				di.ProvideValue(time.NewTicker),
 			),
 		)
 		if err != nil {

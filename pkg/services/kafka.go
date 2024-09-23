@@ -78,6 +78,7 @@ type ItemEventsKafkaReaderDeps struct {
 func NewItemEventsKafkaReader(deps ItemEventsKafkaReaderDeps) ItemEventsKafkaReaderOut {
 	reader := kafka.NewReader(kafka.ReaderConfig{
 		Brokers: []string{deps.KafkaAddress},
+		Topic:   deps.KafkaTopic,
 	})
 
 	return ItemEventsKafkaReaderOut{
