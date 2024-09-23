@@ -81,8 +81,9 @@ func (m *itemEventsAggregatorModel) fetchMessages(ctx context.Context) <-chan fe
 	return resultsChan
 }
 
-func (m *itemEventsAggregatorModel) flushMessages(_ context.Context) error {
-	panic("not implemented")
+func (m *itemEventsAggregatorModel) flushMessages(ctx context.Context) error {
+	m.logger.DebugContext(ctx, "Flushing aggregated messages")
+	return nil
 }
 
 func NewItemEventsAggregatorModel(

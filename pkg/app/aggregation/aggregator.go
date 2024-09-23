@@ -59,10 +59,13 @@ func (a *itemEventsAggregator) BeginAggregating(ctx context.Context) error {
 			if res.err != nil {
 				a.logger.ErrorContext(ctx, "failed to fetch message", diag.ErrAttr(res.err))
 			} else {
-				if a.Verbose {
-					a.logger.DebugContext(ctx, "Aggregating item event", slog.String("itemID", res.event.ItemID))
-				}
 				a.AggregatorModel.aggregateItemEvent(res.offset, res.event)
+				if a.Verbose {
+					a.logger.DebugContext(ctx, "Item event aggregated",
+						slog.String("itemID", res.event.ItemID),
+						slog.Int64("offset", res.offset),
+					)
+				}
 			}
 		case <-ctx.Done():
 			return nil
