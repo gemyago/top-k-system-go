@@ -9,7 +9,8 @@
   "kafka": {
     "address": "localhost:29092",
     "itemEventsTopic": "item-events",
-    "allowAutoTopicCreation": false
+    "allowAutoTopicCreation": false,
+    "readerMaxWait": "10s"
   },
   "aggregator": {
     "flushInterval": "60s",

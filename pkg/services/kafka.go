@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"log/slog"
+	"time"
 
 	"github.com/gemyago/top-k-system-go/pkg/di"
 	"github.com/segmentio/kafka-go"
@@ -71,14 +72,16 @@ type ItemEventsKafkaReaderDeps struct {
 
 	RootLogger *slog.Logger
 
-	KafkaTopic   string `name:"config.kafka.itemEventsTopic"`
-	KafkaAddress string `name:"config.kafka.address"`
+	KafkaTopic    string        `name:"config.kafka.itemEventsTopic"`
+	KafkaAddress  string        `name:"config.kafka.address"`
+	ReaderMaxWait time.Duration `name:"config.kafka.readerMaxWait"`
 }
 
 func NewItemEventsKafkaReader(deps ItemEventsKafkaReaderDeps) ItemEventsKafkaReaderOut {
 	reader := kafka.NewReader(kafka.ReaderConfig{
 		Brokers: []string{deps.KafkaAddress},
 		Topic:   deps.KafkaTopic,
+		MaxWait: deps.ReaderMaxWait,
 	})
 
 	return ItemEventsKafkaReaderOut{

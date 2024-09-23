@@ -42,7 +42,7 @@ func runHTTPServer(params runHTTPServerParams) {
 
 	grp, errGrpCtx := errgroup.WithContext(signalCtx)
 	grp.Go(func() error {
-		rootLogger.InfoContext(rootCtx, "Starting http listener",
+		rootLogger.InfoContext(errGrpCtx, "Starting http listener",
 			slog.String("addr", httpServer.Addr),
 			slog.String("idleTimeout", httpServer.IdleTimeout.String()),
 			slog.String("readHeaderTimeout", httpServer.ReadHeaderTimeout.String()),

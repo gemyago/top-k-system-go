@@ -50,6 +50,7 @@ func Provide(container *dig.Container, cfg *viper.Viper) error {
 		provideConfigValue(cfg, "kafka.address").asString(),
 		provideConfigValue(cfg, "kafka.itemEventsTopic").asString(),
 		provideConfigValue(cfg, "kafka.allowAutoTopicCreation").asBool(),
+		provideConfigValue(cfg, "kafka.readerMaxWait").asDuration(),
 
 		// aggregator
 		provideConfigValue(cfg, "aggregator.flushInterval").asDuration(),
