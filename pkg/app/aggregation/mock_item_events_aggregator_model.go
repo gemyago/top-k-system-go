@@ -24,9 +24,9 @@ func (_m *MockItemEventsAggregatorModel) EXPECT() *MockItemEventsAggregatorModel
 	return &MockItemEventsAggregatorModel_Expecter{mock: &_m.Mock}
 }
 
-// aggregateItemEvent provides a mock function with given fields: evt
-func (_m *MockItemEventsAggregatorModel) aggregateItemEvent(evt *models.ItemEvent) {
-	_m.Called(evt)
+// aggregateItemEvent provides a mock function with given fields: offset, evt
+func (_m *MockItemEventsAggregatorModel) aggregateItemEvent(offset int64, evt *models.ItemEvent) {
+	_m.Called(offset, evt)
 }
 
 // MockItemEventsAggregatorModel_aggregateItemEvent_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'aggregateItemEvent'
@@ -35,14 +35,15 @@ type MockItemEventsAggregatorModel_aggregateItemEvent_Call struct {
 }
 
 // aggregateItemEvent is a helper method to define mock.On call
+//   - offset int64
 //   - evt *models.ItemEvent
-func (_e *MockItemEventsAggregatorModel_Expecter) aggregateItemEvent(evt interface{}) *MockItemEventsAggregatorModel_aggregateItemEvent_Call {
-	return &MockItemEventsAggregatorModel_aggregateItemEvent_Call{Call: _e.mock.On("aggregateItemEvent", evt)}
+func (_e *MockItemEventsAggregatorModel_Expecter) aggregateItemEvent(offset interface{}, evt interface{}) *MockItemEventsAggregatorModel_aggregateItemEvent_Call {
+	return &MockItemEventsAggregatorModel_aggregateItemEvent_Call{Call: _e.mock.On("aggregateItemEvent", offset, evt)}
 }
 
-func (_c *MockItemEventsAggregatorModel_aggregateItemEvent_Call) Run(run func(evt *models.ItemEvent)) *MockItemEventsAggregatorModel_aggregateItemEvent_Call {
+func (_c *MockItemEventsAggregatorModel_aggregateItemEvent_Call) Run(run func(offset int64, evt *models.ItemEvent)) *MockItemEventsAggregatorModel_aggregateItemEvent_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(*models.ItemEvent))
+		run(args[0].(int64), args[1].(*models.ItemEvent))
 	})
 	return _c
 }
@@ -52,7 +53,7 @@ func (_c *MockItemEventsAggregatorModel_aggregateItemEvent_Call) Return() *MockI
 	return _c
 }
 
-func (_c *MockItemEventsAggregatorModel_aggregateItemEvent_Call) RunAndReturn(run func(*models.ItemEvent)) *MockItemEventsAggregatorModel_aggregateItemEvent_Call {
+func (_c *MockItemEventsAggregatorModel_aggregateItemEvent_Call) RunAndReturn(run func(int64, *models.ItemEvent)) *MockItemEventsAggregatorModel_aggregateItemEvent_Call {
 	_c.Call.Return(run)
 	return _c
 }

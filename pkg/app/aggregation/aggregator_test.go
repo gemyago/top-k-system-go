@@ -9,7 +9,6 @@ import (
 
 	"github.com/gemyago/top-k-system-go/pkg/app/models"
 	"github.com/gemyago/top-k-system-go/pkg/diag"
-	"github.com/gemyago/top-k-system-go/pkg/services"
 	"github.com/go-faker/faker/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -28,11 +27,9 @@ func TestItemEventsAggregator(t *testing.T) {
 		return itemEventsAggregatorMockDeps{
 			flushTickerChan: flushTickerChan,
 			deps: ItemEventsAggregatorDeps{
-				RootLogger:       diag.RootTestLogger(),
-				AggregatorModel:  NewMockItemEventsAggregatorModel(t),
-				Counters:         NewMockCounters(t),
-				ItemEventsReader: services.NewMockKafkaReader(t),
-				FlushInterval:    flushInterval,
+				RootLogger:      diag.RootTestLogger(),
+				AggregatorModel: NewMockItemEventsAggregatorModel(t),
+				FlushInterval:   flushInterval,
 				TickerFactory: func(d time.Duration) *time.Ticker {
 					assert.Equal(t, flushInterval, d)
 					return flushTicker
@@ -49,6 +46,7 @@ func TestItemEventsAggregator(t *testing.T) {
 
 			mockModel, _ := deps.deps.AggregatorModel.(*MockItemEventsAggregatorModel)
 
+			offsetBase := rand.Int63n(1000)
 			wantItems := []models.ItemEvent{
 				models.MakeRandomItemEvent(),
 				models.MakeRandomItemEvent(),
@@ -62,9 +60,9 @@ func TestItemEventsAggregator(t *testing.T) {
 			go func() {
 				exit <- aggregator.BeginAggregating(ctx)
 			}()
-			for _, v := range wantItems {
-				mockModel.EXPECT().aggregateItemEvent(&v)
-				fetchResultChan <- fetchMessageResult{event: &v}
+			for i, v := range wantItems {
+				mockModel.EXPECT().aggregateItemEvent(int64(i)+offsetBase, &v)
+				fetchResultChan <- fetchMessageResult{offset: int64(i) + offsetBase, event: &v}
 			}
 
 			cancel()

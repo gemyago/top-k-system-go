@@ -6,12 +6,11 @@ import (
 	"time"
 
 	"github.com/gemyago/top-k-system-go/pkg/diag"
-	"github.com/gemyago/top-k-system-go/pkg/services"
 	"go.uber.org/dig"
 )
 
 type ItemEventsAggregatorState struct {
-	LastOffset int
+	LastOffset int64
 }
 
 type ItemEventsAggregator interface {
@@ -29,11 +28,9 @@ type ItemEventsAggregatorDeps struct {
 
 	// app layer
 	AggregatorModel ItemEventsAggregatorModel
-	Counters
 
 	// service layer
-	ItemEventsReader services.ItemEventsKafkaReader
-	TickerFactory    func(d time.Duration) *time.Ticker
+	TickerFactory func(d time.Duration) *time.Ticker
 }
 
 type itemEventsAggregator struct {
@@ -61,7 +58,7 @@ func (a *itemEventsAggregator) BeginAggregating(ctx context.Context) error {
 			if res.err != nil {
 				a.logger.ErrorContext(ctx, "failed to fetch message", diag.ErrAttr(res.err))
 			} else {
-				a.AggregatorModel.aggregateItemEvent(res.event)
+				a.AggregatorModel.aggregateItemEvent(res.offset, res.event)
 			}
 		case <-ctx.Done():
 			return nil
