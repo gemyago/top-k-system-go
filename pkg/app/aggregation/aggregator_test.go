@@ -41,6 +41,7 @@ func TestItemEventsAggregator(t *testing.T) {
 	t.Run("BeginAggregating", func(t *testing.T) {
 		t.Run("should aggregate messages", func(t *testing.T) {
 			deps := newMockDeps(t)
+			deps.deps.Verbose = true
 			ctx, cancel := context.WithCancel(context.Background())
 			aggregator := NewItemEventsAggregator(deps.deps)
 
