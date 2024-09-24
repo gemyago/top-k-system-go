@@ -19,36 +19,36 @@ func (_m *MockCounters) EXPECT() *MockCounters_Expecter {
 	return &MockCounters_Expecter{mock: &_m.Mock}
 }
 
-// UpdateItemsCount provides a mock function with given fields: lastOffset, newCounts
-func (_m *MockCounters) UpdateItemsCount(lastOffset int64, newCounts map[string]int64) {
+// updateItemsCount provides a mock function with given fields: lastOffset, newCounts
+func (_m *MockCounters) updateItemsCount(lastOffset int64, newCounts map[string]int64) {
 	_m.Called(lastOffset, newCounts)
 }
 
-// MockCounters_UpdateItemsCount_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateItemsCount'
-type MockCounters_UpdateItemsCount_Call struct {
+// MockCounters_updateItemsCount_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'updateItemsCount'
+type MockCounters_updateItemsCount_Call struct {
 	*mock.Call
 }
 
-// UpdateItemsCount is a helper method to define mock.On call
+// updateItemsCount is a helper method to define mock.On call
 //   - lastOffset int64
 //   - newCounts map[string]int64
-func (_e *MockCounters_Expecter) UpdateItemsCount(lastOffset interface{}, newCounts interface{}) *MockCounters_UpdateItemsCount_Call {
-	return &MockCounters_UpdateItemsCount_Call{Call: _e.mock.On("UpdateItemsCount", lastOffset, newCounts)}
+func (_e *MockCounters_Expecter) updateItemsCount(lastOffset interface{}, newCounts interface{}) *MockCounters_updateItemsCount_Call {
+	return &MockCounters_updateItemsCount_Call{Call: _e.mock.On("updateItemsCount", lastOffset, newCounts)}
 }
 
-func (_c *MockCounters_UpdateItemsCount_Call) Run(run func(lastOffset int64, newCounts map[string]int64)) *MockCounters_UpdateItemsCount_Call {
+func (_c *MockCounters_updateItemsCount_Call) Run(run func(lastOffset int64, newCounts map[string]int64)) *MockCounters_updateItemsCount_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(int64), args[1].(map[string]int64))
 	})
 	return _c
 }
 
-func (_c *MockCounters_UpdateItemsCount_Call) Return() *MockCounters_UpdateItemsCount_Call {
+func (_c *MockCounters_updateItemsCount_Call) Return() *MockCounters_updateItemsCount_Call {
 	_c.Call.Return()
 	return _c
 }
 
-func (_c *MockCounters_UpdateItemsCount_Call) RunAndReturn(run func(int64, map[string]int64)) *MockCounters_UpdateItemsCount_Call {
+func (_c *MockCounters_updateItemsCount_Call) RunAndReturn(run func(int64, map[string]int64)) *MockCounters_updateItemsCount_Call {
 	_c.Call.Return(run)
 	return _c
 }

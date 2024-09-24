@@ -58,7 +58,7 @@ func (m *itemEventsAggregatorModel) aggregateItemEvent(offset int64, evt *models
 // goroutine as aggregateItemEvent.
 func (m *itemEventsAggregatorModel) flushMessages(ctx context.Context) {
 	m.logger.DebugContext(ctx, "Flushing aggregated messages")
-	m.deps.Counters.UpdateItemsCount(m.lastAggregatedOffset, m.aggregatedItems)
+	m.deps.Counters.updateItemsCount(m.lastAggregatedOffset, m.aggregatedItems)
 	clear(m.aggregatedItems)
 }
 
