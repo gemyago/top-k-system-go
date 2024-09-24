@@ -39,7 +39,7 @@ func TestCommands(t *testing.T) {
 				},
 			).Return(nil)
 
-			lo.Must0(commands.IngestItemEvent(context.TODO(), &wantEvt))
+			lo.Must0(commands.IngestItemEvent(context.Background(), &wantEvt))
 		})
 		t.Run("should fail if write fails", func(t *testing.T) {
 			mockDeps := newMockDeps(t)
@@ -53,7 +53,7 @@ func TestCommands(t *testing.T) {
 				mock.Anything,
 			).Return(wantErr)
 
-			gotErr := commands.IngestItemEvent(context.TODO(), &wantEvt)
+			gotErr := commands.IngestItemEvent(context.Background(), &wantEvt)
 			require.ErrorIs(t, gotErr, wantErr)
 		})
 	})

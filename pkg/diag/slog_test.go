@@ -13,7 +13,7 @@ import (
 
 func TestGetLogAttributesFromContext(t *testing.T) {
 	t.Run("return empty value if no attributes", func(t *testing.T) {
-		got := GetLogAttributesFromContext(context.TODO())
+		got := GetLogAttributesFromContext(context.Background())
 		assert.Equal(t, LogAttributes{}, got)
 	})
 	t.Run("return actual value", func(t *testing.T) {
