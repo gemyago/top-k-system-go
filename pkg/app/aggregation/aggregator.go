@@ -49,11 +49,7 @@ func (a *itemEventsAggregator) BeginAggregating(ctx context.Context) error {
 	for {
 		select {
 		case <-flushTimer.C:
-			// TODO: Potentially Better error handling here
-			// Like if 3 events in a row then panic or something
-			if err := a.AggregatorModel.flushMessages(ctx); err != nil {
-				a.logger.ErrorContext(ctx, "failed to flush aggregated messages", diag.ErrAttr(err))
-			}
+			a.AggregatorModel.flushMessages(ctx)
 		case res := <-messagesChan:
 			// TODO: Potentially Better error handling here
 			if res.err != nil {

@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/gemyago/top-k-system-go/pkg/app/models"
+	"github.com/gemyago/top-k-system-go/pkg/diag"
 	"github.com/gemyago/top-k-system-go/pkg/services"
 	"github.com/samber/lo"
 	"github.com/segmentio/kafka-go"
@@ -18,6 +19,8 @@ import (
 func TestAggregatorModel(t *testing.T) {
 	newMockDeps := func(t *testing.T) ItemEventsAggregatorModelDeps {
 		return ItemEventsAggregatorModelDeps{
+			RootLogger:       diag.RootTestLogger(),
+			Counters:         NewMockCounters(t),
 			ItemEventsReader: services.NewMockKafkaReader(t),
 		}
 	}
@@ -121,6 +124,34 @@ func TestAggregatorModel(t *testing.T) {
 					event:  &wantItem,
 				}, gotResult)
 			}
+		})
+	})
+
+	t.Run("flushMessages", func(t *testing.T) {
+		t.Run("should update counters and reset the aggregated values", func(t *testing.T) {
+			mockDeps := newMockDeps(t)
+			model := NewItemEventsAggregatorModel(mockDeps)
+
+			baseOffset := rand.Int63()
+			itemEvents := []models.ItemEvent{
+				models.MakeRandomItemEvent(),
+				models.MakeRandomItemEvent(),
+				models.MakeRandomItemEvent(),
+			}
+			for i, e := range itemEvents {
+				model.aggregateItemEvent(baseOffset+int64(i), &e)
+			}
+
+			modelImpl, _ := model.(*itemEventsAggregatorModel)
+
+			mockCounters, _ := mockDeps.Counters.(*MockCounters)
+			mockCounters.EXPECT().UpdateItemsCount(modelImpl.lastAggregatedOffset, modelImpl.aggregatedItems)
+
+			model.flushMessages(context.Background())
+			assert.Equal(t, baseOffset+int64(len(itemEvents)-1), modelImpl.lastAggregatedOffset)
+			assert.Empty(t, modelImpl.aggregatedItems)
+
+			mockCounters.AssertExpectations(t)
 		})
 	})
 }

@@ -19,8 +19,8 @@ type fetchMessageResult struct {
 
 type ItemEventsAggregatorModel interface {
 	aggregateItemEvent(offset int64, evt *models.ItemEvent)
+	flushMessages(ctx context.Context)
 	fetchMessages(ctx context.Context) <-chan fetchMessageResult
-	flushMessages(ctx context.Context) error
 }
 
 type ItemEventsAggregatorModelDeps struct {
@@ -46,12 +46,20 @@ type itemEventsAggregatorModel struct {
 	deps ItemEventsAggregatorModelDeps
 }
 
-// aggregateItemEvent method is not thread safe, should be only called from a single
-// goroutine.
+// aggregateItemEvent method is not thread safe, should be only called from a same
+// goroutine as flushMessages.
 func (m *itemEventsAggregatorModel) aggregateItemEvent(offset int64, evt *models.ItemEvent) {
 	m.lastAggregatedOffset = offset
 	curVal := m.aggregatedItems[evt.ItemID]
 	m.aggregatedItems[evt.ItemID] = curVal + 1
+}
+
+// flushMessages method is not thread safe, should be only called from a same
+// goroutine as aggregateItemEvent.
+func (m *itemEventsAggregatorModel) flushMessages(ctx context.Context) {
+	m.logger.DebugContext(ctx, "Flushing aggregated messages")
+	m.deps.Counters.UpdateItemsCount(m.lastAggregatedOffset, m.aggregatedItems)
+	clear(m.aggregatedItems)
 }
 
 func (m *itemEventsAggregatorModel) fetchMessages(ctx context.Context) <-chan fetchMessageResult {
@@ -76,11 +84,6 @@ func (m *itemEventsAggregatorModel) fetchMessages(ctx context.Context) <-chan fe
 		}
 	}()
 	return resultsChan
-}
-
-func (m *itemEventsAggregatorModel) flushMessages(ctx context.Context) error {
-	m.logger.DebugContext(ctx, "Flushing aggregated messages")
-	return nil
 }
 
 func NewItemEventsAggregatorModel(

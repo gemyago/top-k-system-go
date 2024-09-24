@@ -107,21 +107,8 @@ func (_c *MockItemEventsAggregatorModel_fetchMessages_Call) RunAndReturn(run fun
 }
 
 // flushMessages provides a mock function with given fields: ctx
-func (_m *MockItemEventsAggregatorModel) flushMessages(ctx context.Context) error {
-	ret := _m.Called(ctx)
-
-	if len(ret) == 0 {
-		panic("no return value specified for flushMessages")
-	}
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context) error); ok {
-		r0 = rf(ctx)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
+func (_m *MockItemEventsAggregatorModel) flushMessages(ctx context.Context) {
+	_m.Called(ctx)
 }
 
 // MockItemEventsAggregatorModel_flushMessages_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'flushMessages'
@@ -142,12 +129,12 @@ func (_c *MockItemEventsAggregatorModel_flushMessages_Call) Run(run func(ctx con
 	return _c
 }
 
-func (_c *MockItemEventsAggregatorModel_flushMessages_Call) Return(_a0 error) *MockItemEventsAggregatorModel_flushMessages_Call {
-	_c.Call.Return(_a0)
+func (_c *MockItemEventsAggregatorModel_flushMessages_Call) Return() *MockItemEventsAggregatorModel_flushMessages_Call {
+	_c.Call.Return()
 	return _c
 }
 
-func (_c *MockItemEventsAggregatorModel_flushMessages_Call) RunAndReturn(run func(context.Context) error) *MockItemEventsAggregatorModel_flushMessages_Call {
+func (_c *MockItemEventsAggregatorModel_flushMessages_Call) RunAndReturn(run func(context.Context)) *MockItemEventsAggregatorModel_flushMessages_Call {
 	_c.Call.Return(run)
 	return _c
 }
