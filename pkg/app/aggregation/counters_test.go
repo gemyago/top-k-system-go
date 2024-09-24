@@ -29,7 +29,7 @@ func TestCounters(t *testing.T) {
 
 			nextOffset := initialBaseOffset + rand.Int63n(1000)
 			newCounts := make(map[string]int64, len(existingData))
-			for k, _ := range existingData {
+			for k := range existingData {
 				newCounts[k] = rand.Int63n(1000)
 			}
 
