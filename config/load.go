@@ -13,12 +13,12 @@ var resources embed.FS
 func mergeResourceCfg(cfg *viper.Viper, resourceName string) error {
 	resourceStream, err := resources.Open(resourceName)
 	if err != nil {
-		return fmt.Errorf("failed to read default config: %w", err)
+		return fmt.Errorf("failed to read config %v: %w", resourceName, err)
 	}
 	defer resourceStream.Close()
 
 	if err = cfg.MergeConfig(resourceStream); err != nil {
-		return fmt.Errorf("failed to load default config: %w", err)
+		return fmt.Errorf("failed to load config %v: %w", resourceName, err)
 	}
 	return nil
 }
