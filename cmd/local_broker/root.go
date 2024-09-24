@@ -6,6 +6,7 @@ import (
 	"log/slog"
 
 	"github.com/gemyago/top-k-system-go/config"
+	"github.com/gemyago/top-k-system-go/pkg/app/aggregation"
 	"github.com/gemyago/top-k-system-go/pkg/app/ingestion"
 	"github.com/gemyago/top-k-system-go/pkg/di"
 	"github.com/gemyago/top-k-system-go/pkg/diag"
@@ -67,15 +68,16 @@ func newRootCmd(container *dig.Container) *cobra.Command {
 
 		err = errors.Join(
 			config.Provide(container, cfg),
+
+			// app layer
+			aggregation.Register(container),
+			ingestion.Register(container),
+
+			// services
+			services.Register(container),
+
 			di.ProvideAll(container,
 				di.ProvideValue(rootLogger),
-
-				// app layer
-				ingestion.NewCommands,
-
-				// service layer
-				services.NewTimeProvider,
-				services.NewItemEventsKafkaWriter,
 			),
 		)
 		if err != nil {
