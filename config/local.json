@@ -1,5 +1,10 @@
 {
+  "defaultLogLevel": "DEBUG",
   "kafka": {
-    "allowAutoTopicCreation": true
+    "allowAutoTopicCreation": true,
+    "readerMaxWait": "1s"
+  },
+  "aggregator": {
+    "verbose": true
   }
 }

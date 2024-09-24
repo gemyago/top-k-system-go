@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+
 	"github.com/spf13/cobra"
 	"go.uber.org/dig"
 )
@@ -17,6 +19,7 @@ func setupCommands() *cobra.Command {
 func main() { // coverage-ignore
 	rootCmd := setupCommands()
 	if err := rootCmd.Execute(); err != nil {
-		panic(err)
+		// cobra will print error to stdout
+		os.Exit(1)
 	}
 }

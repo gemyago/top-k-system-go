@@ -50,7 +50,6 @@ func newSendTestEventCmd(container *dig.Container) *cobra.Command {
 						event := models.ItemEvent{
 							ItemID:     itemID,
 							IngestedAt: now,
-							Count:      1,
 						}
 						if err := params.IngestionCommands.IngestItemEvent(
 							cmd.Context(), &event,

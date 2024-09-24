@@ -1,4 +1,5 @@
 {
+  "defaultLogLevel": "INFO",
   "httpServer": {
     "port": 8080,
     "idleTimeout": "60s",
@@ -9,6 +10,11 @@
   "kafka": {
     "address": "localhost:29092",
     "itemEventsTopic": "item-events",
-    "allowAutoTopicCreation": false
+    "allowAutoTopicCreation": false,
+    "readerMaxWait": "10s"
+  },
+  "aggregator": {
+    "flushInterval": "60s",
+    "verbose": false
   }
 }
