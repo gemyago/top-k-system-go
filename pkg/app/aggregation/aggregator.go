@@ -39,7 +39,13 @@ type itemEventsAggregator struct {
 	ItemEventsAggregatorDeps
 }
 
-func (a *itemEventsAggregator) BeginAggregating(ctx context.Context, counters Counters, opts BeginAggregatingOpts) error {
+func (a *itemEventsAggregator) BeginAggregating(
+	ctx context.Context,
+	counters Counters,
+	_ BeginAggregatingOpts,
+) error {
+	// TODO: Set the offset to start fetching from
+	// and keep fetching until the offset provided
 	messagesChan := a.AggregatorModel.fetchMessages(ctx)
 	flushTimer := a.ItemEventsAggregatorDeps.TickerFactory(a.FlushInterval)
 	for {
