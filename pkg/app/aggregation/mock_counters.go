@@ -19,9 +19,9 @@ func (_m *MockCounters) EXPECT() *MockCounters_Expecter {
 	return &MockCounters_Expecter{mock: &_m.Mock}
 }
 
-// updateItemsCount provides a mock function with given fields: lastOffset, newCounts
-func (_m *MockCounters) updateItemsCount(lastOffset int64, newCounts map[string]int64) {
-	_m.Called(lastOffset, newCounts)
+// updateItemsCount provides a mock function with given fields: lastOffset, increments
+func (_m *MockCounters) updateItemsCount(lastOffset int64, increments map[string]int64) {
+	_m.Called(lastOffset, increments)
 }
 
 // MockCounters_updateItemsCount_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'updateItemsCount'
@@ -31,12 +31,12 @@ type MockCounters_updateItemsCount_Call struct {
 
 // updateItemsCount is a helper method to define mock.On call
 //   - lastOffset int64
-//   - newCounts map[string]int64
-func (_e *MockCounters_Expecter) updateItemsCount(lastOffset interface{}, newCounts interface{}) *MockCounters_updateItemsCount_Call {
-	return &MockCounters_updateItemsCount_Call{Call: _e.mock.On("updateItemsCount", lastOffset, newCounts)}
+//   - increments map[string]int64
+func (_e *MockCounters_Expecter) updateItemsCount(lastOffset interface{}, increments interface{}) *MockCounters_updateItemsCount_Call {
+	return &MockCounters_updateItemsCount_Call{Call: _e.mock.On("updateItemsCount", lastOffset, increments)}
 }
 
-func (_c *MockCounters_updateItemsCount_Call) Run(run func(lastOffset int64, newCounts map[string]int64)) *MockCounters_updateItemsCount_Call {
+func (_c *MockCounters_updateItemsCount_Call) Run(run func(lastOffset int64, increments map[string]int64)) *MockCounters_updateItemsCount_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(int64), args[1].(map[string]int64))
 	})

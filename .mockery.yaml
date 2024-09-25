@@ -20,7 +20,11 @@ packages:
     interfaces:
       Counters:
       ItemEventsAggregatorModel:
+      CheckPointerModel:
   github.com/gemyago/top-k-system-go/pkg/services:
     interfaces:
       KafkaReader:
       KafkaWriter:
+  github.com/gemyago/top-k-system-go/pkg/services/blobstorage:
+    interfaces:
+      Storage:
