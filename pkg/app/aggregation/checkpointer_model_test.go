@@ -70,4 +70,60 @@ func TestCheckPointerModel(t *testing.T) {
 			require.NoError(t, model.writeManifest(ctx, wantManifest))
 		})
 	})
+
+	t.Run("readCounters", func(t *testing.T) {
+		t.Run("should read counters from a given file", func(t *testing.T) {
+			deps := newMockDeps(t)
+			model := NewCheckPointerModel(deps)
+
+			wantCounters := map[string]int64{
+				faker.UUIDHyphenated(): rand.Int64(),
+				faker.UUIDHyphenated(): rand.Int64(),
+				faker.UUIDHyphenated(): rand.Int64(),
+			}
+			wantFile := faker.Word()
+
+			ctx := context.Background()
+
+			storage, _ := deps.Storage.(*blobstorage.MockStorage)
+			storage.EXPECT().Download(
+				ctx, wantFile, mock.Anything,
+			).RunAndReturn(func(_ context.Context, _ string, w io.Writer) error {
+				return json.NewEncoder(w).Encode(wantCounters)
+			})
+
+			got, err := model.readCounters(ctx, wantFile)
+			require.NoError(t, err)
+			assert.Equal(t, wantCounters, got)
+		})
+	})
+
+	t.Run("writeCounters", func(t *testing.T) {
+		t.Run("should write counters to a given file", func(t *testing.T) {
+			deps := newMockDeps(t)
+			model := NewCheckPointerModel(deps)
+
+			wantCounters := map[string]int64{
+				faker.UUIDHyphenated(): rand.Int64(),
+				faker.UUIDHyphenated(): rand.Int64(),
+				faker.UUIDHyphenated(): rand.Int64(),
+			}
+			wantFile := faker.Word()
+
+			ctx := context.Background()
+
+			storage, _ := deps.Storage.(*blobstorage.MockStorage)
+			storage.EXPECT().Upload(
+				ctx, wantFile, mock.Anything,
+			).RunAndReturn(func(_ context.Context, _ string, r io.Reader) error {
+				var got map[string]int64
+				require.NoError(t, json.NewDecoder(r).Decode(&got))
+				assert.Equal(t, wantCounters, got)
+				return nil
+			})
+
+			err := model.writeCounters(ctx, wantFile, wantCounters)
+			require.NoError(t, err)
+		})
+	})
 }

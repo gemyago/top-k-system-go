@@ -21,14 +21,14 @@ type CheckPointerDeps struct {
 
 type checkPointer struct{}
 
-func (cp *checkPointer) restoreState(ctx context.Context, counters Counters) error {
+func (cp *checkPointer) restoreState(_ context.Context, _ Counters) error {
 	return nil
 }
 
-func (cp *checkPointer) dumpState(ctx context.Context, counters Counters) error {
+func (cp *checkPointer) dumpState(_ context.Context, _ Counters) error {
 	return nil
 }
 
-func NewCheckPointer(deps CheckPointerDeps) CheckPointer {
+func NewCheckPointer(_ CheckPointerDeps) CheckPointer {
 	return &checkPointer{}
 }

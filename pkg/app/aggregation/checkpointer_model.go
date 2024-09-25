@@ -53,12 +53,31 @@ func (m checkPointerModel) writeManifest(ctx context.Context, manifest checkPoin
 	return m.Storage.Upload(ctx, "manifest.json", &manifestBytes)
 }
 
+// TODO: blobs are going to be very large (5GB), we may need to consider chunking approach
+// but this is a caller level refactoring very likely
+// both read and write sides will need to be updated
+
 func (m checkPointerModel) readCounters(ctx context.Context, blobFileName string) (map[string]int64, error) {
-	panic("not implemented")
+	var contents bytes.Buffer
+	if err := m.Storage.Download(ctx, blobFileName, &contents); err != nil {
+		return nil, fmt.Errorf("failed to download file: %w", err)
+	}
+	var result map[string]int64
+	if err := json.NewDecoder(&contents).Decode(&result); err != nil {
+		return nil, fmt.Errorf("failed to decode counters: %w", err)
+	}
+	return result, nil
 }
 
 func (m checkPointerModel) writeCounters(ctx context.Context, blobFileName string, val map[string]int64) error {
-	panic("not implemented")
+	var contents bytes.Buffer
+	if err := json.NewEncoder(&contents).Encode(val); err != nil {
+		return fmt.Errorf("failed to encode value: %w", err)
+	}
+	if err := m.Storage.Upload(ctx, blobFileName, &contents); err != nil {
+		return fmt.Errorf("failed to upload blob file %s: %w", blobFileName, err)
+	}
+	return nil
 }
 
 func NewCheckPointerModel(deps CheckPointerModelDeps) CheckPointerModel {
