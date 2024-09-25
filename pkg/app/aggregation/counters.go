@@ -30,6 +30,14 @@ type CountersFactory interface {
 	NewCounters() Counters
 }
 
+type CountersFactoryFunc func() Counters
+
+func (c CountersFactoryFunc) NewCounters() Counters {
+	return c()
+}
+
+var _ CountersFactory = CountersFactoryFunc(nil)
+
 func NewCounters() Counters {
 	return &counters{
 		itemCounters: make(map[string]int64),
