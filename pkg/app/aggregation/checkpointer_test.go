@@ -2,6 +2,8 @@ package aggregation
 
 import (
 	"context"
+	"fmt"
+	"math/rand/v2"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -22,17 +24,45 @@ func TestCheckPointer(t *testing.T) {
 
 			ctx := context.Background()
 			manifest := randomManifest()
-			vals := randomCountersValues()
+			values := randomCountersValues()
 
 			mockModel, _ := deps.CheckPointerModel.(*MockCheckPointerModel)
 			mockModel.EXPECT().readManifest(ctx).Return(manifest, nil)
-			mockModel.EXPECT().readCounters(ctx, manifest.CountersBlobFileName).Return(vals, nil)
+			mockModel.EXPECT().readCounters(ctx, manifest.CountersBlobFileName).Return(values, nil)
 
 			counters, _ := NewCounters().(*counters)
 			require.NoError(t, checkPointer.restoreState(ctx, counters))
 
 			assert.Equal(t, manifest.LastOffset, counters.lastOffset)
-			assert.Equal(t, vals, counters.itemCounters)
+			assert.Equal(t, values, counters.itemCounters)
+		})
+	})
+
+	t.Run("dumpState", func(t *testing.T) {
+		t.Run("should write values and manifest", func(t *testing.T) {
+			deps := newMockDeps(t)
+			checkPointer := NewCheckPointer(deps)
+
+			ctx := context.Background()
+			values := randomCountersValues()
+			counters := NewCounters()
+			counters.updateItemsCount(rand.Int64(), values)
+
+			mockModel, _ := deps.CheckPointerModel.(*MockCheckPointerModel)
+			mockModel.EXPECT().writeCounters(
+				ctx,
+				fmt.Sprintf("counters-%d", counters.getLastOffset()),
+				values,
+			).Return(nil)
+			mockModel.EXPECT().writeManifest(
+				ctx,
+				checkPointManifest{
+					LastOffset:           counters.getLastOffset(),
+					CountersBlobFileName: fmt.Sprintf("counters-%d", counters.getLastOffset()),
+				},
+			).Return(nil)
+
+			require.NoError(t, checkPointer.dumpState(ctx, counters))
 		})
 	})
 }

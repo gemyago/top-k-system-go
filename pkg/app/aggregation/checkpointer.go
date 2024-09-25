@@ -2,6 +2,7 @@ package aggregation
 
 import (
 	"context"
+	"fmt"
 
 	"go.uber.org/dig"
 )
@@ -35,7 +36,18 @@ func (cp *checkPointer) restoreState(ctx context.Context, counters Counters) err
 	return nil
 }
 
-func (cp *checkPointer) dumpState(_ context.Context, _ Counters) error {
+func (cp *checkPointer) dumpState(ctx context.Context, counters Counters) error {
+	countersFileName := fmt.Sprintf("counters-%d", counters.getLastOffset())
+	newManifest := checkPointManifest{
+		LastOffset:           counters.getLastOffset(),
+		CountersBlobFileName: countersFileName,
+	}
+	if err := cp.CheckPointerModel.writeCounters(ctx, countersFileName, counters.getItemsCounters()); err != nil {
+		return err
+	}
+	if err := cp.CheckPointerModel.writeManifest(ctx, newManifest); err != nil {
+		return err
+	}
 	return nil
 }
 

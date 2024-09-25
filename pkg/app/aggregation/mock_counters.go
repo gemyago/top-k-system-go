@@ -19,6 +19,53 @@ func (_m *MockCounters) EXPECT() *MockCounters_Expecter {
 	return &MockCounters_Expecter{mock: &_m.Mock}
 }
 
+// getItemsCounters provides a mock function with given fields:
+func (_m *MockCounters) getItemsCounters() map[string]int64 {
+	ret := _m.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for getItemsCounters")
+	}
+
+	var r0 map[string]int64
+	if rf, ok := ret.Get(0).(func() map[string]int64); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(map[string]int64)
+		}
+	}
+
+	return r0
+}
+
+// MockCounters_getItemsCounters_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'getItemsCounters'
+type MockCounters_getItemsCounters_Call struct {
+	*mock.Call
+}
+
+// getItemsCounters is a helper method to define mock.On call
+func (_e *MockCounters_Expecter) getItemsCounters() *MockCounters_getItemsCounters_Call {
+	return &MockCounters_getItemsCounters_Call{Call: _e.mock.On("getItemsCounters")}
+}
+
+func (_c *MockCounters_getItemsCounters_Call) Run(run func()) *MockCounters_getItemsCounters_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *MockCounters_getItemsCounters_Call) Return(_a0 map[string]int64) *MockCounters_getItemsCounters_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *MockCounters_getItemsCounters_Call) RunAndReturn(run func() map[string]int64) *MockCounters_getItemsCounters_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // getLastOffset provides a mock function with given fields:
 func (_m *MockCounters) getLastOffset() int64 {
 	ret := _m.Called()

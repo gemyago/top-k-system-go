@@ -59,6 +59,7 @@ func (m checkPointerModel) writeManifest(ctx context.Context, manifest checkPoin
 
 func (m checkPointerModel) readCounters(ctx context.Context, blobFileName string) (map[string]int64, error) {
 	var contents bytes.Buffer
+	//TODO: Use gob instead of json
 	if err := m.Storage.Download(ctx, blobFileName, &contents); err != nil {
 		return nil, fmt.Errorf("failed to download file: %w", err)
 	}

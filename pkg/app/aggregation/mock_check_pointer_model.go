@@ -186,9 +186,9 @@ func (_c *MockCheckPointerModel_writeCounters_Call) RunAndReturn(run func(contex
 	return _c
 }
 
-// writeManifest provides a mock function with given fields: ctx, m
-func (_m *MockCheckPointerModel) writeManifest(ctx context.Context, m checkPointManifest) error {
-	ret := _m.Called(ctx, m)
+// writeManifest provides a mock function with given fields: ctx, manifest
+func (_m *MockCheckPointerModel) writeManifest(ctx context.Context, manifest checkPointManifest) error {
+	ret := _m.Called(ctx, manifest)
 
 	if len(ret) == 0 {
 		panic("no return value specified for writeManifest")
@@ -196,7 +196,7 @@ func (_m *MockCheckPointerModel) writeManifest(ctx context.Context, m checkPoint
 
 	var r0 error
 	if rf, ok := ret.Get(0).(func(context.Context, checkPointManifest) error); ok {
-		r0 = rf(ctx, m)
+		r0 = rf(ctx, manifest)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -211,12 +211,12 @@ type MockCheckPointerModel_writeManifest_Call struct {
 
 // writeManifest is a helper method to define mock.On call
 //   - ctx context.Context
-//   - m checkPointManifest
-func (_e *MockCheckPointerModel_Expecter) writeManifest(ctx interface{}, m interface{}) *MockCheckPointerModel_writeManifest_Call {
-	return &MockCheckPointerModel_writeManifest_Call{Call: _e.mock.On("writeManifest", ctx, m)}
+//   - manifest checkPointManifest
+func (_e *MockCheckPointerModel_Expecter) writeManifest(ctx interface{}, manifest interface{}) *MockCheckPointerModel_writeManifest_Call {
+	return &MockCheckPointerModel_writeManifest_Call{Call: _e.mock.On("writeManifest", ctx, manifest)}
 }
 
-func (_c *MockCheckPointerModel_writeManifest_Call) Run(run func(ctx context.Context, m checkPointManifest)) *MockCheckPointerModel_writeManifest_Call {
+func (_c *MockCheckPointerModel_writeManifest_Call) Run(run func(ctx context.Context, manifest checkPointManifest)) *MockCheckPointerModel_writeManifest_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(context.Context), args[1].(checkPointManifest))
 	})
