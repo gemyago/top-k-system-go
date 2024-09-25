@@ -26,7 +26,9 @@ func (c *counters) updateItemsCount(lastOffset int64, increments map[string]int6
 	}
 }
 
-type CountersFactory func() Counters
+type CountersFactory interface {
+	NewCounters() Counters
+}
 
 func NewCounters() Counters {
 	return &counters{

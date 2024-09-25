@@ -31,7 +31,7 @@ type commands struct {
 }
 
 func (c *commands) StartAggregator(ctx context.Context) error {
-	counters := c.CountersFactory()
+	counters := c.CountersFactory.NewCounters()
 	if err := c.CheckPointer.restoreState(ctx, counters); err != nil {
 		return err
 	}
@@ -43,7 +43,7 @@ func (c *commands) StartAggregator(ctx context.Context) error {
 }
 
 func (c *commands) CreateCheckPoint(ctx context.Context) error {
-	counters := c.CountersFactory()
+	counters := c.CountersFactory.NewCounters()
 	if err := c.CheckPointer.restoreState(ctx, counters); err != nil {
 		return err
 	}
