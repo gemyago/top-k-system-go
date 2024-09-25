@@ -57,9 +57,11 @@ func TestItemEventsAggregator(t *testing.T) {
 			fetchResultChan := make(chan fetchMessageResult)
 			mockModel.EXPECT().fetchMessages(ctx).Return(fetchResultChan)
 
+			counters := NewCounters()
+
 			exit := make(chan error)
 			go func() {
-				exit <- aggregator.BeginAggregating(ctx)
+				exit <- aggregator.BeginAggregating(ctx, counters, BeginAggregatingOpts{})
 			}()
 			for i, v := range wantItems {
 				mockModel.EXPECT().aggregateItemEvent(int64(i)+offsetBase, &v)
@@ -80,10 +82,11 @@ func TestItemEventsAggregator(t *testing.T) {
 
 			fetchResultChan := make(chan fetchMessageResult)
 			mockModel.EXPECT().fetchMessages(ctx).Return(fetchResultChan)
+			counters := NewCounters()
 
 			exit := make(chan error)
 			go func() {
-				exit <- aggregator.BeginAggregating(ctx)
+				exit <- aggregator.BeginAggregating(ctx, counters, BeginAggregatingOpts{})
 			}()
 			fetchResultChan <- fetchMessageResult{err: errors.New(faker.Word())}
 
@@ -101,10 +104,11 @@ func TestItemEventsAggregator(t *testing.T) {
 
 			mockModel, _ := deps.deps.AggregatorModel.(*MockItemEventsAggregatorModel)
 			mockModel.EXPECT().fetchMessages(ctx).Return(fetchResultChan)
+			counters := NewCounters()
 
 			exit := make(chan error)
 			go func() {
-				exit <- aggregator.BeginAggregating(ctx)
+				exit <- aggregator.BeginAggregating(ctx, counters, BeginAggregatingOpts{})
 			}()
 			cancel()
 			gotErr := <-exit
@@ -116,14 +120,15 @@ func TestItemEventsAggregator(t *testing.T) {
 			aggregator := NewItemEventsAggregator(deps.deps)
 
 			mockModel, _ := deps.deps.AggregatorModel.(*MockItemEventsAggregatorModel)
+			counters := NewCounters()
 
 			fetchResultChan := make(chan fetchMessageResult)
 			mockModel.EXPECT().fetchMessages(ctx).Return(fetchResultChan)
-			mockModel.EXPECT().flushMessages(ctx)
+			mockModel.EXPECT().flushMessages(ctx, counters)
 
 			exit := make(chan error)
 			go func() {
-				exit <- aggregator.BeginAggregating(ctx)
+				exit <- aggregator.BeginAggregating(ctx, counters, BeginAggregatingOpts{})
 			}()
 			deps.flushTickerChan <- time.Now()
 

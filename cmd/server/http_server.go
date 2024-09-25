@@ -26,6 +26,7 @@ type runHTTPServerParams struct {
 
 	HTTPServer           *http.Server
 	ItemEventsAggregator aggregation.ItemEventsAggregator
+	AggregationCommands  aggregation.Commands
 
 	ShutdownHandlers []di.ProcessShutdownHandler `group:"shutdown-handlers"`
 
@@ -61,7 +62,7 @@ func runHTTPServer(params runHTTPServerParams) {
 			rootLogger.InfoContext(errGrpCtx, "NOOP: Exiting now")
 			return nil
 		}
-		return params.ItemEventsAggregator.BeginAggregating(errGrpCtx)
+		return params.AggregationCommands.StartAggregator(errGrpCtx)
 	})
 
 	grpErrs := make(chan error)

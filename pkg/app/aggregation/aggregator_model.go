@@ -19,7 +19,7 @@ type fetchMessageResult struct {
 
 type ItemEventsAggregatorModel interface {
 	aggregateItemEvent(offset int64, evt *models.ItemEvent)
-	flushMessages(ctx context.Context)
+	flushMessages(ctx context.Context, counters Counters)
 	fetchMessages(ctx context.Context) <-chan fetchMessageResult
 }
 
@@ -30,9 +30,6 @@ type ItemEventsAggregatorModelDeps struct {
 
 	// config
 	Verbose bool `name:"config.aggregator.verbose"`
-
-	// app layer
-	Counters
 
 	// service layer
 	ItemEventsReader services.ItemEventsKafkaReader
@@ -56,9 +53,9 @@ func (m *itemEventsAggregatorModel) aggregateItemEvent(offset int64, evt *models
 
 // flushMessages method is not thread safe, should be only called from a same
 // goroutine as aggregateItemEvent.
-func (m *itemEventsAggregatorModel) flushMessages(ctx context.Context) {
+func (m *itemEventsAggregatorModel) flushMessages(ctx context.Context, counters Counters) {
 	m.logger.DebugContext(ctx, "Flushing aggregated messages")
-	m.deps.Counters.updateItemsCount(m.lastAggregatedOffset, m.aggregatedItems)
+	counters.updateItemsCount(m.lastAggregatedOffset, m.aggregatedItems)
 	clear(m.aggregatedItems)
 }
 

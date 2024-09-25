@@ -20,7 +20,6 @@ func TestAggregatorModel(t *testing.T) {
 	newMockDeps := func(t *testing.T) ItemEventsAggregatorModelDeps {
 		return ItemEventsAggregatorModelDeps{
 			RootLogger:       diag.RootTestLogger(),
-			Counters:         NewMockCounters(t),
 			ItemEventsReader: services.NewMockKafkaReader(t),
 		}
 	}
@@ -144,10 +143,10 @@ func TestAggregatorModel(t *testing.T) {
 
 			modelImpl, _ := model.(*itemEventsAggregatorModel)
 
-			mockCounters, _ := mockDeps.Counters.(*MockCounters)
+			mockCounters := NewMockCounters(t)
 			mockCounters.EXPECT().updateItemsCount(modelImpl.lastAggregatedOffset, modelImpl.aggregatedItems)
 
-			model.flushMessages(context.Background())
+			model.flushMessages(context.Background(), mockCounters)
 			assert.Equal(t, baseOffset+int64(len(itemEvents)-1), modelImpl.lastAggregatedOffset)
 			assert.Empty(t, modelImpl.aggregatedItems)
 

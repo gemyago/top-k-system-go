@@ -19,6 +19,51 @@ func (_m *MockCounters) EXPECT() *MockCounters_Expecter {
 	return &MockCounters_Expecter{mock: &_m.Mock}
 }
 
+// getLastOffset provides a mock function with given fields:
+func (_m *MockCounters) getLastOffset() int64 {
+	ret := _m.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for getLastOffset")
+	}
+
+	var r0 int64
+	if rf, ok := ret.Get(0).(func() int64); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(int64)
+	}
+
+	return r0
+}
+
+// MockCounters_getLastOffset_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'getLastOffset'
+type MockCounters_getLastOffset_Call struct {
+	*mock.Call
+}
+
+// getLastOffset is a helper method to define mock.On call
+func (_e *MockCounters_Expecter) getLastOffset() *MockCounters_getLastOffset_Call {
+	return &MockCounters_getLastOffset_Call{Call: _e.mock.On("getLastOffset")}
+}
+
+func (_c *MockCounters_getLastOffset_Call) Run(run func()) *MockCounters_getLastOffset_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *MockCounters_getLastOffset_Call) Return(_a0 int64) *MockCounters_getLastOffset_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *MockCounters_getLastOffset_Call) RunAndReturn(run func() int64) *MockCounters_getLastOffset_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // updateItemsCount provides a mock function with given fields: lastOffset, increments
 func (_m *MockCounters) updateItemsCount(lastOffset int64, increments map[string]int64) {
 	_m.Called(lastOffset, increments)
