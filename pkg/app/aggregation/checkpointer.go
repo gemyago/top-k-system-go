@@ -3,7 +3,6 @@ package aggregation
 import (
 	"context"
 
-	"github.com/gemyago/top-k-system-go/pkg/services/blobstorage"
 	"go.uber.org/dig"
 )
 
@@ -15,13 +14,24 @@ type CheckPointer interface {
 type CheckPointerDeps struct {
 	dig.In
 
-	// services
-	blobstorage.Storage
+	// app layer
+	CheckPointerModel
 }
 
-type checkPointer struct{}
+type checkPointer struct {
+	CheckPointerDeps
+}
 
-func (cp *checkPointer) restoreState(_ context.Context, _ Counters) error {
+func (cp *checkPointer) restoreState(ctx context.Context, counters Counters) error {
+	manifest, err := cp.CheckPointerModel.readManifest(ctx)
+	if err != nil {
+		return err
+	}
+	values, err := cp.CheckPointerModel.readCounters(ctx, manifest.CountersBlobFileName)
+	if err != nil {
+		return err
+	}
+	counters.updateItemsCount(manifest.LastOffset, values)
 	return nil
 }
 
@@ -29,6 +39,8 @@ func (cp *checkPointer) dumpState(_ context.Context, _ Counters) error {
 	return nil
 }
 
-func NewCheckPointer(_ CheckPointerDeps) CheckPointer {
-	return &checkPointer{}
+func NewCheckPointer(deps CheckPointerDeps) CheckPointer {
+	return &checkPointer{
+		CheckPointerDeps: deps,
+	}
 }

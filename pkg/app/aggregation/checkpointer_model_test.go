@@ -21,13 +21,6 @@ func TestCheckPointerModel(t *testing.T) {
 		}
 	}
 
-	randomManifest := func() checkPointManifest {
-		return checkPointManifest{
-			LastRevision:         rand.Int64N(10000),
-			CountersBlobFileName: faker.Word(),
-		}
-	}
-
 	t.Run("readManifest", func(t *testing.T) {
 		t.Run("should load the manifest from blob storage", func(t *testing.T) {
 			deps := newMockDeps(t)
@@ -103,11 +96,7 @@ func TestCheckPointerModel(t *testing.T) {
 			deps := newMockDeps(t)
 			model := NewCheckPointerModel(deps)
 
-			wantCounters := map[string]int64{
-				faker.UUIDHyphenated(): rand.Int64(),
-				faker.UUIDHyphenated(): rand.Int64(),
-				faker.UUIDHyphenated(): rand.Int64(),
-			}
+			wantCounters := randomCountersValues()
 			wantFile := faker.Word()
 
 			ctx := context.Background()

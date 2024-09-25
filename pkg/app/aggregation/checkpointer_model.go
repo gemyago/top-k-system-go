@@ -11,7 +11,7 @@ import (
 )
 
 type checkPointManifest struct {
-	LastRevision         int64  `json:"lastRevision"`
+	LastOffset           int64  `json:"lastOffset"`
 	CountersBlobFileName string `json:"countersBlobFileName"`
 }
 
