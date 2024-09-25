@@ -48,4 +48,26 @@ func TestCheckPointerModel(t *testing.T) {
 			assert.Equal(t, wantManifest, gotManifest)
 		})
 	})
+
+	t.Run("writeManifest", func(t *testing.T) {
+		t.Run("should upload manifest to blob storage", func(t *testing.T) {
+			deps := newMockDeps(t)
+			model := NewCheckPointerModel(deps)
+
+			ctx := context.Background()
+
+			wantManifest := randomManifest()
+			storage, _ := deps.Storage.(*blobstorage.MockStorage)
+			storage.EXPECT().Upload(
+				ctx, "manifest.json", mock.Anything,
+			).RunAndReturn(func(_ context.Context, _ string, r io.Reader) error {
+				var got checkPointManifest
+				require.NoError(t, json.NewDecoder(r).Decode(&got))
+				assert.Equal(t, wantManifest, got)
+				return nil
+			})
+
+			require.NoError(t, model.writeManifest(ctx, wantManifest))
+		})
+	})
 }

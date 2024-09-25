@@ -46,7 +46,11 @@ func (m checkPointerModel) readManifest(ctx context.Context) (checkPointManifest
 }
 
 func (m checkPointerModel) writeManifest(ctx context.Context, manifest checkPointManifest) error {
-	panic("not implemented")
+	var manifestBytes bytes.Buffer
+	if err := json.NewEncoder(&manifestBytes).Encode(manifest); err != nil {
+		return fmt.Errorf("failed to encode manifest: %w", err)
+	}
+	return m.Storage.Upload(ctx, "manifest.json", &manifestBytes)
 }
 
 func (m checkPointerModel) readCounters(ctx context.Context, blobFileName string) (map[string]int64, error) {
