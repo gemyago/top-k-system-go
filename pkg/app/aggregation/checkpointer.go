@@ -3,6 +3,7 @@ package aggregation
 import (
 	"context"
 
+	"github.com/gemyago/top-k-system-go/pkg/services/blobstorage"
 	"go.uber.org/dig"
 )
 
@@ -13,16 +14,19 @@ type CheckPointer interface {
 
 type CheckPointerDeps struct {
 	dig.In
+
+	// services
+	blobstorage.Storage
 }
 
 type checkPointer struct{}
 
 func (cp *checkPointer) restoreState(ctx context.Context, counters Counters) error {
-	panic("not implemented")
+	return nil
 }
 
 func (cp *checkPointer) dumpState(ctx context.Context, counters Counters) error {
-	panic("not implemented")
+	return nil
 }
 
 func NewCheckPointer(deps CheckPointerDeps) CheckPointer {
