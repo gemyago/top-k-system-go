@@ -5,6 +5,6 @@
     "readerMaxWait": "1s"
   },
   "aggregator": {
-    "verbose": true
+    "verbose": false
   }
 }

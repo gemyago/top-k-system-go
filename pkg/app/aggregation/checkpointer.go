@@ -2,7 +2,10 @@ package aggregation
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"io/fs"
+	"log/slog"
 
 	"go.uber.org/dig"
 )
@@ -15,17 +18,24 @@ type CheckPointer interface {
 type CheckPointerDeps struct {
 	dig.In
 
+	RootLogger *slog.Logger
+
 	// app layer
 	CheckPointerModel
 }
 
 type checkPointer struct {
+	logger *slog.Logger
 	CheckPointerDeps
 }
 
 func (cp *checkPointer) restoreState(ctx context.Context, counters Counters) error {
 	manifest, err := cp.CheckPointerModel.readManifest(ctx)
 	if err != nil {
+		if errors.Is(err, fs.ErrNotExist) {
+			cp.logger.InfoContext(ctx, "Manifest not found. No state to restore from.")
+			return nil
+		}
 		return err
 	}
 	values, err := cp.CheckPointerModel.readCounters(ctx, manifest.CountersBlobFileName)
@@ -53,6 +63,7 @@ func (cp *checkPointer) dumpState(ctx context.Context, counters Counters) error 
 
 func NewCheckPointer(deps CheckPointerDeps) CheckPointer {
 	return &checkPointer{
+		logger:           deps.RootLogger.WithGroup("check-pointer"),
 		CheckPointerDeps: deps,
 	}
 }
