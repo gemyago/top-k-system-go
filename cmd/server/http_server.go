@@ -33,51 +33,12 @@ type runHTTPServerParams struct {
 	noop bool
 }
 
-func runHTTPServer(params runHTTPServerParams) {
+func runHTTPServer(params runHTTPServerParams) error {
 	rootLogger := params.RootLogger
 	httpServer := params.HTTPServer
 	rootCtx := context.Background()
 
-	signalCtx, cancel := signal.NotifyContext(rootCtx, unix.SIGINT, unix.SIGTERM)
-	defer cancel()
-
-	grp, errGrpCtx := errgroup.WithContext(signalCtx)
-	grp.Go(func() error {
-		rootLogger.InfoContext(errGrpCtx, "Starting http listener",
-			slog.String("addr", httpServer.Addr),
-			slog.String("idleTimeout", httpServer.IdleTimeout.String()),
-			slog.String("readHeaderTimeout", httpServer.ReadHeaderTimeout.String()),
-			slog.String("readTimeout", httpServer.ReadTimeout.String()),
-			slog.String("writeTimeout", httpServer.WriteTimeout.String()),
-		)
-		if params.noop {
-			rootLogger.InfoContext(errGrpCtx, "NOOP: Exiting now")
-			return nil
-		}
-		return httpServer.ListenAndServe()
-	})
-	grp.Go(func() error {
-		rootLogger.InfoContext(errGrpCtx, "Starting item events aggregator")
-		if params.noop {
-			rootLogger.InfoContext(errGrpCtx, "NOOP: Exiting now")
-			return nil
-		}
-		return params.AggregationCommands.StartAggregator(errGrpCtx)
-	})
-
-	grpErrs := make(chan error)
-	go func() {
-		grpErrs <- grp.Wait()
-	}()
-
-	select {
-	case err := <-grpErrs:
-		if err != nil {
-			rootLogger.ErrorContext(rootCtx, "Server error", "err", err)
-		} else {
-			rootLogger.InfoContext(rootCtx, "Server stopped")
-		}
-	case <-signalCtx.Done(): // coverage-ignore
+	shutdown := func() {
 		rootLogger.InfoContext(rootCtx, "Trying to shut down gracefully")
 		ts := time.Now()
 
@@ -98,6 +59,49 @@ func runHTTPServer(params runHTTPServerParams) {
 			slog.Duration("duration", time.Since(ts)),
 		)
 	}
+
+	signalCtx, cancel := signal.NotifyContext(rootCtx, unix.SIGINT, unix.SIGTERM)
+	defer cancel()
+
+	startupErrors := make(chan error, 2) //nolint:mnd // we have two processes
+	go func() {
+		rootLogger.InfoContext(signalCtx, "Starting http listener",
+			slog.String("addr", httpServer.Addr),
+			slog.String("idleTimeout", httpServer.IdleTimeout.String()),
+			slog.String("readHeaderTimeout", httpServer.ReadHeaderTimeout.String()),
+			slog.String("readTimeout", httpServer.ReadTimeout.String()),
+			slog.String("writeTimeout", httpServer.WriteTimeout.String()),
+		)
+		if params.noop {
+			rootLogger.InfoContext(signalCtx, "NOOP: Exiting now")
+			startupErrors <- nil
+			return
+		}
+		startupErrors <- httpServer.ListenAndServe()
+	}()
+	go func() {
+		rootLogger.InfoContext(signalCtx, "Starting item events aggregator")
+		if params.noop {
+			rootLogger.InfoContext(signalCtx, "NOOP: Exiting now")
+			startupErrors <- nil
+			return
+		}
+		startupErrors <- params.AggregationCommands.StartAggregator(signalCtx)
+	}()
+
+	var startupErr error
+	select {
+	case startupErr = <-startupErrors:
+		if startupErr != nil {
+			rootLogger.ErrorContext(rootCtx, "Server error", "err", startupErr)
+		} else {
+			rootLogger.InfoContext(rootCtx, "Server stopped")
+		}
+		shutdown()
+	case <-signalCtx.Done(): // coverage-ignore
+		shutdown()
+	}
+	return startupErr
 }
 
 func newHTTPServerCmd(container *dig.Container) *cobra.Command {
@@ -124,9 +128,9 @@ func newHTTPServerCmd(container *dig.Container) *cobra.Command {
 		)
 	}
 	cmd.RunE = func(_ *cobra.Command, _ []string) error {
-		return container.Invoke(func(params runHTTPServerParams) {
+		return container.Invoke(func(params runHTTPServerParams) error {
 			params.noop = noop
-			runHTTPServer(params)
+			return runHTTPServer(params)
 		})
 	}
 	return cmd
