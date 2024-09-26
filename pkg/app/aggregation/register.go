@@ -12,5 +12,6 @@ func Register(container *dig.Container) error {
 		NewItemEventsAggregatorModel,
 		di.ProvideValue(CountersFactory(CountersFactoryFunc(NewCounters))),
 		NewCheckPointer,
+		NewCheckPointerModel,
 	)
 }

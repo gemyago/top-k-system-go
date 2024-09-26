@@ -55,5 +55,8 @@ func Provide(container *dig.Container, cfg *viper.Viper) error {
 		// aggregator
 		provideConfigValue(cfg, "aggregator.flushInterval").asDuration(),
 		provideConfigValue(cfg, "aggregator.verbose").asBool(),
+
+		// blob storage
+		provideConfigValue(cfg, "blobstorage.localFolder").asString(),
 	)
 }

@@ -3,6 +3,7 @@ package aggregation
 import (
 	"context"
 	"fmt"
+	"log/slog"
 
 	"go.uber.org/dig"
 )
@@ -20,6 +21,8 @@ type Commands interface {
 type CommandsDeps struct {
 	dig.In
 
+	RootLogger *slog.Logger
+
 	// app layer
 	CheckPointer
 	ItemEventsAggregator
@@ -27,10 +30,12 @@ type CommandsDeps struct {
 }
 
 type commands struct {
+	logger *slog.Logger
 	CommandsDeps
 }
 
 func (c *commands) StartAggregator(ctx context.Context) error {
+	c.logger.InfoContext(ctx, "Restoring counters state")
 	counters := c.CountersFactory.NewCounters()
 	if err := c.CheckPointer.restoreState(ctx, counters); err != nil {
 		return err
@@ -39,6 +44,7 @@ func (c *commands) StartAggregator(ctx context.Context) error {
 	// TODO: Here we need some way to activate counters
 	// so then API layer could query them
 
+	c.logger.InfoContext(ctx, "Starting aggregation")
 	return c.ItemEventsAggregator.BeginAggregating(ctx, counters, BeginAggregatingOpts{})
 }
 
@@ -66,6 +72,7 @@ func (c *commands) CreateCheckPoint(ctx context.Context) error {
 
 func NewCommands(deps CommandsDeps) Commands {
 	return &commands{
+		logger:       deps.RootLogger.WithGroup("aggregator.commands"),
 		CommandsDeps: deps,
 	}
 }
