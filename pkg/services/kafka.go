@@ -56,6 +56,8 @@ type KafkaReader interface {
 	FetchMessage(ctx context.Context) (kafka.Message, error)
 	Offset() int64
 	SetOffset(offset int64) error
+	Stats() kafka.ReaderStats
+	ReadLag(ctx context.Context) (lag int64, err error)
 }
 
 type ItemEventsKafkaReader KafkaReader

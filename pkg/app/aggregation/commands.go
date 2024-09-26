@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 
+	"github.com/gemyago/top-k-system-go/pkg/services"
 	"go.uber.org/dig"
 )
 
@@ -27,6 +28,9 @@ type CommandsDeps struct {
 	CheckPointer
 	ItemEventsAggregator
 	CountersFactory
+
+	// service layer
+	ItemEventsReader services.ItemEventsKafkaReader
 }
 
 type commands struct {
@@ -50,22 +54,56 @@ func (c *commands) StartAggregator(ctx context.Context) error {
 
 func (c *commands) CreateCheckPoint(ctx context.Context) error {
 	counters := c.CountersFactory.NewCounters()
+
+	c.logger.InfoContext(ctx, "Starting creating check point. Restoring last state.")
 	if err := c.CheckPointer.restoreState(ctx, counters); err != nil {
 		return err
 	}
 
-	// Get current state
-	var currentOffset int64 = 0
+	lag, err := c.ItemEventsReader.ReadLag(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to read the lag: %w", err)
+	}
 
-	if err := c.ItemEventsAggregator.BeginAggregating(ctx, counters, BeginAggregatingOpts{
-		TillOffset: currentOffset,
+	lastOffset := counters.getLastOffset()
+	if lastOffset > 0 {
+		// We want to consume starting form the next offset, so doing +1
+		if err = c.ItemEventsReader.SetOffset(lastOffset + 1); err != nil {
+			return fmt.Errorf("failed to set next offset: %w", err)
+		}
+	}
+
+	// lag count starts from zero
+	if lag-lastOffset-1 <= 0 {
+		c.logger.InfoContext(ctx,
+			"No new messages produced. Checkpoint skipped.",
+			slog.Int64("lastOffset", lastOffset),
+			slog.Int64("lag", lag),
+		)
+		return nil
+	}
+
+	// We assume we didn't consume anything yet and the lag is exactly the
+	// tail of the stream
+	tillOffset := lag - 1
+
+	c.logger.InfoContext(ctx,
+		"Aggregating remaining messages",
+		slog.Int64("sinceOffset", counters.getLastOffset()),
+		slog.Int64("tillOffset", tillOffset),
+	)
+	if err = c.ItemEventsAggregator.BeginAggregating(ctx, counters, BeginAggregatingOpts{
+		TillOffset: tillOffset,
 	}); err != nil {
 		return fmt.Errorf("failed to aggregate till offset: %w", err)
 	}
 
-	if err := c.CheckPointer.dumpState(ctx, counters); err != nil {
+	c.logger.InfoContext(ctx, "Producing new state")
+	if err = c.CheckPointer.dumpState(ctx, counters); err != nil {
 		return fmt.Errorf("failed to dump state: %w", err)
 	}
+
+	c.logger.InfoContext(ctx, "Checkpoint created", slog.Int64("lastOffset", counters.getLastOffset()))
 
 	return nil
 }

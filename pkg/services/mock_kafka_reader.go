@@ -231,6 +231,62 @@ func (_c *MockKafkaReader_Offset_Call) RunAndReturn(run func() int64) *MockKafka
 	return _c
 }
 
+// ReadLag provides a mock function with given fields: ctx
+func (_m *MockKafkaReader) ReadLag(ctx context.Context) (int64, error) {
+	ret := _m.Called(ctx)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ReadLag")
+	}
+
+	var r0 int64
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context) (int64, error)); ok {
+		return rf(ctx)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context) int64); ok {
+		r0 = rf(ctx)
+	} else {
+		r0 = ret.Get(0).(int64)
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = rf(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// MockKafkaReader_ReadLag_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ReadLag'
+type MockKafkaReader_ReadLag_Call struct {
+	*mock.Call
+}
+
+// ReadLag is a helper method to define mock.On call
+//   - ctx context.Context
+func (_e *MockKafkaReader_Expecter) ReadLag(ctx interface{}) *MockKafkaReader_ReadLag_Call {
+	return &MockKafkaReader_ReadLag_Call{Call: _e.mock.On("ReadLag", ctx)}
+}
+
+func (_c *MockKafkaReader_ReadLag_Call) Run(run func(ctx context.Context)) *MockKafkaReader_ReadLag_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context))
+	})
+	return _c
+}
+
+func (_c *MockKafkaReader_ReadLag_Call) Return(lag int64, err error) *MockKafkaReader_ReadLag_Call {
+	_c.Call.Return(lag, err)
+	return _c
+}
+
+func (_c *MockKafkaReader_ReadLag_Call) RunAndReturn(run func(context.Context) (int64, error)) *MockKafkaReader_ReadLag_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // SetOffset provides a mock function with given fields: offset
 func (_m *MockKafkaReader) SetOffset(offset int64) error {
 	ret := _m.Called(offset)

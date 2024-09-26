@@ -42,7 +42,7 @@ type itemEventsAggregator struct {
 func (a *itemEventsAggregator) BeginAggregating(
 	ctx context.Context,
 	counters Counters,
-	_ BeginAggregatingOpts,
+	opts BeginAggregatingOpts,
 ) error {
 	// TODO: Set the offset to start fetching from
 	// and keep fetching until the offset provided
@@ -63,6 +63,14 @@ func (a *itemEventsAggregator) BeginAggregating(
 						slog.String("itemID", res.event.ItemID),
 						slog.Int64("offset", res.offset),
 					)
+				}
+				if opts.TillOffset > 0 && res.offset >= opts.TillOffset {
+					a.logger.InfoContext(ctx, "Target offset reached. Flushing and stopping aggregation.",
+						slog.Int64("offset", res.offset),
+						slog.Int64("tillOffset", opts.TillOffset),
+					)
+					a.AggregatorModel.flushMessages(ctx, counters)
+					return nil
 				}
 			}
 		case <-ctx.Done():

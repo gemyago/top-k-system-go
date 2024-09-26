@@ -61,7 +61,6 @@ func createCheckPoint(params createCheckPointParams) error {
 
 	startupErrors := make(chan error)
 	go func() {
-		rootLogger.InfoContext(signalCtx, "Starting creating check point")
 		if params.noop {
 			rootLogger.InfoContext(signalCtx, "NOOP: Exiting now")
 			startupErrors <- nil
