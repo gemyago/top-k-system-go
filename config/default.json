@@ -16,5 +16,8 @@
   "aggregator": {
     "flushInterval": "60s",
     "verbose": false
+  },
+  "blobstorage": {
+    "localFolder": "tmp/blobs"
   }
 }
