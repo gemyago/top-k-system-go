@@ -277,6 +277,51 @@ func (_c *MockKafkaReader_SetOffset_Call) RunAndReturn(run func(int64) error) *M
 	return _c
 }
 
+// Stats provides a mock function with given fields:
+func (_m *MockKafkaReader) Stats() kafka.ReaderStats {
+	ret := _m.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for Stats")
+	}
+
+	var r0 kafka.ReaderStats
+	if rf, ok := ret.Get(0).(func() kafka.ReaderStats); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(kafka.ReaderStats)
+	}
+
+	return r0
+}
+
+// MockKafkaReader_Stats_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Stats'
+type MockKafkaReader_Stats_Call struct {
+	*mock.Call
+}
+
+// Stats is a helper method to define mock.On call
+func (_e *MockKafkaReader_Expecter) Stats() *MockKafkaReader_Stats_Call {
+	return &MockKafkaReader_Stats_Call{Call: _e.mock.On("Stats")}
+}
+
+func (_c *MockKafkaReader_Stats_Call) Run(run func()) *MockKafkaReader_Stats_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *MockKafkaReader_Stats_Call) Return(_a0 kafka.ReaderStats) *MockKafkaReader_Stats_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *MockKafkaReader_Stats_Call) RunAndReturn(run func() kafka.ReaderStats) *MockKafkaReader_Stats_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // NewMockKafkaReader creates a new instance of MockKafkaReader. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewMockKafkaReader(t interface {

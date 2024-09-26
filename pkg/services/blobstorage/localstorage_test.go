@@ -48,7 +48,7 @@ func TestLocalStorage(t *testing.T) {
 
 			var result bytes.Buffer
 			require.NoError(t, storage.Download(ctx, key, &result))
-			assert.Equal(t, wantData, string(result.String()))
+			assert.Equal(t, wantData, result.String())
 		})
 	})
 }
