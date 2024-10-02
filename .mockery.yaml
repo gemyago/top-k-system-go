@@ -28,6 +28,8 @@ packages:
     interfaces:
       KafkaReader:
       KafkaWriter:
+      ShutdownHook:
+      ShutdownHooks:
   github.com/gemyago/top-k-system-go/pkg/services/blobstorage:
     interfaces:
       Storage:

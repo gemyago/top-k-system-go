@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"errors"
-	"fmt"
 	"log/slog"
 	"os/signal"
 	"time"
@@ -12,9 +11,10 @@ import (
 	"github.com/gemyago/top-k-system-go/pkg/api/http/server"
 	"github.com/gemyago/top-k-system-go/pkg/app/aggregation"
 	"github.com/gemyago/top-k-system-go/pkg/di"
+	"github.com/gemyago/top-k-system-go/pkg/diag"
+	"github.com/gemyago/top-k-system-go/pkg/services"
 	"github.com/spf13/cobra"
 	"go.uber.org/dig"
-	"golang.org/x/sync/errgroup"
 	"golang.org/x/sys/unix"
 )
 
@@ -25,7 +25,7 @@ type createCheckPointParams struct {
 
 	AggregationCommands aggregation.Commands
 
-	ShutdownHandlers []di.ProcessShutdownHandler `group:"shutdown-handlers"`
+	services.ShutdownHooks
 
 	noop bool
 }
@@ -34,26 +34,19 @@ func createCheckPoint(params createCheckPointParams) error {
 	rootLogger := params.RootLogger
 	rootCtx := context.Background()
 
-	shutdown := func() {
+	shutdown := func() error {
 		rootLogger.InfoContext(rootCtx, "Trying to shut down gracefully")
 		ts := time.Now()
 
-		grp := errgroup.Group{}
-		for _, h := range params.ShutdownHandlers {
-			grp.Go(func() error {
-				rootLogger.InfoContext(rootCtx, fmt.Sprintf("Shutting down %s", h.Name))
-				return h.Shutdown(rootCtx)
-			})
-		}
-
-		// Not much we can do at this stage, so just logging
-		if err := grp.Wait(); err != nil {
-			rootLogger.ErrorContext(rootCtx, "Graceful shutdown failed", "err", err)
+		err := params.ShutdownHooks.PerformShutdown(rootCtx)
+		if err != nil {
+			rootLogger.ErrorContext(rootCtx, "Failed to shut down gracefully", diag.ErrAttr(err))
 		}
 
 		rootLogger.InfoContext(rootCtx, "Service stopped",
 			slog.Duration("duration", time.Since(ts)),
 		)
+		return err
 	}
 
 	signalCtx, cancel := signal.NotifyContext(rootCtx, unix.SIGINT, unix.SIGTERM)
@@ -73,15 +66,13 @@ func createCheckPoint(params createCheckPointParams) error {
 	select {
 	case startupErr = <-startupErrors:
 		if startupErr != nil {
-			rootLogger.ErrorContext(rootCtx, "Server error", "err", startupErr)
-		} else {
-			rootLogger.InfoContext(rootCtx, "Server stopped")
+			rootLogger.ErrorContext(rootCtx, "Server startup failed", "err", startupErr)
 		}
-		shutdown()
 	case <-signalCtx.Done(): // coverage-ignore
-		shutdown()
+		// We will attempt to shut down in both cases
+		// so doing it once on a next line
 	}
-	return startupErr
+	return errors.Join(startupErr, shutdown())
 }
 
 func newCreateCheckPointCmd(container *dig.Container) *cobra.Command {

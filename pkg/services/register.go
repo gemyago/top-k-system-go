@@ -13,6 +13,7 @@ func Register(container *dig.Container) error {
 		NewTimeProvider,
 		NewItemEventsKafkaReader,
 		NewItemEventsKafkaWriter,
+		NewShutdownHooks,
 		di.ProvideValue(time.NewTicker),
 		blobstorage.NewLocalStorage,
 	)
