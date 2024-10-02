@@ -42,6 +42,14 @@ func (s *localStorage) Download(_ context.Context, key string, out io.Writer) er
 	return nil
 }
 
+func (s *localStorage) Delete(_ context.Context, key string) error {
+	filePath := path.Join(s.LocalStorageFolder, key)
+	if err := os.Remove(filePath); err != nil {
+		return fmt.Errorf("failed to remove file %s: %w", filePath, err)
+	}
+	return nil
+}
+
 type LocalStorageDeps struct {
 	dig.In
 

@@ -51,4 +51,18 @@ func TestLocalStorage(t *testing.T) {
 			assert.Equal(t, wantData, result.String())
 		})
 	})
+
+	t.Run("delete", func(t *testing.T) {
+		t.Run("should remove given file", func(t *testing.T) {
+			deps := newMockDeps(t)
+			storage := NewLocalStorage(deps)
+			ctx := context.Background()
+			key := faker.UUIDHyphenated()
+			require.NoError(t, os.WriteFile(path.Join(deps.LocalStorageFolder, key), []byte(faker.Sentence()), 0644))
+
+			require.NoError(t, storage.Delete(ctx, key))
+			_, err := os.Stat(path.Join(deps.LocalStorageFolder, key))
+			assert.True(t, os.IsNotExist(err))
+		})
+	})
 }

@@ -24,6 +24,53 @@ func (_m *MockStorage) EXPECT() *MockStorage_Expecter {
 	return &MockStorage_Expecter{mock: &_m.Mock}
 }
 
+// Delete provides a mock function with given fields: ctx, key
+func (_m *MockStorage) Delete(ctx context.Context, key string) error {
+	ret := _m.Called(ctx, key)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Delete")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, string) error); ok {
+		r0 = rf(ctx, key)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// MockStorage_Delete_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Delete'
+type MockStorage_Delete_Call struct {
+	*mock.Call
+}
+
+// Delete is a helper method to define mock.On call
+//   - ctx context.Context
+//   - key string
+func (_e *MockStorage_Expecter) Delete(ctx interface{}, key interface{}) *MockStorage_Delete_Call {
+	return &MockStorage_Delete_Call{Call: _e.mock.On("Delete", ctx, key)}
+}
+
+func (_c *MockStorage_Delete_Call) Run(run func(ctx context.Context, key string)) *MockStorage_Delete_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(string))
+	})
+	return _c
+}
+
+func (_c *MockStorage_Delete_Call) Return(_a0 error) *MockStorage_Delete_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *MockStorage_Delete_Call) RunAndReturn(run func(context.Context, string) error) *MockStorage_Delete_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // Download provides a mock function with given fields: ctx, key, out
 func (_m *MockStorage) Download(ctx context.Context, key string, out io.Writer) error {
 	ret := _m.Called(ctx, key, out)
