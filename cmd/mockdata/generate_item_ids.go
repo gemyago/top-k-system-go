@@ -2,9 +2,11 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"log/slog"
+	"os"
 
 	"github.com/gemyago/top-k-system-go/pkg/services"
 	"github.com/gemyago/top-k-system-go/pkg/services/blobstorage"
@@ -64,7 +66,9 @@ func newGenerateItemIDsCmd(container *dig.Container) *cobra.Command {
 				if overwrite {
 					logger.InfoContext(cmd.Context(), "Removing existing file", slog.String("file", outputFileName))
 					if err := params.Storage.Delete(cmd.Context(), outputFileName); err != nil {
-						return err
+						if !errors.Is(err, os.ErrNotExist) {
+							return err
+						}
 					}
 				}
 

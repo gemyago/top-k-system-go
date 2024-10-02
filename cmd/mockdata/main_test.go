@@ -37,7 +37,11 @@ func TestMain(t *testing.T) {
 			rootCmd := setupCommands()
 			randomFileName := faker.UUIDHyphenated()
 			require.NoError(t, os.Chdir(path.Join("..", "..")))
-			rootCmd.SetArgs([]string{"generate-item-ids", "-n", "1", "-o", randomFileName, "--logs-file", "../../test.log"})
+			rootCmd.SetArgs([]string{
+				"generate-item-ids",
+				"-n", "1", "-o", randomFileName,
+				"--overwrite", "--logs-file", "../../test.log",
+			})
 			require.NoError(t, rootCmd.Execute())
 			// check if file exists
 			filePath := path.Join("tmp", "blobs", randomFileName)
