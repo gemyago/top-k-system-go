@@ -48,8 +48,9 @@ func newGenerateItemIDsCmd(container *dig.Container) *cobra.Command {
 		blobstorage.Storage
 	}
 
-	var itemsNumber int
+	itemsNumber := defaultItemsNumberToGenerate
 	outputFileName := "test-item-ids.txt"
+	overwrite := false
 
 	noop := false
 	cmd := &cobra.Command{
@@ -59,6 +60,13 @@ func newGenerateItemIDsCmd(container *dig.Container) *cobra.Command {
 			return container.Invoke(func(params invokeCmdParams) error {
 				logger := params.RootLogger.WithGroup("generate-item-ids")
 				logger.InfoContext(cmd.Context(), "Generating item ids", slog.Int("number", itemsNumber))
+
+				if overwrite {
+					logger.InfoContext(cmd.Context(), "Removing existing file", slog.String("file", outputFileName))
+					if err := params.Storage.Delete(cmd.Context(), outputFileName); err != nil {
+						return err
+					}
+				}
 
 				reader, writer := io.Pipe()
 
@@ -96,6 +104,7 @@ func newGenerateItemIDsCmd(container *dig.Container) *cobra.Command {
 		"Do not send. Just setup deps and exit. Useful for testing if setup is all working.",
 	)
 	cmd.Flags().StringVarP(&outputFileName, "output-file", "o", outputFileName, "Output file name")
-	cmd.Flags().IntVarP(&itemsNumber, "items-number", "n", defaultItemsNumberToGenerate, "Number of items to generate")
+	cmd.Flags().IntVarP(&itemsNumber, "items-number", "n", itemsNumber, "Number of items to generate")
+	cmd.Flags().BoolVar(&overwrite, "overwrite", overwrite, "Remove existing file before writing")
 	return cmd
 }
