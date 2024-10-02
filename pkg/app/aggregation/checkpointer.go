@@ -55,6 +55,9 @@ func (cp *checkPointer) dumpState(ctx context.Context, counters Counters) error 
 	if err := cp.CheckPointerModel.writeCounters(ctx, countersFileName, counters.getItemsCounters()); err != nil {
 		return err
 	}
+
+	// We write manifest last so if counters fail, the manifest will point on the last
+	// counters
 	if err := cp.CheckPointerModel.writeManifest(ctx, newManifest); err != nil {
 		return err
 	}

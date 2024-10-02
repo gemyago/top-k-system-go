@@ -40,7 +40,10 @@ func TestDiagSlogHandler(t *testing.T) {
 			attrs := []slog.Attr{slog.String(faker.Word(), faker.Word())}
 
 			target.EXPECT().WithAttrs(attrs).Return(mockResult)
-			assert.Equal(t, mockResult, handler.WithAttrs(attrs))
+			got, ok := handler.WithAttrs(attrs).(*diagLogHandler)
+			assert.True(t, ok)
+
+			assert.Equal(t, mockResult, got.target)
 		})
 	})
 	t.Run("Handle", func(t *testing.T) {
