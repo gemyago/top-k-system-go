@@ -80,7 +80,7 @@ func newGenerateItemIDsCmd(container *dig.Container) *cobra.Command {
 					})
 				}()
 
-				if err := params.Storage.Upload(cmd.Context(), "test-item-ids.txt", reader); err != nil {
+				if err := params.Storage.Upload(cmd.Context(), outputFileName, reader); err != nil {
 					return err
 				}
 				if err := <-generatorDone; err != nil {
