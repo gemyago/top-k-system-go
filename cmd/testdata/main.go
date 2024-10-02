@@ -12,6 +12,7 @@ func setupCommands() *cobra.Command {
 	rootCmd := newRootCmd(container)
 	rootCmd.AddCommand(
 		newSendTestEventCmd(container),
+		newGenerateItemIDsCmd(container),
 	)
 	return rootCmd
 }
