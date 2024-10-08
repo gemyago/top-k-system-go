@@ -1,5 +1,6 @@
 {
   "defaultLogLevel": "INFO",
+  "gracefulShutdownTimeout": "10s",
   "httpServer": {
     "port": 8080,
     "idleTimeout": "60s",
@@ -16,5 +17,8 @@
   "aggregator": {
     "flushInterval": "60s",
     "verbose": false
+  },
+  "blobstorage": {
+    "localFolder": "tmp/blobs"
   }
 }

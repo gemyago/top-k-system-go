@@ -41,9 +41,9 @@ Metrics sources:
 * https://photutorial.com/how-many-videos-on-youtube
 * https://www.comparitech.com/tv-streaming/youtube-statistics
 
-It is assumed that each item has ID of 36 bytes max (uuid). Views counter will be stored as int64 (8 bytes) since some videos may have more than 4B views. TopK Counter hash map size will be: (36 + 8) * 4B = 176B bytes ~ `176GB` of memory. TopK Heap will store just 1000 items so it's size is insignificant.
+It is assumed that each item has ID of 36 bytes max (uuid or similar). Views counter will be stored as int64 (8 bytes) since some videos may have more than 4B views. TopK Counter hash map size will be: (36 + 8) * 4B = 176B bytes ~ `176GB` of memory. TopK Heap will store just 1000 items so it's size is insignificant.
 
-Given the memory requirement, we will shard our system by item ID. This can create a hot shard problem that will be ignored for now. In a `30 shards` setup it will be required up to `6GB` of memory to keep TopK Counters.
+Given the memory requirement, we will shard our system by item ID. This can create a hot shard problem that will be ignored for now. In a `30 shards` setup it will be required up to `6GB` (~133M items) of memory to keep TopK Counters.
 
 Data aggregation across shards can lead to increased TopK query latency. This problem is ignored for now.
 

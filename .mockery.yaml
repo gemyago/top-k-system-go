@@ -18,9 +18,18 @@ packages:
       Commands:
   github.com/gemyago/top-k-system-go/pkg/app/aggregation:
     interfaces:
+      CheckPointer:
+      CountersFactory:
       Counters:
+      ItemEventsAggregator:
       ItemEventsAggregatorModel:
+      CheckPointerModel:
   github.com/gemyago/top-k-system-go/pkg/services:
     interfaces:
       KafkaReader:
       KafkaWriter:
+      ShutdownHook:
+      ShutdownHooks:
+  github.com/gemyago/top-k-system-go/pkg/services/blobstorage:
+    interfaces:
+      Storage:

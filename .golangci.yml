@@ -346,7 +346,7 @@ issues:
       linters: [ godot ]
     - source: "//noinspection"
       linters: [ gocritic ]
-    - path: "_test\\.go"
+    - path: "(testing.go|_test\\.go)"
       linters:
         - bodyclose
         - dupl
@@ -358,3 +358,4 @@ issues:
         - gocognit
         - gocyclo
         - cyclop
+        - mnd

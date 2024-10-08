@@ -11,7 +11,7 @@ func setupCommands() *cobra.Command {
 	container := dig.New()
 	rootCmd := newRootCmd(container)
 	rootCmd.AddCommand(
-		newSendTestEventCmd(container),
+		newCreateCheckPointCmd(container),
 	)
 	return rootCmd
 }

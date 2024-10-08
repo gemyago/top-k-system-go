@@ -5,7 +5,6 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/gemyago/top-k-system-go/pkg/di"
 	"github.com/segmentio/kafka-go"
 	"go.uber.org/dig"
 )
@@ -22,19 +21,16 @@ type ItemEventsKafkaWriterDeps struct {
 
 	RootLogger *slog.Logger
 
+	// config
 	KafkaTopic                  string `name:"config.kafka.itemEventsTopic"`
 	KafkaAddress                string `name:"config.kafka.address"`
 	KafkaAllowAutoTopicCreation bool   `name:"config.kafka.allowAutoTopicCreation"`
+
+	// services
+	ShutdownHooks
 }
 
-type ItemEventsKafkaWriterOut struct {
-	dig.Out
-
-	Writer          ItemEventsKafkaWriter
-	ShutdownHandler di.ProcessShutdownHandler `group:"shutdown-handlers"`
-}
-
-func NewItemEventsKafkaWriter(deps ItemEventsKafkaWriterDeps) ItemEventsKafkaWriterOut {
+func NewItemEventsKafkaWriter(deps ItemEventsKafkaWriterDeps) ItemEventsKafkaWriter {
 	writer := &kafka.Writer{
 		Topic:                  deps.KafkaTopic,
 		AllowAutoTopicCreation: deps.KafkaAllowAutoTopicCreation,
@@ -44,10 +40,9 @@ func NewItemEventsKafkaWriter(deps ItemEventsKafkaWriterDeps) ItemEventsKafkaWri
 		Async: true,
 	}
 
-	return ItemEventsKafkaWriterOut{
-		Writer:          writer,
-		ShutdownHandler: di.MakeProcessShutdownHandlerNoContext("Item Events Topic Writer", writer.Close),
-	}
+	deps.ShutdownHooks.Register(NewShutdownHookNoCtx("Item Events Topic Writer", writer.Close))
+
+	return writer
 }
 
 type KafkaReader interface {
@@ -56,36 +51,34 @@ type KafkaReader interface {
 	FetchMessage(ctx context.Context) (kafka.Message, error)
 	Offset() int64
 	SetOffset(offset int64) error
+	Stats() kafka.ReaderStats
+	ReadLag(ctx context.Context) (lag int64, err error)
 }
 
 type ItemEventsKafkaReader KafkaReader
-
-type ItemEventsKafkaReaderOut struct {
-	dig.Out
-
-	Reader          ItemEventsKafkaReader
-	ShutdownHandler di.ProcessShutdownHandler `group:"shutdown-handlers"`
-}
 
 type ItemEventsKafkaReaderDeps struct {
 	dig.In
 
 	RootLogger *slog.Logger
 
+	// config
 	KafkaTopic    string        `name:"config.kafka.itemEventsTopic"`
 	KafkaAddress  string        `name:"config.kafka.address"`
 	ReaderMaxWait time.Duration `name:"config.kafka.readerMaxWait"`
+
+	// services
+	ShutdownHooks
 }
 
-func NewItemEventsKafkaReader(deps ItemEventsKafkaReaderDeps) ItemEventsKafkaReaderOut {
+func NewItemEventsKafkaReader(deps ItemEventsKafkaReaderDeps) ItemEventsKafkaReader {
 	reader := kafka.NewReader(kafka.ReaderConfig{
 		Brokers: []string{deps.KafkaAddress},
 		Topic:   deps.KafkaTopic,
 		MaxWait: deps.ReaderMaxWait,
 	})
 
-	return ItemEventsKafkaReaderOut{
-		Reader:          reader,
-		ShutdownHandler: di.MakeProcessShutdownHandlerNoContext("Item Events Reader", reader.Close),
-	}
+	deps.ShutdownHooks.Register(NewShutdownHookNoCtx("Item Events Reader", reader.Close))
+
+	return reader
 }

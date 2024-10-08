@@ -9,6 +9,7 @@ import (
 
 	"github.com/gemyago/top-k-system-go/pkg/api/http/routes"
 	"github.com/gemyago/top-k-system-go/pkg/api/http/server"
+	"github.com/gemyago/top-k-system-go/pkg/app/aggregation"
 	"github.com/gemyago/top-k-system-go/pkg/di"
 	"github.com/gemyago/top-k-system-go/pkg/diag"
 	"github.com/gemyago/top-k-system-go/pkg/services"
@@ -17,21 +18,20 @@ import (
 	"golang.org/x/sys/unix"
 )
 
-type runHTTPServerParams struct {
+type createCheckPointParams struct {
 	dig.In `ignore-unexported:"true"`
 
 	RootLogger *slog.Logger
 
-	HTTPServer *server.HTTPServer
+	AggregationCommands aggregation.Commands
 
 	services.ShutdownHooks
 
 	noop bool
 }
 
-func runHTTPServer(params runHTTPServerParams) error {
+func createCheckPoint(params createCheckPointParams) error {
 	rootLogger := params.RootLogger
-	httpServer := params.HTTPServer
 	rootCtx := context.Background()
 
 	shutdown := func() error {
@@ -52,14 +52,14 @@ func runHTTPServer(params runHTTPServerParams) error {
 	signalCtx, cancel := signal.NotifyContext(rootCtx, unix.SIGINT, unix.SIGTERM)
 	defer cancel()
 
-	startupErrors := make(chan error, 1)
+	startupErrors := make(chan error)
 	go func() {
 		if params.noop {
-			rootLogger.InfoContext(signalCtx, "NOOP: Starting http server")
+			rootLogger.InfoContext(signalCtx, "NOOP: Exiting now")
 			startupErrors <- nil
 			return
 		}
-		startupErrors <- httpServer.Start(signalCtx)
+		startupErrors <- params.AggregationCommands.CreateCheckPoint(signalCtx)
 	}()
 
 	var startupErr error
@@ -75,10 +75,10 @@ func runHTTPServer(params runHTTPServerParams) error {
 	return errors.Join(startupErr, shutdown())
 }
 
-func newHTTPServerCmd(container *dig.Container) *cobra.Command {
+func newCreateCheckPointCmd(container *dig.Container) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "http",
-		Short: "Command to start http server",
+		Use:   "create-check-point",
+		Short: "Command to create check point",
 	}
 	noop := false
 	cmd.Flags().BoolVar(
@@ -99,9 +99,9 @@ func newHTTPServerCmd(container *dig.Container) *cobra.Command {
 		)
 	}
 	cmd.RunE = func(_ *cobra.Command, _ []string) error {
-		return container.Invoke(func(params runHTTPServerParams) error {
+		return container.Invoke(func(params createCheckPointParams) error {
 			params.noop = noop
-			return runHTTPServer(params)
+			return createCheckPoint(params)
 		})
 	}
 	return cmd

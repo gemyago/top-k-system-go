@@ -9,13 +9,13 @@ import (
 	"go.uber.org/dig"
 )
 
-type ItemEventsAggregatorState struct {
-	LastOffset int64
+type BeginAggregatingOpts struct {
+	// TillOffset indicates the offset to aggregate until
+	TillOffset int64
 }
 
 type ItemEventsAggregator interface {
-	RestoreState(context context.Context, state ItemEventsAggregatorState) error
-	BeginAggregating(context context.Context) error
+	BeginAggregating(context context.Context, counters Counters, opts BeginAggregatingOpts) error
 }
 
 type ItemEventsAggregatorDeps struct {
@@ -39,17 +39,19 @@ type itemEventsAggregator struct {
 	ItemEventsAggregatorDeps
 }
 
-func (a *itemEventsAggregator) RestoreState(_ context.Context, _ ItemEventsAggregatorState) error {
-	panic("not implemented")
-}
-
-func (a *itemEventsAggregator) BeginAggregating(ctx context.Context) error {
+func (a *itemEventsAggregator) BeginAggregating(
+	ctx context.Context,
+	counters Counters,
+	opts BeginAggregatingOpts,
+) error {
+	// TODO: Set the offset to start fetching from
+	// and keep fetching until the offset provided
 	messagesChan := a.AggregatorModel.fetchMessages(ctx)
 	flushTimer := a.ItemEventsAggregatorDeps.TickerFactory(a.FlushInterval)
 	for {
 		select {
 		case <-flushTimer.C:
-			a.AggregatorModel.flushMessages(ctx)
+			a.AggregatorModel.flushMessages(ctx, counters)
 		case res := <-messagesChan:
 			// TODO: Potentially Better error handling here
 			if res.err != nil {
@@ -61,6 +63,14 @@ func (a *itemEventsAggregator) BeginAggregating(ctx context.Context) error {
 						slog.String("itemID", res.event.ItemID),
 						slog.Int64("offset", res.offset),
 					)
+				}
+				if opts.TillOffset > 0 && res.offset >= opts.TillOffset {
+					a.logger.InfoContext(ctx, "Target offset reached. Flushing and stopping aggregation.",
+						slog.Int64("offset", res.offset),
+						slog.Int64("tillOffset", opts.TillOffset),
+					)
+					a.AggregatorModel.flushMessages(ctx, counters)
+					return nil
 				}
 			}
 		case <-ctx.Done():
