@@ -5,9 +5,9 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/gemyago/top-k-system-go/pkg/app/ingestion"
-	"github.com/gemyago/top-k-system-go/pkg/app/models"
-	"github.com/gemyago/top-k-system-go/pkg/services"
+	"github.com/gemyago/top-k-system-go/internal/app/ingestion"
+	"github.com/gemyago/top-k-system-go/internal/app/models"
+	"github.com/gemyago/top-k-system-go/internal/services"
 	"github.com/gofrs/uuid/v5"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"

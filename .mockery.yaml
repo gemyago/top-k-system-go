@@ -13,10 +13,10 @@ packages:
           dir: 'pkg/diag'
           filename: "mock_slog_handler.go"
           mockname: MockSlogHandler
-  github.com/gemyago/top-k-system-go/pkg/app/ingestion:
+  github.com/gemyago/top-k-system-go/internal/app/ingestion:
     interfaces:
       Commands:
-  github.com/gemyago/top-k-system-go/pkg/app/aggregation:
+  github.com/gemyago/top-k-system-go/internal/app/aggregation:
     interfaces:
       CheckPointer:
       CountersFactory:
@@ -24,12 +24,12 @@ packages:
       ItemEventsAggregator:
       ItemEventsAggregatorModel:
       CheckPointerModel:
-  github.com/gemyago/top-k-system-go/pkg/services:
+  github.com/gemyago/top-k-system-go/internal/services:
     interfaces:
       KafkaReader:
       KafkaWriter:
       ShutdownHook:
       ShutdownHooks:
-  github.com/gemyago/top-k-system-go/pkg/services/blobstorage:
+  github.com/gemyago/top-k-system-go/internal/services/blobstorage:
     interfaces:
       Storage:

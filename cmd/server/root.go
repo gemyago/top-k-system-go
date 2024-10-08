@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/gemyago/top-k-system-go/config"
-	"github.com/gemyago/top-k-system-go/pkg/app/aggregation"
-	"github.com/gemyago/top-k-system-go/pkg/app/ingestion"
-	"github.com/gemyago/top-k-system-go/pkg/di"
-	"github.com/gemyago/top-k-system-go/pkg/diag"
-	"github.com/gemyago/top-k-system-go/pkg/services"
+	"github.com/gemyago/top-k-system-go/internal/app/aggregation"
+	"github.com/gemyago/top-k-system-go/internal/app/ingestion"
+	"github.com/gemyago/top-k-system-go/internal/config"
+	"github.com/gemyago/top-k-system-go/internal/di"
+	"github.com/gemyago/top-k-system-go/internal/diag"
+	"github.com/gemyago/top-k-system-go/internal/services"
 	"github.com/spf13/cobra"
 	"go.uber.org/dig"
 )
