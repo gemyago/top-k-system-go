@@ -25,7 +25,7 @@ type createCheckPointParams struct {
 
 	AggregationCommands aggregation.Commands
 
-	services.ShutdownHooks
+	*services.ShutdownHooks
 
 	noop bool
 }

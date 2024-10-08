@@ -27,7 +27,7 @@ type ItemEventsKafkaWriterDeps struct {
 	KafkaAllowAutoTopicCreation bool   `name:"config.kafka.allowAutoTopicCreation"`
 
 	// services
-	ShutdownHooks
+	*ShutdownHooks
 }
 
 func NewItemEventsKafkaWriter(deps ItemEventsKafkaWriterDeps) ItemEventsKafkaWriter {
@@ -40,7 +40,7 @@ func NewItemEventsKafkaWriter(deps ItemEventsKafkaWriterDeps) ItemEventsKafkaWri
 		Async: true,
 	}
 
-	deps.ShutdownHooks.Register(NewShutdownHookNoCtx("Item Events Topic Writer", writer.Close))
+	deps.ShutdownHooks.RegisterNoCtx("item-events-writer", writer.Close)
 
 	return writer
 }
@@ -68,7 +68,7 @@ type ItemEventsKafkaReaderDeps struct {
 	ReaderMaxWait time.Duration `name:"config.kafka.readerMaxWait"`
 
 	// services
-	ShutdownHooks
+	*ShutdownHooks
 }
 
 func NewItemEventsKafkaReader(deps ItemEventsKafkaReaderDeps) ItemEventsKafkaReader {
@@ -78,7 +78,7 @@ func NewItemEventsKafkaReader(deps ItemEventsKafkaReaderDeps) ItemEventsKafkaRea
 		MaxWait: deps.ReaderMaxWait,
 	})
 
-	deps.ShutdownHooks.Register(NewShutdownHookNoCtx("Item Events Reader", reader.Close))
+	deps.ShutdownHooks.RegisterNoCtx("item-events-reader", reader.Close)
 
 	return reader
 }
