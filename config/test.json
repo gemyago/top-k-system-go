@@ -1,4 +1,5 @@
 {
+  "defaultLogLevel": "DEBUG",
   "kafka": {
     "allowAutoTopicCreation": true,
     "itemEventsTopic": "item-events-test"
