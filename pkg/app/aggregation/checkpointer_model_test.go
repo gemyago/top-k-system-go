@@ -3,6 +3,7 @@ package aggregation
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"io"
 	"math/rand/v2"
 	"testing"
@@ -39,6 +40,38 @@ func TestCheckPointerModel(t *testing.T) {
 			gotManifest, err := model.readManifest(ctx)
 			require.NoError(t, err)
 			assert.Equal(t, wantManifest, gotManifest)
+		})
+		t.Run("should return error if failed to read manifest", func(t *testing.T) {
+			deps := newMockDeps(t)
+			model := NewCheckPointerModel(deps)
+
+			ctx := context.Background()
+			wantErr := errors.New(faker.Sentence())
+
+			storage, _ := deps.Storage.(*blobstorage.MockStorage)
+			storage.EXPECT().Download(
+				ctx, "manifest.json", mock.Anything,
+			).Return(wantErr)
+
+			_, err := model.readManifest(ctx)
+			require.ErrorIs(t, err, wantErr)
+		})
+		t.Run("should return error if failed to decode manifest", func(t *testing.T) {
+			deps := newMockDeps(t)
+			model := NewCheckPointerModel(deps)
+
+			ctx := context.Background()
+
+			storage, _ := deps.Storage.(*blobstorage.MockStorage)
+			storage.EXPECT().Download(
+				ctx, "manifest.json", mock.Anything,
+			).RunAndReturn(func(_ context.Context, _ string, w io.Writer) error {
+				_, err := w.Write([]byte(faker.Sentence()))
+				return err
+			})
+
+			_, err := model.readManifest(ctx)
+			require.Error(t, err)
 		})
 	})
 
@@ -89,6 +122,42 @@ func TestCheckPointerModel(t *testing.T) {
 			require.NoError(t, err)
 			assert.Equal(t, wantCounters, got)
 		})
+		t.Run("should return error if failed to read counters", func(t *testing.T) {
+			deps := newMockDeps(t)
+			model := NewCheckPointerModel(deps)
+
+			wantFile := faker.Word()
+			wantErr := errors.New(faker.Sentence())
+
+			ctx := context.Background()
+
+			storage, _ := deps.Storage.(*blobstorage.MockStorage)
+			storage.EXPECT().Download(
+				ctx, wantFile, mock.Anything,
+			).Return(wantErr)
+
+			_, err := model.readCounters(ctx, wantFile)
+			require.ErrorIs(t, err, wantErr)
+		})
+		t.Run("should return error if failed to decode counters", func(t *testing.T) {
+			deps := newMockDeps(t)
+			model := NewCheckPointerModel(deps)
+
+			wantFile := faker.Word()
+
+			ctx := context.Background()
+
+			storage, _ := deps.Storage.(*blobstorage.MockStorage)
+			storage.EXPECT().Download(
+				ctx, wantFile, mock.Anything,
+			).RunAndReturn(func(_ context.Context, _ string, w io.Writer) error {
+				_, err := w.Write([]byte(faker.Sentence()))
+				return err
+			})
+
+			_, err := model.readCounters(ctx, wantFile)
+			require.Error(t, err)
+		})
 	})
 
 	t.Run("writeCounters", func(t *testing.T) {
@@ -113,6 +182,25 @@ func TestCheckPointerModel(t *testing.T) {
 
 			err := model.writeCounters(ctx, wantFile, wantCounters)
 			require.NoError(t, err)
+		})
+
+		t.Run("should return error if failed to upload counters", func(t *testing.T) {
+			deps := newMockDeps(t)
+			model := NewCheckPointerModel(deps)
+
+			wantCounters := randomCountersValues()
+			wantFile := faker.Word()
+			wantErr := errors.New(faker.Sentence())
+
+			ctx := context.Background()
+
+			storage, _ := deps.Storage.(*blobstorage.MockStorage)
+			storage.EXPECT().Upload(
+				ctx, wantFile, mock.Anything,
+			).Return(wantErr)
+
+			err := model.writeCounters(ctx, wantFile, wantCounters)
+			require.ErrorIs(t, err, wantErr)
 		})
 	})
 }

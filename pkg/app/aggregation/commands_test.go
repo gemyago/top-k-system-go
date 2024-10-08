@@ -2,11 +2,13 @@ package aggregation
 
 import (
 	"context"
+	"errors"
 	"math/rand/v2"
 	"testing"
 
 	"github.com/gemyago/top-k-system-go/pkg/diag"
 	"github.com/gemyago/top-k-system-go/pkg/services"
+	"github.com/go-faker/faker/v4"
 	"github.com/stretchr/testify/require"
 )
 
@@ -44,6 +46,23 @@ func TestCommands(t *testing.T) {
 			countersFactory.AssertExpectations(t)
 			checkPointer.AssertExpectations(t)
 			aggregator.AssertExpectations(t)
+		})
+
+		t.Run("should return error if restore state failed", func(t *testing.T) {
+			mockDeps := newMockDeps(t)
+			commands := NewCommands(mockDeps)
+
+			ctx := context.Background()
+
+			wantCounters := NewMockCounters(t)
+			countersFactory, _ := mockDeps.CountersFactory.(*MockCountersFactory)
+			countersFactory.EXPECT().NewCounters().Return(wantCounters)
+
+			checkPointer, _ := mockDeps.CheckPointer.(*MockCheckPointer)
+			wantErr := errors.New(faker.Sentence())
+			checkPointer.EXPECT().restoreState(ctx, wantCounters).Return(wantErr)
+
+			require.ErrorIs(t, commands.StartAggregator(ctx), wantErr)
 		})
 	})
 
@@ -134,6 +153,43 @@ func TestCommands(t *testing.T) {
 			reader.EXPECT().SetOffset(lastOffset + 1).Return(nil)
 
 			require.NoError(t, commands.CreateCheckPoint(ctx))
+		})
+		t.Run("should return error if failed to restore state", func(t *testing.T) {
+			mockDeps := newMockDeps(t)
+			commands := NewCommands(mockDeps)
+
+			ctx := context.Background()
+
+			wantCounters := NewMockCounters(t)
+
+			countersFactory, _ := mockDeps.CountersFactory.(*MockCountersFactory)
+			countersFactory.EXPECT().NewCounters().Return(wantCounters)
+
+			checkPointer, _ := mockDeps.CheckPointer.(*MockCheckPointer)
+			wantErr := errors.New(faker.Sentence())
+			checkPointer.EXPECT().restoreState(ctx, wantCounters).Return(wantErr)
+
+			require.ErrorIs(t, commands.CreateCheckPoint(ctx), wantErr)
+		})
+		t.Run("should return error if failed to read lag", func(t *testing.T) {
+			mockDeps := newMockDeps(t)
+			commands := NewCommands(mockDeps)
+
+			ctx := context.Background()
+
+			wantCounters := NewMockCounters(t)
+
+			countersFactory, _ := mockDeps.CountersFactory.(*MockCountersFactory)
+			countersFactory.EXPECT().NewCounters().Return(wantCounters)
+
+			checkPointer, _ := mockDeps.CheckPointer.(*MockCheckPointer)
+			checkPointer.EXPECT().restoreState(ctx, wantCounters).Return(nil)
+
+			reader, _ := mockDeps.ItemEventsReader.(*services.MockKafkaReader)
+			wantErr := errors.New(faker.Sentence())
+			reader.EXPECT().ReadLag(ctx).Return(0, wantErr)
+
+			require.ErrorIs(t, commands.CreateCheckPoint(ctx), wantErr)
 		})
 	})
 }

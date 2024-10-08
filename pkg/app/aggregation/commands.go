@@ -42,7 +42,7 @@ func (c *commands) StartAggregator(ctx context.Context) error {
 	c.logger.InfoContext(ctx, "Restoring counters state")
 	counters := c.CountersFactory.NewCounters()
 	if err := c.CheckPointer.restoreState(ctx, counters); err != nil {
-		return err
+		return fmt.Errorf("failed to restore state while starting aggregator: %w", err)
 	}
 
 	// TODO: Here we need some way to activate counters
@@ -57,7 +57,7 @@ func (c *commands) CreateCheckPoint(ctx context.Context) error {
 
 	c.logger.InfoContext(ctx, "Starting creating check point. Restoring last state.")
 	if err := c.CheckPointer.restoreState(ctx, counters); err != nil {
-		return err
+		return fmt.Errorf("failed to restore state while creating check point: %w", err)
 	}
 
 	lag, err := c.ItemEventsReader.ReadLag(ctx)

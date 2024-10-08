@@ -11,7 +11,8 @@ import (
 func TestCounters(t *testing.T) {
 	t.Run("updateItemsCount", func(t *testing.T) {
 		t.Run("should update items counters with new values", func(t *testing.T) {
-			c := NewCounters()
+			// Doing factory func just to test it
+			c := CountersFactoryFunc(NewCounters).NewCounters()
 
 			initialBaseOffset := rand.Int63n(1000)
 			existingData := map[string]int64{
