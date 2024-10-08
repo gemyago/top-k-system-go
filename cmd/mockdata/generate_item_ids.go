@@ -26,7 +26,7 @@ type writeRandomItemsParams struct {
 func writeRandomItems(ctx context.Context, params writeRandomItemsParams) error {
 	defer params.writer.Close()
 	for generated := range params.itemsNumber {
-		if generated > 0 && generated%1000000 == 0 {
+		if generated > 0 && generated%1000000 == 0 { // coverage-ignore // no value to test log message
 			params.logger.InfoContext(
 				ctx,
 				fmt.Sprintf("Generated %d of %d items", generated, params.itemsNumber),
