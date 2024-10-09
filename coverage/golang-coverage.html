@@ -1,0 +1,4753 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>checkpointer: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/gemyago/top-k-system-go/cmd/checkpointer/check_point.go (91.2%)</option>
+				
+				<option value="file1">github.com/gemyago/top-k-system-go/cmd/checkpointer/main.go (57.1%)</option>
+				
+				<option value="file2">github.com/gemyago/top-k-system-go/cmd/checkpointer/root.go (91.3%)</option>
+				
+				<option value="file3">github.com/gemyago/top-k-system-go/cmd/mockdata/generate_item_ids.go (86.1%)</option>
+				
+				<option value="file4">github.com/gemyago/top-k-system-go/cmd/mockdata/main.go (57.1%)</option>
+				
+				<option value="file5">github.com/gemyago/top-k-system-go/cmd/mockdata/root.go (91.7%)</option>
+				
+				<option value="file6">github.com/gemyago/top-k-system-go/cmd/mockdata/send_test_event.go (84.0%)</option>
+				
+				<option value="file7">github.com/gemyago/top-k-system-go/cmd/server/http_server.go (91.4%)</option>
+				
+				<option value="file8">github.com/gemyago/top-k-system-go/cmd/server/main.go (57.1%)</option>
+				
+				<option value="file9">github.com/gemyago/top-k-system-go/cmd/server/root.go (91.3%)</option>
+				
+				<option value="file10">github.com/gemyago/top-k-system-go/internal/api/http/middleware/chain.go (100.0%)</option>
+				
+				<option value="file11">github.com/gemyago/top-k-system-go/internal/api/http/middleware/recover.go (100.0%)</option>
+				
+				<option value="file12">github.com/gemyago/top-k-system-go/internal/api/http/middleware/tracing.go (100.0%)</option>
+				
+				<option value="file13">github.com/gemyago/top-k-system-go/internal/api/http/routes/healthcheck.go (100.0%)</option>
+				
+				<option value="file14">github.com/gemyago/top-k-system-go/internal/api/http/routes/items.go (100.0%)</option>
+				
+				<option value="file15">github.com/gemyago/top-k-system-go/internal/api/http/routes/routes.go (100.0%)</option>
+				
+				<option value="file16">github.com/gemyago/top-k-system-go/internal/api/http/server/handler.go (100.0%)</option>
+				
+				<option value="file17">github.com/gemyago/top-k-system-go/internal/api/http/server/server.go (100.0%)</option>
+				
+				<option value="file18">github.com/gemyago/top-k-system-go/internal/app/aggregation/aggregator.go (100.0%)</option>
+				
+				<option value="file19">github.com/gemyago/top-k-system-go/internal/app/aggregation/aggregator_model.go (94.4%)</option>
+				
+				<option value="file20">github.com/gemyago/top-k-system-go/internal/app/aggregation/checkpointer.go (100.0%)</option>
+				
+				<option value="file21">github.com/gemyago/top-k-system-go/internal/app/aggregation/checkpointer_model.go (92.0%)</option>
+				
+				<option value="file22">github.com/gemyago/top-k-system-go/internal/app/aggregation/commands.go (90.0%)</option>
+				
+				<option value="file23">github.com/gemyago/top-k-system-go/internal/app/aggregation/counters.go (100.0%)</option>
+				
+				<option value="file24">github.com/gemyago/top-k-system-go/internal/app/aggregation/mock_check_pointer.go (63.2%)</option>
+				
+				<option value="file25">github.com/gemyago/top-k-system-go/internal/app/aggregation/mock_check_pointer_model.go (61.4%)</option>
+				
+				<option value="file26">github.com/gemyago/top-k-system-go/internal/app/aggregation/mock_commands.go (0.0%)</option>
+				
+				<option value="file27">github.com/gemyago/top-k-system-go/internal/app/aggregation/mock_counters.go (35.4%)</option>
+				
+				<option value="file28">github.com/gemyago/top-k-system-go/internal/app/aggregation/mock_counters_factory.go (69.6%)</option>
+				
+				<option value="file29">github.com/gemyago/top-k-system-go/internal/app/aggregation/mock_item_events_aggregator.go (68.2%)</option>
+				
+				<option value="file30">github.com/gemyago/top-k-system-go/internal/app/aggregation/mock_item_events_aggregator_model.go (48.8%)</option>
+				
+				<option value="file31">github.com/gemyago/top-k-system-go/internal/app/aggregation/register.go (100.0%)</option>
+				
+				<option value="file32">github.com/gemyago/top-k-system-go/internal/app/aggregation/testing.go (100.0%)</option>
+				
+				<option value="file33">github.com/gemyago/top-k-system-go/internal/app/ingestion/commands.go (87.5%)</option>
+				
+				<option value="file34">github.com/gemyago/top-k-system-go/internal/app/ingestion/mock_commands.go (68.2%)</option>
+				
+				<option value="file35">github.com/gemyago/top-k-system-go/internal/app/ingestion/register.go (100.0%)</option>
+				
+				<option value="file36">github.com/gemyago/top-k-system-go/internal/app/models/testing.go (100.0%)</option>
+				
+				<option value="file37">github.com/gemyago/top-k-system-go/internal/config/load.go (94.4%)</option>
+				
+				<option value="file38">github.com/gemyago/top-k-system-go/internal/config/provide.go (100.0%)</option>
+				
+				<option value="file39">github.com/gemyago/top-k-system-go/internal/di/dig.go (94.1%)</option>
+				
+				<option value="file40">github.com/gemyago/top-k-system-go/internal/diag/attributes.go (100.0%)</option>
+				
+				<option value="file41">github.com/gemyago/top-k-system-go/internal/diag/mock_slog_handler.go (34.7%)</option>
+				
+				<option value="file42">github.com/gemyago/top-k-system-go/internal/diag/slog.go (93.1%)</option>
+				
+				<option value="file43">github.com/gemyago/top-k-system-go/internal/diag/testing.go (75.0%)</option>
+				
+				<option value="file44">github.com/gemyago/top-k-system-go/internal/services/blobstorage/localstorage.go (90.5%)</option>
+				
+				<option value="file45">github.com/gemyago/top-k-system-go/internal/services/blobstorage/mock_storage.go (55.6%)</option>
+				
+				<option value="file46">github.com/gemyago/top-k-system-go/internal/services/kafka.go (100.0%)</option>
+				
+				<option value="file47">github.com/gemyago/top-k-system-go/internal/services/mock_kafka_reader.go (26.4%)</option>
+				
+				<option value="file48">github.com/gemyago/top-k-system-go/internal/services/mock_kafka_writer.go (43.8%)</option>
+				
+				<option value="file49">github.com/gemyago/top-k-system-go/internal/services/register.go (100.0%)</option>
+				
+				<option value="file50">github.com/gemyago/top-k-system-go/internal/services/shutdown.go (95.8%)</option>
+				
+				<option value="file51">github.com/gemyago/top-k-system-go/internal/services/testing.go (37.5%)</option>
+				
+				<option value="file52">github.com/gemyago/top-k-system-go/internal/services/time.go (100.0%)</option>
+				
+				<option value="file53">github.com/gemyago/top-k-system-go/internal/services/uuid.go (100.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">no coverage</span>
+				<span class="cov1">low coverage</span>
+				<span class="cov2">*</span>
+				<span class="cov3">*</span>
+				<span class="cov4">*</span>
+				<span class="cov5">*</span>
+				<span class="cov6">*</span>
+				<span class="cov7">*</span>
+				<span class="cov8">*</span>
+				<span class="cov9">*</span>
+				<span class="cov10">high coverage</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package main
+
+import (
+        "context"
+        "errors"
+        "log/slog"
+        "os/signal"
+        "time"
+
+        "github.com/gemyago/top-k-system-go/internal/api/http/routes"
+        "github.com/gemyago/top-k-system-go/internal/api/http/server"
+        "github.com/gemyago/top-k-system-go/internal/app/aggregation"
+        "github.com/gemyago/top-k-system-go/internal/di"
+        "github.com/gemyago/top-k-system-go/internal/diag"
+        "github.com/gemyago/top-k-system-go/internal/services"
+        "github.com/spf13/cobra"
+        "go.uber.org/dig"
+        "golang.org/x/sys/unix"
+)
+
+type createCheckPointParams struct {
+        dig.In `ignore-unexported:"true"`
+
+        RootLogger *slog.Logger
+
+        AggregationCommands *aggregation.Commands
+
+        *services.ShutdownHooks
+
+        noop bool
+}
+
+func createCheckPoint(params createCheckPointParams) error <span class="cov1" title="1">{
+        rootLogger := params.RootLogger
+        rootCtx := context.Background()
+
+        shutdown := func() error </span><span class="cov1" title="1">{
+                rootLogger.InfoContext(rootCtx, "Trying to shut down gracefully")
+                ts := time.Now()
+
+                err := params.ShutdownHooks.PerformShutdown(rootCtx)
+                if err != nil </span><span class="cov0" title="0">{
+                        rootLogger.ErrorContext(rootCtx, "Failed to shut down gracefully", diag.ErrAttr(err))
+                }</span>
+
+                <span class="cov1" title="1">rootLogger.InfoContext(rootCtx, "Service stopped",
+                        slog.Duration("duration", time.Since(ts)),
+                )
+                return err</span>
+        }
+
+        <span class="cov1" title="1">signalCtx, cancel := signal.NotifyContext(rootCtx, unix.SIGINT, unix.SIGTERM)
+        defer cancel()
+
+        startupErrors := make(chan error)
+        go func() </span><span class="cov1" title="1">{
+                if params.noop </span><span class="cov1" title="1">{
+                        rootLogger.InfoContext(signalCtx, "NOOP: Exiting now")
+                        startupErrors &lt;- nil
+                        return
+                }</span>
+                <span class="cov0" title="0">startupErrors &lt;- params.AggregationCommands.CreateCheckPoint(signalCtx)</span>
+        }()
+
+        <span class="cov1" title="1">var startupErr error
+        select </span>{
+        case startupErr = &lt;-startupErrors:<span class="cov1" title="1">
+                if startupErr != nil </span><span class="cov0" title="0">{
+                        rootLogger.ErrorContext(rootCtx, "Server startup failed", "err", startupErr)
+                }</span>
+        case &lt;-signalCtx.Done():<span class="cov0" title="0"></span> // coverage-ignore
+                // We will attempt to shut down in both cases
+                // so doing it once on a next line
+        }
+        <span class="cov1" title="1">return errors.Join(startupErr, shutdown())</span>
+}
+
+func newCreateCheckPointCmd(container *dig.Container) *cobra.Command <span class="cov10" title="3">{
+        cmd := &amp;cobra.Command{
+                Use:   "create-check-point",
+                Short: "Command to create check point",
+        }
+        noop := false
+        cmd.Flags().BoolVar(
+                &amp;noop,
+                "noop",
+                false,
+                "Do not start. Just setup deps and exit. Useful for testing if setup is all working.",
+        )
+        cmd.PreRunE = func(_ *cobra.Command, _ []string) error </span><span class="cov1" title="1">{
+                return errors.Join(
+                        // http related dependencies
+                        routes.Register(container),
+                        di.ProvideAll(
+                                container,
+                                server.NewHTTPServer,
+                                server.NewRootHandler,
+                        ),
+                )
+        }</span>
+        <span class="cov10" title="3">cmd.RunE = func(_ *cobra.Command, _ []string) error </span><span class="cov1" title="1">{
+                return container.Invoke(func(params createCheckPointParams) error </span><span class="cov1" title="1">{
+                        params.noop = noop
+                        return createCheckPoint(params)
+                }</span>)
+        }
+        <span class="cov10" title="3">return cmd</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package main
+
+import (
+        "os"
+
+        "github.com/spf13/cobra"
+        "go.uber.org/dig"
+)
+
+func setupCommands() *cobra.Command <span class="cov10" title="3">{
+        container := dig.New()
+        rootCmd := newRootCmd(container)
+        rootCmd.AddCommand(
+                newCreateCheckPointCmd(container),
+        )
+        return rootCmd
+}</span>
+
+func main() <span class="cov0" title="0">{ // coverage-ignore
+        rootCmd := setupCommands()
+        if err := rootCmd.Execute(); err != nil </span><span class="cov0" title="0">{
+                // cobra will print error to stdout
+                os.Exit(1)
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package main
+
+import (
+        "errors"
+        "fmt"
+        "log/slog"
+
+        "github.com/gemyago/top-k-system-go/internal/app/aggregation"
+        "github.com/gemyago/top-k-system-go/internal/app/ingestion"
+        "github.com/gemyago/top-k-system-go/internal/config"
+        "github.com/gemyago/top-k-system-go/internal/di"
+        "github.com/gemyago/top-k-system-go/internal/diag"
+        "github.com/gemyago/top-k-system-go/internal/services"
+        "github.com/spf13/cobra"
+        "go.uber.org/dig"
+)
+
+func newRootCmd(container *dig.Container) *cobra.Command <span class="cov10" title="3">{
+        logsOutputFile := ""
+        jsonLogs := false
+        env := ""
+
+        cmd := &amp;cobra.Command{
+                Use:          "checkpointer",
+                Short:        "Command to start checkpointer jobs",
+                SilenceUsage: true,
+        }
+        cmd.PersistentFlags().StringP("log-level", "l", "", "Produce logs with given level. Default is env specific.")
+        cmd.PersistentFlags().StringVar(
+                &amp;logsOutputFile,
+                "logs-file",
+                "",
+                "Produce logs to file instead of stdout. Used for tests only.",
+        )
+        cmd.PersistentFlags().BoolVar(
+                &amp;jsonLogs,
+                "json-logs",
+                false,
+                "Indicates if logs should be in JSON format or text (default)",
+        )
+        cmd.PersistentFlags().StringVarP(
+                &amp;env,
+                "env",
+                "e",
+                "",
+                "Env that the process is running in.",
+        )
+        cmd.PersistentPreRunE = func(_ *cobra.Command, _ []string) error </span><span class="cov10" title="3">{
+                cfg, err := config.Load(config.NewLoadOpts().WithEnv(env))
+                if err != nil </span><span class="cov1" title="1">{
+                        return err
+                }</span>
+
+                <span class="cov6" title="2">if err = cfg.BindPFlag("defaultLogLevel", cmd.PersistentFlags().Lookup("log-level")); err != nil </span><span class="cov0" title="0">{
+                        return err
+                }</span>
+
+                <span class="cov6" title="2">var logLevel slog.Level
+                if err = logLevel.UnmarshalText([]byte(cfg.GetString("defaultLogLevel"))); err != nil </span><span class="cov1" title="1">{
+                        return err
+                }</span>
+
+                <span class="cov1" title="1">rootLogger := diag.SetupRootLogger(
+                        diag.NewRootLoggerOpts().
+                                WithJSONLogs(jsonLogs).
+                                WithLogLevel(logLevel).
+                                WithOptionalOutputFile(logsOutputFile),
+                )
+
+                err = errors.Join(
+                        config.Provide(container, cfg),
+
+                        // app layer
+                        aggregation.Register(container),
+                        ingestion.Register(container),
+
+                        // services
+                        services.Register(container),
+
+                        di.ProvideAll(container,
+                                di.ProvideValue(rootLogger),
+                        ),
+                )
+                if err != nil </span><span class="cov0" title="0">{
+                        return fmt.Errorf("failed to inject dependencies: %w", err)
+                }</span>
+
+                <span class="cov1" title="1">return nil</span>
+        }
+        <span class="cov10" title="3">return cmd</span>
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package main
+
+import (
+        "context"
+        "errors"
+        "fmt"
+        "io"
+        "log/slog"
+        "os"
+
+        "github.com/gemyago/top-k-system-go/internal/services"
+        "github.com/gemyago/top-k-system-go/internal/services/blobstorage"
+        "github.com/spf13/cobra"
+        "go.uber.org/dig"
+)
+
+const defaultItemsNumberToGenerate = 10000
+
+type writeRandomItemsParams struct {
+        logger      *slog.Logger
+        writer      io.WriteCloser
+        itemsNumber int
+        services.UUIDGenerator
+}
+
+func writeRandomItems(ctx context.Context, params writeRandomItemsParams) error <span class="cov1" title="1">{
+        defer params.writer.Close()
+        for generated := range params.itemsNumber </span><span class="cov1" title="1">{
+                if generated &gt; 0 &amp;&amp; generated%1000000 == 0 </span><span class="cov0" title="0">{ // coverage-ignore // no value to test log message
+                        params.logger.InfoContext(
+                                ctx,
+                                fmt.Sprintf("Generated %d of %d items", generated, params.itemsNumber),
+                        )
+                }</span>
+                <span class="cov1" title="1">if _, err := params.writer.Write([]byte(params.UUIDGenerator() + "\n")); err != nil </span><span class="cov0" title="0">{
+                        return err
+                }</span>
+        }
+        <span class="cov1" title="1">return nil</span>
+}
+
+func newGenerateItemIDsCmd(container *dig.Container) *cobra.Command <span class="cov10" title="4">{
+        type invokeCmdParams struct {
+                dig.In
+
+                RootLogger *slog.Logger
+
+                // Services
+                services.UUIDGenerator
+                blobstorage.Storage
+        }
+
+        itemsNumber := defaultItemsNumberToGenerate
+        outputFileName := "test-item-ids.txt"
+        overwrite := false
+
+        noop := false
+        cmd := &amp;cobra.Command{
+                Use:   "generate-item-ids",
+                Short: "Generate test item IDs and write them to file",
+                RunE: func(cmd *cobra.Command, _ []string) error </span><span class="cov1" title="1">{
+                        return container.Invoke(func(params invokeCmdParams) error </span><span class="cov1" title="1">{
+                                logger := params.RootLogger.WithGroup("generate-item-ids")
+                                logger.InfoContext(cmd.Context(), "Generating item ids", slog.Int("number", itemsNumber))
+
+                                if overwrite </span><span class="cov1" title="1">{
+                                        logger.InfoContext(cmd.Context(), "Removing existing file", slog.String("file", outputFileName))
+                                        if err := params.Storage.Delete(cmd.Context(), outputFileName); err != nil </span><span class="cov1" title="1">{
+                                                if !errors.Is(err, os.ErrNotExist) </span><span class="cov0" title="0">{
+                                                        return err
+                                                }</span>
+                                        }
+                                }
+
+                                <span class="cov1" title="1">reader, writer := io.Pipe()
+
+                                generatorDone := make(chan error)
+                                go func() </span><span class="cov1" title="1">{
+                                        generatorDone &lt;- writeRandomItems(cmd.Context(), writeRandomItemsParams{
+                                                logger:        logger,
+                                                writer:        writer,
+                                                itemsNumber:   itemsNumber,
+                                                UUIDGenerator: params.UUIDGenerator,
+                                        })
+                                }</span>()
+
+                                <span class="cov1" title="1">if err := params.Storage.Upload(cmd.Context(), outputFileName, reader); err != nil </span><span class="cov0" title="0">{
+                                        return err
+                                }</span>
+                                <span class="cov1" title="1">if err := &lt;-generatorDone; err != nil </span><span class="cov0" title="0">{
+                                        return err
+                                }</span>
+
+                                <span class="cov1" title="1">logger.InfoContext(
+                                        cmd.Context(),
+                                        "Test item ids generated",
+                                        slog.Int("number", itemsNumber),
+                                )
+
+                                return nil</span>
+                        })
+                },
+        }
+        <span class="cov10" title="4">cmd.Flags().BoolVar(
+                &amp;noop,
+                "noop",
+                false,
+                "Do not send. Just setup deps and exit. Useful for testing if setup is all working.",
+        )
+        cmd.Flags().StringVarP(&amp;outputFileName, "output-file", "o", outputFileName, "Output file name")
+        cmd.Flags().IntVarP(&amp;itemsNumber, "items-number", "n", itemsNumber, "Number of items to generate")
+        cmd.Flags().BoolVar(&amp;overwrite, "overwrite", overwrite, "Remove existing file before writing")
+        return cmd</span>
+}
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package main
+
+import (
+        "os"
+
+        "github.com/spf13/cobra"
+        "go.uber.org/dig"
+)
+
+func setupCommands() *cobra.Command <span class="cov10" title="4">{
+        container := dig.New()
+        rootCmd := newRootCmd(container)
+        rootCmd.AddCommand(
+                newSendTestEventCmd(container),
+                newGenerateItemIDsCmd(container),
+        )
+        return rootCmd
+}</span>
+
+func main() <span class="cov0" title="0">{ // coverage-ignore
+        rootCmd := setupCommands()
+        if err := rootCmd.Execute(); err != nil </span><span class="cov0" title="0">{
+                // cobra will print error to stdout
+                os.Exit(1)
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package main
+
+import (
+        "errors"
+        "fmt"
+        "log/slog"
+
+        "github.com/gemyago/top-k-system-go/internal/app/aggregation"
+        "github.com/gemyago/top-k-system-go/internal/app/ingestion"
+        "github.com/gemyago/top-k-system-go/internal/config"
+        "github.com/gemyago/top-k-system-go/internal/di"
+        "github.com/gemyago/top-k-system-go/internal/diag"
+        "github.com/gemyago/top-k-system-go/internal/services"
+        "github.com/spf13/cobra"
+        "go.uber.org/dig"
+)
+
+func newRootCmd(container *dig.Container) *cobra.Command <span class="cov10" title="4">{
+        logsOutputFile := ""
+        jsonLogs := false
+        env := ""
+
+        cmd := &amp;cobra.Command{
+                Use:          "local-broker",
+                Short:        "Commands to setup and interact with local broker",
+                SilenceUsage: true,
+        }
+        cmd.SilenceUsage = true
+        cmd.PersistentFlags().StringP("log-level", "l", "", "Produce logs with given level. Default is env specific.")
+        cmd.PersistentFlags().StringVar(
+                &amp;logsOutputFile,
+                "logs-file",
+                "",
+                "Produce logs to file instead of stdout. Used for tests only.",
+        )
+        cmd.PersistentFlags().BoolVar(
+                &amp;jsonLogs,
+                "json-logs",
+                false,
+                "Indicates if logs should be in JSON format or text (default)",
+        )
+        cmd.PersistentFlags().StringVarP(
+                &amp;env,
+                "env",
+                "e",
+                "",
+                "Env that the process is running in.",
+        )
+        cmd.PersistentPreRunE = func(_ *cobra.Command, _ []string) error </span><span class="cov10" title="4">{
+                cfg, err := config.Load(config.NewLoadOpts().WithEnv(env))
+                if err != nil </span><span class="cov1" title="1">{
+                        return err
+                }</span>
+
+                <span class="cov8" title="3">if err = cfg.BindPFlag("defaultLogLevel", cmd.PersistentFlags().Lookup("log-level")); err != nil </span><span class="cov0" title="0">{
+                        return err
+                }</span>
+
+                <span class="cov8" title="3">var logLevel slog.Level
+                if err = logLevel.UnmarshalText([]byte(cfg.GetString("defaultLogLevel"))); err != nil </span><span class="cov1" title="1">{
+                        return err
+                }</span>
+
+                <span class="cov5" title="2">rootLogger := diag.SetupRootLogger(
+                        diag.NewRootLoggerOpts().
+                                WithJSONLogs(jsonLogs).
+                                WithLogLevel(logLevel).
+                                WithOptionalOutputFile(logsOutputFile),
+                )
+
+                err = errors.Join(
+                        config.Provide(container, cfg),
+
+                        // app layer
+                        aggregation.Register(container),
+                        ingestion.Register(container),
+
+                        // services
+                        services.Register(container),
+
+                        di.ProvideAll(container,
+                                di.ProvideValue(rootLogger),
+                        ),
+                )
+                if err != nil </span><span class="cov0" title="0">{
+                        return fmt.Errorf("failed to inject dependencies: %w", err)
+                }</span>
+
+                <span class="cov5" title="2">return nil</span>
+        }
+        <span class="cov10" title="4">return cmd</span>
+}
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package main
+
+import (
+        "fmt"
+        "log/slog"
+        "time"
+
+        "github.com/gemyago/top-k-system-go/internal/app/ingestion"
+        "github.com/gemyago/top-k-system-go/internal/app/models"
+        "github.com/gemyago/top-k-system-go/internal/services"
+        "github.com/gofrs/uuid/v5"
+        "github.com/samber/lo"
+        "github.com/spf13/cobra"
+        "go.uber.org/dig"
+)
+
+func newSendTestEventCmd(container *dig.Container) *cobra.Command <span class="cov10" title="4">{
+        type invokeCmdParams struct {
+                dig.In
+
+                RootLogger *slog.Logger
+
+                // app layer
+                IngestionCommands *ingestion.Commands
+
+                // service layer
+                ItemEventsWriter services.ItemEventsKafkaWriter
+        }
+
+        var itemID string
+        var eventsNumber int
+
+        noop := false
+        cmd := &amp;cobra.Command{
+                Use:   "send-test-events",
+                Short: "Send test item events",
+                RunE: func(cmd *cobra.Command, _ []string) error </span><span class="cov1" title="1">{
+                        return container.Invoke(func(params invokeCmdParams) error </span><span class="cov1" title="1">{
+                                logger := params.RootLogger.WithGroup("send-test-event")
+                                logger.InfoContext(cmd.Context(), "Sending test item event")
+
+                                if itemID == "" </span><span class="cov1" title="1">{
+                                        itemID = lo.Must(uuid.NewV4()).String()
+                                }</span>
+                                <span class="cov1" title="1">now := time.Now()
+                                for range eventsNumber </span><span class="cov1" title="1">{
+                                        if noop </span><span class="cov1" title="1">{
+                                                logger.InfoContext(cmd.Context(), "NOOP: Ingesting event", slog.String("itemID", itemID))
+                                        }</span> else<span class="cov0" title="0"> { // coverage-ignore // our test is high level and it's hard cover this step
+                                                event := models.ItemEvent{
+                                                        ItemID:     itemID,
+                                                        IngestedAt: now,
+                                                }
+                                                if err := params.IngestionCommands.IngestItemEvent(
+                                                        cmd.Context(), &amp;event,
+                                                ); err != nil </span><span class="cov0" title="0">{
+                                                        return fmt.Errorf("failed to write event: %w", err)
+                                                }</span>
+                                        }
+                                }
+
+                                <span class="cov1" title="1">if err := params.ItemEventsWriter.Close(); err != nil </span><span class="cov0" title="0">{
+                                        return fmt.Errorf("failed to flush pending events: %w", err)
+                                }</span>
+
+                                <span class="cov1" title="1">logger.InfoContext(
+                                        cmd.Context(),
+                                        "Test events sent",
+                                        slog.Int("number", eventsNumber),
+                                        slog.String("itemId", itemID),
+                                )
+
+                                return nil</span>
+                        })
+                },
+        }
+        <span class="cov10" title="4">cmd.Flags().BoolVar(
+                &amp;noop,
+                "noop",
+                false,
+                "Do not send. Just setup deps and exit. Useful for testing if setup is all working.",
+        )
+        cmd.Flags().StringVar(
+                &amp;itemID, "item-id", "", "ItemID to produce the events for. If not provided - random is generated.",
+        )
+        cmd.Flags().IntVarP(&amp;eventsNumber, "events-number", "n", 1, "Number of events to produce")
+        return cmd</span>
+}
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package main
+
+import (
+        "context"
+        "errors"
+        "log/slog"
+        "os/signal"
+        "time"
+
+        "github.com/gemyago/top-k-system-go/internal/api/http/routes"
+        "github.com/gemyago/top-k-system-go/internal/api/http/server"
+        "github.com/gemyago/top-k-system-go/internal/di"
+        "github.com/gemyago/top-k-system-go/internal/diag"
+        "github.com/gemyago/top-k-system-go/internal/services"
+        "github.com/spf13/cobra"
+        "go.uber.org/dig"
+        "golang.org/x/sys/unix"
+)
+
+type runHTTPServerParams struct {
+        dig.In `ignore-unexported:"true"`
+
+        RootLogger *slog.Logger
+
+        HTTPServer *server.HTTPServer
+
+        *services.ShutdownHooks
+
+        noop bool
+}
+
+func runHTTPServer(params runHTTPServerParams) error <span class="cov1" title="1">{
+        rootLogger := params.RootLogger
+        httpServer := params.HTTPServer
+        rootCtx := context.Background()
+
+        shutdown := func() error </span><span class="cov1" title="1">{
+                rootLogger.InfoContext(rootCtx, "Trying to shut down gracefully")
+                ts := time.Now()
+
+                err := params.ShutdownHooks.PerformShutdown(rootCtx)
+                if err != nil </span><span class="cov0" title="0">{
+                        rootLogger.ErrorContext(rootCtx, "Failed to shut down gracefully", diag.ErrAttr(err))
+                }</span>
+
+                <span class="cov1" title="1">rootLogger.InfoContext(rootCtx, "Service stopped",
+                        slog.Duration("duration", time.Since(ts)),
+                )
+                return err</span>
+        }
+
+        <span class="cov1" title="1">signalCtx, cancel := signal.NotifyContext(rootCtx, unix.SIGINT, unix.SIGTERM)
+        defer cancel()
+
+        startupErrors := make(chan error, 1)
+        go func() </span><span class="cov1" title="1">{
+                if params.noop </span><span class="cov1" title="1">{
+                        rootLogger.InfoContext(signalCtx, "NOOP: Starting http server")
+                        startupErrors &lt;- nil
+                        return
+                }</span>
+                <span class="cov0" title="0">startupErrors &lt;- httpServer.Start(signalCtx)</span>
+        }()
+
+        <span class="cov1" title="1">var startupErr error
+        select </span>{
+        case startupErr = &lt;-startupErrors:<span class="cov1" title="1">
+                if startupErr != nil </span><span class="cov0" title="0">{
+                        rootLogger.ErrorContext(rootCtx, "Server startup failed", "err", startupErr)
+                }</span>
+        case &lt;-signalCtx.Done():<span class="cov0" title="0"></span> // coverage-ignore
+                // We will attempt to shut down in both cases
+                // so doing it once on a next line
+        }
+        <span class="cov1" title="1">return errors.Join(startupErr, shutdown())</span>
+}
+
+func newHTTPServerCmd(container *dig.Container) *cobra.Command <span class="cov10" title="3">{
+        cmd := &amp;cobra.Command{
+                Use:   "http",
+                Short: "Command to start http server",
+        }
+        noop := false
+        cmd.Flags().BoolVar(
+                &amp;noop,
+                "noop",
+                false,
+                "Do not start. Just setup deps and exit. Useful for testing if setup is all working.",
+        )
+        cmd.PreRunE = func(_ *cobra.Command, _ []string) error </span><span class="cov1" title="1">{
+                return errors.Join(
+                        // http related dependencies
+                        routes.Register(container),
+                        di.ProvideAll(
+                                container,
+                                server.NewHTTPServer,
+                                server.NewRootHandler,
+                        ),
+                )
+        }</span>
+        <span class="cov10" title="3">cmd.RunE = func(_ *cobra.Command, _ []string) error </span><span class="cov1" title="1">{
+                return container.Invoke(func(params runHTTPServerParams) error </span><span class="cov1" title="1">{
+                        params.noop = noop
+                        return runHTTPServer(params)
+                }</span>)
+        }
+        <span class="cov10" title="3">return cmd</span>
+}
+</pre>
+		
+		<pre class="file" id="file8" style="display: none">package main
+
+import (
+        "os"
+
+        "github.com/spf13/cobra"
+        "go.uber.org/dig"
+)
+
+func setupCommands() *cobra.Command <span class="cov10" title="3">{
+        container := dig.New()
+        rootCmd := newRootCmd(container)
+        rootCmd.AddCommand(
+                newHTTPServerCmd(container),
+        )
+        return rootCmd
+}</span>
+
+func main() <span class="cov0" title="0">{ // coverage-ignore
+        rootCmd := setupCommands()
+        if err := rootCmd.Execute(); err != nil </span><span class="cov0" title="0">{
+                // cobra will print error to stdout
+                os.Exit(1)
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file9" style="display: none">package main
+
+import (
+        "errors"
+        "fmt"
+        "log/slog"
+
+        "github.com/gemyago/top-k-system-go/internal/app/aggregation"
+        "github.com/gemyago/top-k-system-go/internal/app/ingestion"
+        "github.com/gemyago/top-k-system-go/internal/config"
+        "github.com/gemyago/top-k-system-go/internal/di"
+        "github.com/gemyago/top-k-system-go/internal/diag"
+        "github.com/gemyago/top-k-system-go/internal/services"
+        "github.com/spf13/cobra"
+        "go.uber.org/dig"
+)
+
+func newRootCmd(container *dig.Container) *cobra.Command <span class="cov10" title="3">{
+        logsOutputFile := ""
+        jsonLogs := false
+        env := ""
+
+        cmd := &amp;cobra.Command{
+                Use:          "server",
+                Short:        "Command to start the server",
+                SilenceUsage: true,
+        }
+        cmd.PersistentFlags().StringP("log-level", "l", "", "Produce logs with given level. Default is env specific.")
+        cmd.PersistentFlags().StringVar(
+                &amp;logsOutputFile,
+                "logs-file",
+                "",
+                "Produce logs to file instead of stdout. Used for tests only.",
+        )
+        cmd.PersistentFlags().BoolVar(
+                &amp;jsonLogs,
+                "json-logs",
+                false,
+                "Indicates if logs should be in JSON format or text (default)",
+        )
+        cmd.PersistentFlags().StringVarP(
+                &amp;env,
+                "env",
+                "e",
+                "",
+                "Env that the process is running in.",
+        )
+        cmd.PersistentPreRunE = func(_ *cobra.Command, _ []string) error </span><span class="cov10" title="3">{
+                cfg, err := config.Load(config.NewLoadOpts().WithEnv(env))
+                if err != nil </span><span class="cov1" title="1">{
+                        return err
+                }</span>
+
+                <span class="cov6" title="2">if err = cfg.BindPFlag("defaultLogLevel", cmd.PersistentFlags().Lookup("log-level")); err != nil </span><span class="cov0" title="0">{
+                        return err
+                }</span>
+
+                <span class="cov6" title="2">var logLevel slog.Level
+                if err = logLevel.UnmarshalText([]byte(cfg.GetString("defaultLogLevel"))); err != nil </span><span class="cov1" title="1">{
+                        return err
+                }</span>
+
+                <span class="cov1" title="1">rootLogger := diag.SetupRootLogger(
+                        diag.NewRootLoggerOpts().
+                                WithJSONLogs(jsonLogs).
+                                WithLogLevel(logLevel).
+                                WithOptionalOutputFile(logsOutputFile),
+                )
+
+                err = errors.Join(
+                        config.Provide(container, cfg),
+
+                        // app layer
+                        aggregation.Register(container),
+                        ingestion.Register(container),
+
+                        // services
+                        services.Register(container),
+
+                        di.ProvideAll(container,
+                                di.ProvideValue(rootLogger),
+                        ),
+                )
+                if err != nil </span><span class="cov0" title="0">{
+                        return fmt.Errorf("failed to inject dependencies: %w", err)
+                }</span>
+
+                <span class="cov1" title="1">return nil</span>
+        }
+        <span class="cov10" title="3">return cmd</span>
+}
+</pre>
+		
+		<pre class="file" id="file10" style="display: none">package middleware
+
+import "net/http"
+
+type Middleware func(http.Handler) http.Handler
+
+func Chain(middlewares ...Middleware) func(http.Handler) http.Handler <span class="cov4" title="2">{
+        return func(h http.Handler) http.Handler </span><span class="cov4" title="2">{
+                for i := len(middlewares) - 1; i &gt;= 0; i-- </span><span class="cov10" title="6">{
+                        h = middlewares[i](h)
+                }</span>
+                <span class="cov4" title="2">return h</span>
+        }
+}
+</pre>
+		
+		<pre class="file" id="file11" style="display: none">package middleware
+
+import (
+        "errors"
+        "log/slog"
+        "net/http"
+        "runtime/debug"
+)
+
+// NewRecovererMiddleware creates a middleware that will handle panics
+// log them and respond with 500 to client. This should be the last in a chain.
+func NewRecovererMiddleware(rootLogger *slog.Logger) Middleware <span class="cov10" title="4">{
+        return func(next http.Handler) http.Handler </span><span class="cov10" title="4">{
+                fn := func(w http.ResponseWriter, r *http.Request) </span><span class="cov8" title="3">{
+                        defer func() </span><span class="cov8" title="3">{
+                                if rvr := recover(); rvr != nil </span><span class="cov5" title="2">{
+                                        if err, ok := rvr.(error); ok &amp;&amp; errors.Is(err, http.ErrAbortHandler) </span><span class="cov1" title="1">{
+                                                rootLogger.InfoContext(r.Context(), "Request aborted")
+                                                return
+                                        }</span>
+                                        <span class="cov1" title="1">rootLogger.ErrorContext(
+                                                r.Context(),
+                                                "Unhandled panic",
+                                                slog.Any("panic", rvr),
+                                                slog.String("stack", string(debug.Stack())),
+                                        )
+                                        // TODO: Do not write header if already written
+                                        w.WriteHeader(http.StatusInternalServerError)</span>
+                                }
+                        }()
+
+                        <span class="cov8" title="3">next.ServeHTTP(w, r)</span>
+                }
+
+                <span class="cov10" title="4">return http.HandlerFunc(fn)</span>
+        }
+}
+</pre>
+		
+		<pre class="file" id="file12" style="display: none">package middleware
+
+import (
+        "log/slog"
+        "net/http"
+
+        "github.com/gemyago/top-k-system-go/internal/diag"
+        "github.com/gofrs/uuid/v5"
+)
+
+type TracingMiddlewareCfg struct {
+        generateUUID func() string
+}
+
+func NewTracingMiddlewareCfg() *TracingMiddlewareCfg <span class="cov10" title="3">{
+        return &amp;TracingMiddlewareCfg{
+                generateUUID: func() string </span><span class="cov1" title="1">{
+                        return uuid.Must(uuid.NewV4()).String()
+                }</span>,
+        }
+}
+
+func NewTracingMiddleware(cfg *TracingMiddlewareCfg) Middleware <span class="cov10" title="3">{
+        generateUUID := cfg.generateUUID
+        return func(next http.Handler) http.Handler </span><span class="cov10" title="3">{
+                return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) </span><span class="cov6" title="2">{
+                        correlationID := req.Header.Get("x-correlation-id")
+                        if correlationID == "" </span><span class="cov1" title="1">{
+                                correlationID = generateUUID()
+                        }</span>
+                        <span class="cov6" title="2">logAttributes := diag.GetLogAttributesFromContext(req.Context())
+                        logAttributes.CorrelationID = slog.StringValue(correlationID)
+                        nextCtx := diag.SetLogAttributesToContext(req.Context(), logAttributes)
+                        next.ServeHTTP(w, req.WithContext(nextCtx))</span>
+                })
+        }
+}
+</pre>
+		
+		<pre class="file" id="file13" style="display: none">package routes
+
+import (
+        "log/slog"
+        "net/http"
+
+        "go.uber.org/dig"
+)
+
+type HealthCheckDeps struct {
+        dig.In
+
+        RootLogger *slog.Logger
+}
+
+func NewHealthCheckRoutesGroup(deps HealthCheckDeps) Group <span class="cov10" title="2">{
+        return Group{
+                Mount: MountFunc(func(r router) </span><span class="cov10" title="2">{
+                        log := deps.RootLogger.WithGroup("routes.healthCheck")
+                        r.Handle("GET /health", http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) </span><span class="cov1" title="1">{
+                                w.WriteHeader(http.StatusOK)
+                                WriteData(req, log, w, []byte("OK"))
+                        }</span>))
+                }),
+        }
+}
+</pre>
+		
+		<pre class="file" id="file14" style="display: none">package routes
+
+import (
+        "context"
+        "log/slog"
+        "net/http"
+
+        "github.com/gemyago/top-k-system-go/internal/app/models"
+        "github.com/gemyago/top-k-system-go/internal/diag"
+        "github.com/gemyago/top-k-system-go/internal/services"
+        "go.uber.org/dig"
+)
+
+type ingestionCommands interface {
+        IngestItemEvent(ctx context.Context, evt *models.ItemEvent) error
+}
+
+type ItemsRoutesDeps struct {
+        dig.In
+
+        RootLogger *slog.Logger
+
+        // app layer
+        Commands ingestionCommands
+
+        // service layer
+        Time services.TimeProvider
+}
+
+func NewItemsRoutesGroup(deps ItemsRoutesDeps) Group <span class="cov10" title="3">{
+        commands := deps.Commands
+        logger := deps.RootLogger.WithGroup("items-routes")
+        return Group{
+                Mount: func(r router) </span><span class="cov10" title="3">{
+                        r.Handle("POST /items/events/{itemID}", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) </span><span class="cov6" title="2">{
+                                itemID := r.PathValue("itemID")
+                                err := commands.IngestItemEvent(r.Context(), &amp;models.ItemEvent{
+                                        ItemID:     itemID,
+                                        IngestedAt: deps.Time.Now(),
+                                })
+                                if err != nil </span><span class="cov1" title="1">{
+                                        logger.ErrorContext(r.Context(), "Failed to ingest item event", slog.String("itemID", itemID), diag.ErrAttr(err))
+                                        w.WriteHeader(http.StatusInternalServerError)
+                                        return
+                                }</span>
+                                <span class="cov1" title="1">w.WriteHeader(http.StatusAccepted)</span>
+                        }))
+                },
+        }
+}
+</pre>
+		
+		<pre class="file" id="file15" style="display: none">package routes
+
+import (
+        "io"
+        "log/slog"
+        "net/http"
+
+        "github.com/gemyago/top-k-system-go/internal/app/ingestion"
+        "github.com/gemyago/top-k-system-go/internal/di"
+        "github.com/gemyago/top-k-system-go/internal/diag"
+        "go.uber.org/dig"
+)
+
+type router interface {
+        Handle(pattern string, handler http.Handler)
+}
+
+type Group struct {
+        dig.Out
+
+        Mount MountFunc `group:"server"`
+}
+
+type MountFunc func(r router)
+
+func WriteData(req *http.Request, log *slog.Logger, writer io.Writer, data []byte) <span class="cov10" title="3">{
+        if _, err := writer.Write(data); err != nil </span><span class="cov1" title="1">{
+                log.ErrorContext(req.Context(), "Failed to write response", diag.ErrAttr(err))
+        }</span>
+}
+
+func Register(container *dig.Container) error <span class="cov6" title="2">{
+        return di.ProvideAll(container,
+                di.ProvideAs[*ingestion.Commands, ingestionCommands],
+
+                NewHealthCheckRoutesGroup,
+                NewItemsRoutesGroup,
+        )
+}</span>
+</pre>
+		
+		<pre class="file" id="file16" style="display: none">package server
+
+import (
+        "log/slog"
+        "net/http"
+
+        "github.com/gemyago/top-k-system-go/internal/api/http/middleware"
+        "github.com/gemyago/top-k-system-go/internal/api/http/routes"
+        sloghttp "github.com/samber/slog-http"
+        "go.uber.org/dig"
+)
+
+type RootHandlerDeps struct {
+        dig.In
+
+        RootLogger *slog.Logger
+        Groups     []routes.MountFunc `group:"server"`
+}
+
+func NewRootHandler(deps RootHandlerDeps) http.Handler <span class="cov1" title="1">{
+        mux := http.NewServeMux()
+
+        for _, grp := range deps.Groups </span><span class="cov10" title="2">{
+                grp(mux)
+        }</span>
+
+        // Router wire-up
+        <span class="cov1" title="1">chain := middleware.Chain(
+                middleware.NewTracingMiddleware(middleware.NewTracingMiddlewareCfg()),
+                sloghttp.NewWithConfig(deps.RootLogger, sloghttp.Config{
+                        DefaultLevel:     slog.LevelInfo,
+                        ClientErrorLevel: slog.LevelWarn,
+                        ServerErrorLevel: slog.LevelError,
+
+                        WithUserAgent:      true,
+                        WithRequestID:      false, // We handle it ourselves (tracing middleware)
+                        WithRequestHeader:  true,
+                        WithResponseHeader: true,
+                        WithSpanID:         true,
+                        WithTraceID:        true,
+                }),
+                middleware.NewRecovererMiddleware(deps.RootLogger),
+        )
+        return chain(mux)</span>
+}
+</pre>
+		
+		<pre class="file" id="file17" style="display: none">package server
+
+import (
+        "context"
+        "fmt"
+        "log/slog"
+        "net/http"
+        "time"
+
+        "github.com/gemyago/top-k-system-go/internal/services"
+        "go.uber.org/dig"
+)
+
+type HTTPServerDeps struct {
+        dig.In
+
+        RootLogger *slog.Logger
+
+        // config
+        Port              int           `name:"config.httpServer.port"`
+        IdleTimeout       time.Duration `name:"config.httpServer.idleTimeout"`
+        ReadHeaderTimeout time.Duration `name:"config.httpServer.readHeaderTimeout"`
+        ReadTimeout       time.Duration `name:"config.httpServer.readTimeout"`
+        WriteTimeout      time.Duration `name:"config.httpServer.writeTimeout"`
+
+        Handler http.Handler
+
+        // services
+        *services.ShutdownHooks
+}
+
+type HTTPServer struct {
+        httpSrv *http.Server
+        deps    HTTPServerDeps
+        logger  *slog.Logger
+}
+
+func (srv *HTTPServer) Start(ctx context.Context) error <span class="cov1" title="1">{
+        srv.logger.InfoContext(ctx, "Starting http listener",
+                slog.String("addr", srv.httpSrv.Addr),
+                slog.String("idleTimeout", srv.deps.IdleTimeout.String()),
+                slog.String("readHeaderTimeout", srv.deps.ReadHeaderTimeout.String()),
+                slog.String("readTimeout", srv.deps.ReadTimeout.String()),
+                slog.String("writeTimeout", srv.deps.WriteTimeout.String()),
+        )
+        return srv.httpSrv.ListenAndServe()
+}</span>
+
+// NewHTTPServer constructor factory for general use *http.Server.
+func NewHTTPServer(deps HTTPServerDeps) *HTTPServer <span class="cov10" title="2">{
+        address := fmt.Sprintf("[::]:%d", deps.Port)
+        srv := &amp;http.Server{
+                Addr:              address,
+                IdleTimeout:       deps.IdleTimeout,
+                ReadHeaderTimeout: deps.ReadHeaderTimeout,
+                ReadTimeout:       deps.ReadTimeout,
+                WriteTimeout:      deps.WriteTimeout,
+                Handler:           deps.Handler,
+                ErrorLog:          slog.NewLogLogger(deps.RootLogger.Handler(), slog.LevelError),
+        }
+
+        deps.ShutdownHooks.Register("http-server", srv.Shutdown)
+
+        return &amp;HTTPServer{
+                deps:    deps,
+                httpSrv: srv,
+                logger:  deps.RootLogger.WithGroup("http-server"),
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file18" style="display: none">package aggregation
+
+import (
+        "context"
+        "log/slog"
+        "time"
+
+        "github.com/gemyago/top-k-system-go/internal/diag"
+        "go.uber.org/dig"
+)
+
+type beginAggregatingOpts struct {
+        // TillOffset indicates the offset to aggregate until
+        TillOffset int64
+}
+
+type itemEventsAggregator interface {
+        beginAggregating(context context.Context, counters counters, opts beginAggregatingOpts) error
+}
+
+type ItemEventsAggregatorDeps struct {
+        // all injectable fields must be exported
+        // to let dig inject them
+
+        dig.In
+
+        RootLogger *slog.Logger
+
+        // config
+        FlushInterval time.Duration `name:"config.aggregator.flushInterval"`
+        Verbose       bool          `name:"config.aggregator.verbose"`
+
+        // service layer
+        TickerFactory func(d time.Duration) *time.Ticker
+
+        // package private components
+        AggregatorModel itemEventsAggregatorModel
+}
+
+type itemEventsAggregatorImpl struct {
+        logger *slog.Logger
+        ItemEventsAggregatorDeps
+}
+
+func (a *itemEventsAggregatorImpl) beginAggregating(
+        ctx context.Context,
+        counters counters,
+        opts beginAggregatingOpts,
+) error <span class="cov6" title="5">{
+        // TODO: Set the offset to start fetching from
+        // and keep fetching until the offset provided
+        messagesChan := a.AggregatorModel.fetchMessages(ctx)
+        flushTimer := a.ItemEventsAggregatorDeps.TickerFactory(a.FlushInterval)
+        for </span><span class="cov10" title="12">{
+                select </span>{
+                case &lt;-flushTimer.C:<span class="cov1" title="1">
+                        a.AggregatorModel.flushMessages(ctx, counters)</span>
+                case res := &lt;-messagesChan:<span class="cov8" title="7">
+                        // TODO: Potentially Better error handling here
+                        if res.err != nil </span><span class="cov1" title="1">{
+                                a.logger.ErrorContext(ctx, "failed to fetch message", diag.ErrAttr(res.err))
+                        }</span> else<span class="cov7" title="6"> {
+                                a.AggregatorModel.aggregateItemEvent(res.offset, res.event)
+                                if a.Verbose </span><span class="cov7" title="6">{
+                                        a.logger.DebugContext(ctx, "Item event aggregated",
+                                                slog.String("itemID", res.event.ItemID),
+                                                slog.Int64("offset", res.offset),
+                                        )
+                                }</span>
+                                <span class="cov7" title="6">if opts.TillOffset &gt; 0 &amp;&amp; res.offset &gt;= opts.TillOffset </span><span class="cov1" title="1">{
+                                        a.logger.InfoContext(ctx, "Target offset reached. Flushing and stopping aggregation.",
+                                                slog.Int64("offset", res.offset),
+                                                slog.Int64("tillOffset", opts.TillOffset),
+                                        )
+                                        a.AggregatorModel.flushMessages(ctx, counters)
+                                        return nil
+                                }</span>
+                        }
+                case &lt;-ctx.Done():<span class="cov6" title="4">
+                        return nil</span>
+                }
+        }
+}
+
+func newItemEventsAggregator(deps ItemEventsAggregatorDeps) itemEventsAggregator <span class="cov7" title="6">{
+        return &amp;itemEventsAggregatorImpl{
+                logger:                   deps.RootLogger.WithGroup("item-events-aggregator"),
+                ItemEventsAggregatorDeps: deps,
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file19" style="display: none">package aggregation
+
+import (
+        "context"
+        "encoding/json"
+        "fmt"
+        "log/slog"
+
+        "github.com/gemyago/top-k-system-go/internal/app/models"
+        "go.uber.org/dig"
+)
+
+type fetchMessageResult struct {
+        event  *models.ItemEvent
+        offset int64
+        err    error
+}
+
+type ItemEventsAggregatorModelDeps struct {
+        // all injectable fields must be exported
+        // to let dig inject them
+
+        dig.In
+
+        RootLogger *slog.Logger
+
+        // config
+        Verbose bool `name:"config.aggregator.verbose"`
+
+        // service layer
+        ItemEventsReader itemEventsKafkaReader
+}
+
+type itemEventsAggregatorModel interface {
+        aggregateItemEvent(offset int64, evt *models.ItemEvent)
+        flushMessages(ctx context.Context, counters counters)
+        fetchMessages(ctx context.Context) &lt;-chan fetchMessageResult
+}
+
+type itemEventsAggregatorModelImpl struct {
+        lastAggregatedOffset int64
+        aggregatedItems      map[string]int64
+        logger               *slog.Logger
+
+        deps ItemEventsAggregatorModelDeps
+}
+
+// aggregateItemEvent method is not thread safe, should be only called from a same
+// goroutine as flushMessages.
+func (m *itemEventsAggregatorModelImpl) aggregateItemEvent(offset int64, evt *models.ItemEvent) <span class="cov10" title="9">{
+        m.lastAggregatedOffset = offset
+        curVal := m.aggregatedItems[evt.ItemID]
+        m.aggregatedItems[evt.ItemID] = curVal + 1
+}</span>
+
+// flushMessages method is not thread safe, should be only called from a same
+// goroutine as aggregateItemEvent.
+func (m *itemEventsAggregatorModelImpl) flushMessages(ctx context.Context, counters counters) <span class="cov1" title="1">{
+        m.logger.DebugContext(ctx, "Flushing aggregated messages")
+        counters.updateItemsCount(m.lastAggregatedOffset, m.aggregatedItems)
+        clear(m.aggregatedItems)
+}</span>
+
+func (m *itemEventsAggregatorModelImpl) fetchMessages(ctx context.Context) &lt;-chan fetchMessageResult <span class="cov1" title="1">{
+        resultsChan := make(chan fetchMessageResult)
+        go func() </span><span class="cov1" title="1">{
+                for </span><span class="cov6" title="4">{
+                        msg, err := m.deps.ItemEventsReader.FetchMessage(ctx)
+                        if err != nil </span><span class="cov1" title="1">{
+                                resultsChan &lt;- fetchMessageResult{err: fmt.Errorf("failed to fetch messages: %w", err)}
+                                // TODO: If EOF just stop the loop
+                                // review usage to make sure it will not break anything
+                        }</span> else<span class="cov5" title="3"> {
+                                var itemEvent models.ItemEvent
+                                if err = json.Unmarshal(msg.Value, &amp;itemEvent); err != nil </span><span class="cov0" title="0">{
+                                        resultsChan &lt;- fetchMessageResult{err: fmt.Errorf("failed to unmarshal message: %w", err)}
+                                }</span>
+                                <span class="cov5" title="3">resultsChan &lt;- fetchMessageResult{
+                                        event:  &amp;itemEvent,
+                                        offset: msg.Offset,
+                                }</span>
+                        }
+                }
+        }()
+        <span class="cov1" title="1">return resultsChan</span>
+}
+
+func newItemEventsAggregatorModel(
+        deps ItemEventsAggregatorModelDeps,
+) itemEventsAggregatorModel <span class="cov7" title="5">{
+        return &amp;itemEventsAggregatorModelImpl{
+                logger:          deps.RootLogger.WithGroup("item-events-aggregator-model"),
+                aggregatedItems: make(map[string]int64),
+                deps:            deps,
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file20" style="display: none">package aggregation
+
+import (
+        "context"
+        "errors"
+        "fmt"
+        "io/fs"
+        "log/slog"
+
+        "go.uber.org/dig"
+)
+
+type checkPointer interface {
+        restoreState(ctx context.Context, counters counters) error
+        dumpState(ctx context.Context, counters counters) error
+}
+
+type CheckPointerDeps struct {
+        // all injectable fields must be exported
+        // to let dig inject them
+
+        dig.In
+
+        RootLogger *slog.Logger
+
+        // package private components
+        CheckPointerModel checkPointerModel
+}
+
+type checkPointerImpl struct {
+        logger *slog.Logger
+        deps   CheckPointerDeps
+}
+
+func (cp *checkPointerImpl) restoreState(ctx context.Context, counters counters) error <span class="cov7" title="4">{
+        manifest, err := cp.deps.CheckPointerModel.readManifest(ctx)
+        if err != nil </span><span class="cov4" title="2">{
+                if errors.Is(err, fs.ErrNotExist) </span><span class="cov1" title="1">{
+                        cp.logger.InfoContext(ctx, "Manifest not found. No state to restore from.")
+                        return nil
+                }</span>
+                <span class="cov1" title="1">return err</span>
+        }
+        <span class="cov4" title="2">values, err := cp.deps.CheckPointerModel.readCounters(ctx, manifest.CountersBlobFileName)
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+        <span class="cov1" title="1">counters.updateItemsCount(manifest.LastOffset, values)
+        return nil</span>
+}
+
+func (cp *checkPointerImpl) dumpState(ctx context.Context, counters counters) error <span class="cov5" title="3">{
+        countersFileName := fmt.Sprintf("counters-%d", counters.getLastOffset())
+        newManifest := checkPointManifest{
+                LastOffset:           counters.getLastOffset(),
+                CountersBlobFileName: countersFileName,
+        }
+        if err := cp.deps.CheckPointerModel.writeCounters(ctx, countersFileName, counters.getItemsCounters()); err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        // We write manifest last so if counters fail, the manifest will point on the last
+        // counters
+        <span class="cov4" title="2">if err := cp.deps.CheckPointerModel.writeManifest(ctx, newManifest); err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+        <span class="cov1" title="1">return nil</span>
+}
+
+func newCheckPointer(deps CheckPointerDeps) checkPointer <span class="cov10" title="8">{
+        return &amp;checkPointerImpl{
+                logger: deps.RootLogger.WithGroup("check-pointer"),
+                deps:   deps,
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file21" style="display: none">package aggregation
+
+import (
+        "bytes"
+        "context"
+        "encoding/json"
+        "fmt"
+
+        "github.com/gemyago/top-k-system-go/internal/services/blobstorage"
+        "go.uber.org/dig"
+)
+
+type checkPointManifest struct {
+        LastOffset           int64  `json:"lastOffset"`
+        CountersBlobFileName string `json:"countersBlobFileName"`
+}
+
+type checkPointerModel interface {
+        readManifest(ctx context.Context) (checkPointManifest, error)
+        writeManifest(ctx context.Context, manifest checkPointManifest) error
+        readCounters(ctx context.Context, blobFileName string) (map[string]int64, error)
+        writeCounters(ctx context.Context, blobFileName string, val map[string]int64) error
+}
+
+type CheckPointerModelDeps struct {
+        // all injectable fields must be exported
+        // to let dig inject them
+
+        dig.In
+
+        // services
+        blobstorage.Storage
+}
+
+type checkPointerModelImpl struct {
+        CheckPointerModelDeps
+}
+
+func (m checkPointerModelImpl) readManifest(ctx context.Context) (checkPointManifest, error) <span class="cov5" title="3">{
+        var manifestBytes bytes.Buffer
+        if err := m.Storage.Download(ctx, "manifest.json", &amp;manifestBytes); err != nil </span><span class="cov1" title="1">{
+                return checkPointManifest{}, fmt.Errorf("failed to read the manifest: %w", err)
+        }</span>
+        <span class="cov3" title="2">var manifest checkPointManifest
+        if err := json.NewDecoder(&amp;manifestBytes).Decode(&amp;manifest); err != nil </span><span class="cov1" title="1">{
+                return checkPointManifest{}, fmt.Errorf("faield to decode manifest: %w", err)
+        }</span>
+        <span class="cov1" title="1">return manifest, nil</span>
+}
+
+func (m checkPointerModelImpl) writeManifest(ctx context.Context, manifest checkPointManifest) error <span class="cov1" title="1">{
+        var manifestBytes bytes.Buffer
+        if err := json.NewEncoder(&amp;manifestBytes).Encode(manifest); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to encode manifest: %w", err)
+        }</span>
+        <span class="cov1" title="1">return m.Storage.Upload(ctx, "manifest.json", &amp;manifestBytes)</span>
+}
+
+// TODO: blobs are going to be very large (5GB), we may need to consider chunking approach
+// but this is a caller level refactoring very likely
+// both read and write sides will need to be updated
+
+func (m checkPointerModelImpl) readCounters(ctx context.Context, blobFileName string) (map[string]int64, error) <span class="cov5" title="3">{
+        var contents bytes.Buffer
+        //TODO: Use gob instead of json
+        if err := m.Storage.Download(ctx, blobFileName, &amp;contents); err != nil </span><span class="cov1" title="1">{
+                return nil, fmt.Errorf("failed to download file: %w", err)
+        }</span>
+        <span class="cov3" title="2">var result map[string]int64
+        if err := json.NewDecoder(&amp;contents).Decode(&amp;result); err != nil </span><span class="cov1" title="1">{
+                return nil, fmt.Errorf("failed to decode counters: %w", err)
+        }</span>
+        <span class="cov1" title="1">return result, nil</span>
+}
+
+func (m checkPointerModelImpl) writeCounters(ctx context.Context, blobFileName string, val map[string]int64) error <span class="cov3" title="2">{
+        var contents bytes.Buffer
+        if err := json.NewEncoder(&amp;contents).Encode(val); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to encode value: %w", err)
+        }</span>
+        <span class="cov3" title="2">if err := m.Storage.Upload(ctx, blobFileName, &amp;contents); err != nil </span><span class="cov1" title="1">{
+                return fmt.Errorf("failed to upload blob file %s: %w", blobFileName, err)
+        }</span>
+        <span class="cov1" title="1">return nil</span>
+}
+
+func newCheckPointerModel(deps CheckPointerModelDeps) checkPointerModel <span class="cov10" title="10">{
+        return &amp;checkPointerModelImpl{CheckPointerModelDeps: deps}
+}</span>
+</pre>
+		
+		<pre class="file" id="file22" style="display: none">package aggregation
+
+import (
+        "context"
+        "fmt"
+        "log/slog"
+
+        "github.com/segmentio/kafka-go"
+        "go.uber.org/dig"
+)
+
+type itemEventsKafkaReader interface {
+        FetchMessage(ctx context.Context) (kafka.Message, error)
+        SetOffset(offset int64) error
+        ReadLag(ctx context.Context) (lag int64, err error)
+}
+
+type CommandsDeps struct {
+        // all injectable fields must be exported
+        // to let dig inject them
+
+        dig.In
+
+        RootLogger *slog.Logger
+
+        // service layer
+        ItemEventsReader itemEventsKafkaReader
+
+        // package private components
+        ItemEventsAggregator itemEventsAggregator
+        CheckPointer         checkPointer
+        CountersFactory      countersFactory
+}
+
+type Commands struct {
+        logger *slog.Logger
+        deps   CommandsDeps
+}
+
+func (c *Commands) StartAggregator(ctx context.Context) error <span class="cov4" title="2">{
+        c.logger.InfoContext(ctx, "Restoring counters state")
+        cnt := c.deps.CountersFactory.newCounters()
+        if err := c.deps.CheckPointer.restoreState(ctx, cnt); err != nil </span><span class="cov1" title="1">{
+                return fmt.Errorf("failed to restore state while starting aggregator: %w", err)
+        }</span>
+
+        // TODO: Here we need some way to activate counters
+        // so then API layer could query them
+
+        <span class="cov1" title="1">c.logger.InfoContext(ctx, "Starting aggregation")
+        return c.deps.ItemEventsAggregator.beginAggregating(ctx, cnt, beginAggregatingOpts{})</span>
+}
+
+func (c *Commands) CreateCheckPoint(ctx context.Context) error <span class="cov7" title="5">{
+        ctn := c.deps.CountersFactory.newCounters()
+
+        c.logger.InfoContext(ctx, "Starting creating check point. Restoring last state.")
+        if err := c.deps.CheckPointer.restoreState(ctx, ctn); err != nil </span><span class="cov1" title="1">{
+                return fmt.Errorf("failed to restore state while creating check point: %w", err)
+        }</span>
+
+        <span class="cov7" title="4">lag, err := c.deps.ItemEventsReader.ReadLag(ctx)
+        if err != nil </span><span class="cov1" title="1">{
+                return fmt.Errorf("failed to read the lag: %w", err)
+        }</span>
+
+        <span class="cov5" title="3">lastOffset := ctn.getLastOffset()
+        if lastOffset &gt; 0 </span><span class="cov4" title="2">{
+                // We want to consume starting form the next offset, so doing +1
+                if err = c.deps.ItemEventsReader.SetOffset(lastOffset + 1); err != nil </span><span class="cov0" title="0">{
+                        return fmt.Errorf("failed to set next offset: %w", err)
+                }</span>
+        }
+
+        // lag count starts from zero
+        <span class="cov5" title="3">if lag-lastOffset-1 &lt;= 0 </span><span class="cov1" title="1">{
+                c.logger.InfoContext(ctx,
+                        "No new messages produced. Checkpoint skipped.",
+                        slog.Int64("lastOffset", lastOffset),
+                        slog.Int64("lag", lag),
+                )
+                return nil
+        }</span>
+
+        // We assume we didn't consume anything yet and the lag is exactly the
+        // tail of the stream
+        <span class="cov4" title="2">tillOffset := lag - 1
+
+        c.logger.InfoContext(ctx,
+                "Aggregating remaining messages",
+                slog.Int64("sinceOffset", ctn.getLastOffset()),
+                slog.Int64("tillOffset", tillOffset),
+        )
+        if err = c.deps.ItemEventsAggregator.beginAggregating(ctx, ctn, beginAggregatingOpts{
+                TillOffset: tillOffset,
+        }); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to aggregate till offset: %w", err)
+        }</span>
+
+        <span class="cov4" title="2">c.logger.InfoContext(ctx, "Producing new state")
+        if err = c.deps.CheckPointer.dumpState(ctx, ctn); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to dump state: %w", err)
+        }</span>
+
+        <span class="cov4" title="2">c.logger.InfoContext(ctx, "Checkpoint created", slog.Int64("lastOffset", ctn.getLastOffset()))
+
+        return nil</span>
+}
+
+func NewCommands(deps CommandsDeps) *Commands <span class="cov10" title="8">{
+        return &amp;Commands{
+                logger: deps.RootLogger.WithGroup("aggregator.commands"),
+                deps:   deps,
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file23" style="display: none">package aggregation
+
+type counters interface {
+        getItemsCounters() map[string]int64
+
+        getLastOffset() int64
+
+        // updateItemsCount will update the counts and return the result with
+        // total values for input counts.
+        updateItemsCount(lastOffset int64, increments map[string]int64)
+}
+
+type countersImpl struct {
+        lastOffset   int64
+        itemCounters map[string]int64
+}
+
+func (c *countersImpl) getItemsCounters() map[string]int64 <span class="cov4" title="3">{
+        return c.itemCounters
+}</span>
+
+func (c *countersImpl) getLastOffset() int64 <span class="cov9" title="13">{
+        return c.lastOffset
+}</span>
+
+func (c *countersImpl) updateItemsCount(lastOffset int64, increments map[string]int64) <span class="cov6" title="5">{
+        // TODO: We may have to potentially synchronize
+        c.lastOffset = lastOffset
+        for itemID, increment := range increments </span><span class="cov10" title="16">{
+                existingVal := c.itemCounters[itemID]
+                c.itemCounters[itemID] = existingVal + increment
+        }</span>
+}
+
+type countersFactory interface {
+        newCounters() counters
+}
+
+type countersFactoryFunc func() counters
+
+func (c countersFactoryFunc) newCounters() counters <span class="cov1" title="1">{
+        return c()
+}</span>
+
+var _ countersFactory = countersFactoryFunc(nil)
+
+func newCounters() counters <span class="cov9" title="13">{
+        return &amp;countersImpl{
+                itemCounters: make(map[string]int64),
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file24" style="display: none">// Code generated by mockery. DO NOT EDIT.
+
+//go:build !release
+
+package aggregation
+
+import (
+        context "context"
+
+        mock "github.com/stretchr/testify/mock"
+)
+
+// mockCheckPointer is an autogenerated mock type for the checkPointer type
+type mockCheckPointer struct {
+        mock.Mock
+}
+
+type mockCheckPointer_Expecter struct {
+        mock *mock.Mock
+}
+
+func (_m *mockCheckPointer) EXPECT() *mockCheckPointer_Expecter <span class="cov10" title="9">{
+        return &amp;mockCheckPointer_Expecter{mock: &amp;_m.Mock}
+}</span>
+
+// dumpState provides a mock function with given fields: ctx, counters1
+func (_m *mockCheckPointer) dumpState(ctx context.Context, counters1 counters) error <span class="cov3" title="2">{
+        ret := _m.Called(ctx, counters1)
+
+        if len(ret) == 0 </span><span class="cov0" title="0">{
+                panic("no return value specified for dumpState")</span>
+        }
+
+        <span class="cov3" title="2">var r0 error
+        if rf, ok := ret.Get(0).(func(context.Context, counters) error); ok </span><span class="cov0" title="0">{
+                r0 = rf(ctx, counters1)
+        }</span> else<span class="cov3" title="2"> {
+                r0 = ret.Error(0)
+        }</span>
+
+        <span class="cov3" title="2">return r0</span>
+}
+
+// mockCheckPointer_dumpState_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'dumpState'
+type mockCheckPointer_dumpState_Call struct {
+        *mock.Call
+}
+
+// dumpState is a helper method to define mock.On call
+//   - ctx context.Context
+//   - counters1 counters
+func (_e *mockCheckPointer_Expecter) dumpState(ctx interface{}, counters1 interface{}) *mockCheckPointer_dumpState_Call <span class="cov3" title="2">{
+        return &amp;mockCheckPointer_dumpState_Call{Call: _e.mock.On("dumpState", ctx, counters1)}
+}</span>
+
+func (_c *mockCheckPointer_dumpState_Call) Run(run func(ctx context.Context, counters1 counters)) *mockCheckPointer_dumpState_Call <span class="cov0" title="0">{
+        _c.Call.Run(func(args mock.Arguments) </span><span class="cov0" title="0">{
+                run(args[0].(context.Context), args[1].(counters))
+        }</span>)
+        <span class="cov0" title="0">return _c</span>
+}
+
+func (_c *mockCheckPointer_dumpState_Call) Return(_a0 error) *mockCheckPointer_dumpState_Call <span class="cov3" title="2">{
+        _c.Call.Return(_a0)
+        return _c
+}</span>
+
+func (_c *mockCheckPointer_dumpState_Call) RunAndReturn(run func(context.Context, counters) error) *mockCheckPointer_dumpState_Call <span class="cov0" title="0">{
+        _c.Call.Return(run)
+        return _c
+}</span>
+
+// restoreState provides a mock function with given fields: ctx, counters1
+func (_m *mockCheckPointer) restoreState(ctx context.Context, counters1 counters) error <span class="cov8" title="7">{
+        ret := _m.Called(ctx, counters1)
+
+        if len(ret) == 0 </span><span class="cov0" title="0">{
+                panic("no return value specified for restoreState")</span>
+        }
+
+        <span class="cov8" title="7">var r0 error
+        if rf, ok := ret.Get(0).(func(context.Context, counters) error); ok </span><span class="cov0" title="0">{
+                r0 = rf(ctx, counters1)
+        }</span> else<span class="cov8" title="7"> {
+                r0 = ret.Error(0)
+        }</span>
+
+        <span class="cov8" title="7">return r0</span>
+}
+
+// mockCheckPointer_restoreState_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'restoreState'
+type mockCheckPointer_restoreState_Call struct {
+        *mock.Call
+}
+
+// restoreState is a helper method to define mock.On call
+//   - ctx context.Context
+//   - counters1 counters
+func (_e *mockCheckPointer_Expecter) restoreState(ctx interface{}, counters1 interface{}) *mockCheckPointer_restoreState_Call <span class="cov8" title="7">{
+        return &amp;mockCheckPointer_restoreState_Call{Call: _e.mock.On("restoreState", ctx, counters1)}
+}</span>
+
+func (_c *mockCheckPointer_restoreState_Call) Run(run func(ctx context.Context, counters1 counters)) *mockCheckPointer_restoreState_Call <span class="cov0" title="0">{
+        _c.Call.Run(func(args mock.Arguments) </span><span class="cov0" title="0">{
+                run(args[0].(context.Context), args[1].(counters))
+        }</span>)
+        <span class="cov0" title="0">return _c</span>
+}
+
+func (_c *mockCheckPointer_restoreState_Call) Return(_a0 error) *mockCheckPointer_restoreState_Call <span class="cov8" title="7">{
+        _c.Call.Return(_a0)
+        return _c
+}</span>
+
+func (_c *mockCheckPointer_restoreState_Call) RunAndReturn(run func(context.Context, counters) error) *mockCheckPointer_restoreState_Call <span class="cov0" title="0">{
+        _c.Call.Return(run)
+        return _c
+}</span>
+
+// newMockCheckPointer creates a new instance of mockCheckPointer. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
+// The first argument is typically a *testing.T value.
+func newMockCheckPointer(t interface {
+        mock.TestingT
+        Cleanup(func())
+}) *mockCheckPointer <span class="cov8" title="7">{
+        mock := &amp;mockCheckPointer{}
+        mock.Mock.Test(t)
+
+        t.Cleanup(func() </span><span class="cov8" title="7">{ mock.AssertExpectations(t) }</span>)
+
+        <span class="cov8" title="7">return mock</span>
+}
+</pre>
+		
+		<pre class="file" id="file25" style="display: none">// Code generated by mockery. DO NOT EDIT.
+
+//go:build !release
+
+package aggregation
+
+import (
+        context "context"
+
+        mock "github.com/stretchr/testify/mock"
+)
+
+// mockCheckPointerModel is an autogenerated mock type for the checkPointerModel type
+type mockCheckPointerModel struct {
+        mock.Mock
+}
+
+type mockCheckPointerModel_Expecter struct {
+        mock *mock.Mock
+}
+
+func (_m *mockCheckPointerModel) EXPECT() *mockCheckPointerModel_Expecter <span class="cov10" title="11">{
+        return &amp;mockCheckPointerModel_Expecter{mock: &amp;_m.Mock}
+}</span>
+
+// readCounters provides a mock function with given fields: ctx, blobFileName
+func (_m *mockCheckPointerModel) readCounters(ctx context.Context, blobFileName string) (map[string]int64, error) <span class="cov3" title="2">{
+        ret := _m.Called(ctx, blobFileName)
+
+        if len(ret) == 0 </span><span class="cov0" title="0">{
+                panic("no return value specified for readCounters")</span>
+        }
+
+        <span class="cov3" title="2">var r0 map[string]int64
+        var r1 error
+        if rf, ok := ret.Get(0).(func(context.Context, string) (map[string]int64, error)); ok </span><span class="cov0" title="0">{
+                return rf(ctx, blobFileName)
+        }</span>
+        <span class="cov3" title="2">if rf, ok := ret.Get(0).(func(context.Context, string) map[string]int64); ok </span><span class="cov0" title="0">{
+                r0 = rf(ctx, blobFileName)
+        }</span> else<span class="cov3" title="2"> {
+                if ret.Get(0) != nil </span><span class="cov3" title="2">{
+                        r0 = ret.Get(0).(map[string]int64)
+                }</span>
+        }
+
+        <span class="cov3" title="2">if rf, ok := ret.Get(1).(func(context.Context, string) error); ok </span><span class="cov0" title="0">{
+                r1 = rf(ctx, blobFileName)
+        }</span> else<span class="cov3" title="2"> {
+                r1 = ret.Error(1)
+        }</span>
+
+        <span class="cov3" title="2">return r0, r1</span>
+}
+
+// mockCheckPointerModel_readCounters_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'readCounters'
+type mockCheckPointerModel_readCounters_Call struct {
+        *mock.Call
+}
+
+// readCounters is a helper method to define mock.On call
+//   - ctx context.Context
+//   - blobFileName string
+func (_e *mockCheckPointerModel_Expecter) readCounters(ctx interface{}, blobFileName interface{}) *mockCheckPointerModel_readCounters_Call <span class="cov3" title="2">{
+        return &amp;mockCheckPointerModel_readCounters_Call{Call: _e.mock.On("readCounters", ctx, blobFileName)}
+}</span>
+
+func (_c *mockCheckPointerModel_readCounters_Call) Run(run func(ctx context.Context, blobFileName string)) *mockCheckPointerModel_readCounters_Call <span class="cov0" title="0">{
+        _c.Call.Run(func(args mock.Arguments) </span><span class="cov0" title="0">{
+                run(args[0].(context.Context), args[1].(string))
+        }</span>)
+        <span class="cov0" title="0">return _c</span>
+}
+
+func (_c *mockCheckPointerModel_readCounters_Call) Return(_a0 map[string]int64, _a1 error) *mockCheckPointerModel_readCounters_Call <span class="cov3" title="2">{
+        _c.Call.Return(_a0, _a1)
+        return _c
+}</span>
+
+func (_c *mockCheckPointerModel_readCounters_Call) RunAndReturn(run func(context.Context, string) (map[string]int64, error)) *mockCheckPointerModel_readCounters_Call <span class="cov0" title="0">{
+        _c.Call.Return(run)
+        return _c
+}</span>
+
+// readManifest provides a mock function with given fields: ctx
+func (_m *mockCheckPointerModel) readManifest(ctx context.Context) (checkPointManifest, error) <span class="cov6" title="4">{
+        ret := _m.Called(ctx)
+
+        if len(ret) == 0 </span><span class="cov0" title="0">{
+                panic("no return value specified for readManifest")</span>
+        }
+
+        <span class="cov6" title="4">var r0 checkPointManifest
+        var r1 error
+        if rf, ok := ret.Get(0).(func(context.Context) (checkPointManifest, error)); ok </span><span class="cov0" title="0">{
+                return rf(ctx)
+        }</span>
+        <span class="cov6" title="4">if rf, ok := ret.Get(0).(func(context.Context) checkPointManifest); ok </span><span class="cov0" title="0">{
+                r0 = rf(ctx)
+        }</span> else<span class="cov6" title="4"> {
+                r0 = ret.Get(0).(checkPointManifest)
+        }</span>
+
+        <span class="cov6" title="4">if rf, ok := ret.Get(1).(func(context.Context) error); ok </span><span class="cov0" title="0">{
+                r1 = rf(ctx)
+        }</span> else<span class="cov6" title="4"> {
+                r1 = ret.Error(1)
+        }</span>
+
+        <span class="cov6" title="4">return r0, r1</span>
+}
+
+// mockCheckPointerModel_readManifest_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'readManifest'
+type mockCheckPointerModel_readManifest_Call struct {
+        *mock.Call
+}
+
+// readManifest is a helper method to define mock.On call
+//   - ctx context.Context
+func (_e *mockCheckPointerModel_Expecter) readManifest(ctx interface{}) *mockCheckPointerModel_readManifest_Call <span class="cov6" title="4">{
+        return &amp;mockCheckPointerModel_readManifest_Call{Call: _e.mock.On("readManifest", ctx)}
+}</span>
+
+func (_c *mockCheckPointerModel_readManifest_Call) Run(run func(ctx context.Context)) *mockCheckPointerModel_readManifest_Call <span class="cov0" title="0">{
+        _c.Call.Run(func(args mock.Arguments) </span><span class="cov0" title="0">{
+                run(args[0].(context.Context))
+        }</span>)
+        <span class="cov0" title="0">return _c</span>
+}
+
+func (_c *mockCheckPointerModel_readManifest_Call) Return(_a0 checkPointManifest, _a1 error) *mockCheckPointerModel_readManifest_Call <span class="cov6" title="4">{
+        _c.Call.Return(_a0, _a1)
+        return _c
+}</span>
+
+func (_c *mockCheckPointerModel_readManifest_Call) RunAndReturn(run func(context.Context) (checkPointManifest, error)) *mockCheckPointerModel_readManifest_Call <span class="cov0" title="0">{
+        _c.Call.Return(run)
+        return _c
+}</span>
+
+// writeCounters provides a mock function with given fields: ctx, blobFileName, val
+func (_m *mockCheckPointerModel) writeCounters(ctx context.Context, blobFileName string, val map[string]int64) error <span class="cov5" title="3">{
+        ret := _m.Called(ctx, blobFileName, val)
+
+        if len(ret) == 0 </span><span class="cov0" title="0">{
+                panic("no return value specified for writeCounters")</span>
+        }
+
+        <span class="cov5" title="3">var r0 error
+        if rf, ok := ret.Get(0).(func(context.Context, string, map[string]int64) error); ok </span><span class="cov0" title="0">{
+                r0 = rf(ctx, blobFileName, val)
+        }</span> else<span class="cov5" title="3"> {
+                r0 = ret.Error(0)
+        }</span>
+
+        <span class="cov5" title="3">return r0</span>
+}
+
+// mockCheckPointerModel_writeCounters_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'writeCounters'
+type mockCheckPointerModel_writeCounters_Call struct {
+        *mock.Call
+}
+
+// writeCounters is a helper method to define mock.On call
+//   - ctx context.Context
+//   - blobFileName string
+//   - val map[string]int64
+func (_e *mockCheckPointerModel_Expecter) writeCounters(ctx interface{}, blobFileName interface{}, val interface{}) *mockCheckPointerModel_writeCounters_Call <span class="cov5" title="3">{
+        return &amp;mockCheckPointerModel_writeCounters_Call{Call: _e.mock.On("writeCounters", ctx, blobFileName, val)}
+}</span>
+
+func (_c *mockCheckPointerModel_writeCounters_Call) Run(run func(ctx context.Context, blobFileName string, val map[string]int64)) *mockCheckPointerModel_writeCounters_Call <span class="cov0" title="0">{
+        _c.Call.Run(func(args mock.Arguments) </span><span class="cov0" title="0">{
+                run(args[0].(context.Context), args[1].(string), args[2].(map[string]int64))
+        }</span>)
+        <span class="cov0" title="0">return _c</span>
+}
+
+func (_c *mockCheckPointerModel_writeCounters_Call) Return(_a0 error) *mockCheckPointerModel_writeCounters_Call <span class="cov5" title="3">{
+        _c.Call.Return(_a0)
+        return _c
+}</span>
+
+func (_c *mockCheckPointerModel_writeCounters_Call) RunAndReturn(run func(context.Context, string, map[string]int64) error) *mockCheckPointerModel_writeCounters_Call <span class="cov0" title="0">{
+        _c.Call.Return(run)
+        return _c
+}</span>
+
+// writeManifest provides a mock function with given fields: ctx, manifest
+func (_m *mockCheckPointerModel) writeManifest(ctx context.Context, manifest checkPointManifest) error <span class="cov3" title="2">{
+        ret := _m.Called(ctx, manifest)
+
+        if len(ret) == 0 </span><span class="cov0" title="0">{
+                panic("no return value specified for writeManifest")</span>
+        }
+
+        <span class="cov3" title="2">var r0 error
+        if rf, ok := ret.Get(0).(func(context.Context, checkPointManifest) error); ok </span><span class="cov0" title="0">{
+                r0 = rf(ctx, manifest)
+        }</span> else<span class="cov3" title="2"> {
+                r0 = ret.Error(0)
+        }</span>
+
+        <span class="cov3" title="2">return r0</span>
+}
+
+// mockCheckPointerModel_writeManifest_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'writeManifest'
+type mockCheckPointerModel_writeManifest_Call struct {
+        *mock.Call
+}
+
+// writeManifest is a helper method to define mock.On call
+//   - ctx context.Context
+//   - manifest checkPointManifest
+func (_e *mockCheckPointerModel_Expecter) writeManifest(ctx interface{}, manifest interface{}) *mockCheckPointerModel_writeManifest_Call <span class="cov3" title="2">{
+        return &amp;mockCheckPointerModel_writeManifest_Call{Call: _e.mock.On("writeManifest", ctx, manifest)}
+}</span>
+
+func (_c *mockCheckPointerModel_writeManifest_Call) Run(run func(ctx context.Context, manifest checkPointManifest)) *mockCheckPointerModel_writeManifest_Call <span class="cov0" title="0">{
+        _c.Call.Run(func(args mock.Arguments) </span><span class="cov0" title="0">{
+                run(args[0].(context.Context), args[1].(checkPointManifest))
+        }</span>)
+        <span class="cov0" title="0">return _c</span>
+}
+
+func (_c *mockCheckPointerModel_writeManifest_Call) Return(_a0 error) *mockCheckPointerModel_writeManifest_Call <span class="cov3" title="2">{
+        _c.Call.Return(_a0)
+        return _c
+}</span>
+
+func (_c *mockCheckPointerModel_writeManifest_Call) RunAndReturn(run func(context.Context, checkPointManifest) error) *mockCheckPointerModel_writeManifest_Call <span class="cov0" title="0">{
+        _c.Call.Return(run)
+        return _c
+}</span>
+
+// newMockCheckPointerModel creates a new instance of mockCheckPointerModel. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
+// The first argument is typically a *testing.T value.
+func newMockCheckPointerModel(t interface {
+        mock.TestingT
+        Cleanup(func())
+}) *mockCheckPointerModel <span class="cov8" title="7">{
+        mock := &amp;mockCheckPointerModel{}
+        mock.Mock.Test(t)
+
+        t.Cleanup(func() </span><span class="cov8" title="7">{ mock.AssertExpectations(t) }</span>)
+
+        <span class="cov8" title="7">return mock</span>
+}
+</pre>
+		
+		<pre class="file" id="file26" style="display: none">// Code generated by mockery. DO NOT EDIT.
+
+//go:build !release
+
+package aggregation
+
+import (
+        context "context"
+
+        mock "github.com/stretchr/testify/mock"
+)
+
+// MockCommands is an autogenerated mock type for the mockCommands type
+type MockCommands struct {
+        mock.Mock
+}
+
+type MockCommands_Expecter struct {
+        mock *mock.Mock
+}
+
+func (_m *MockCommands) EXPECT() *MockCommands_Expecter <span class="cov0" title="0">{
+        return &amp;MockCommands_Expecter{mock: &amp;_m.Mock}
+}</span>
+
+// CreateCheckPoint provides a mock function with given fields: ctx
+func (_m *MockCommands) CreateCheckPoint(ctx context.Context) error <span class="cov0" title="0">{
+        ret := _m.Called(ctx)
+
+        if len(ret) == 0 </span><span class="cov0" title="0">{
+                panic("no return value specified for CreateCheckPoint")</span>
+        }
+
+        <span class="cov0" title="0">var r0 error
+        if rf, ok := ret.Get(0).(func(context.Context) error); ok </span><span class="cov0" title="0">{
+                r0 = rf(ctx)
+        }</span> else<span class="cov0" title="0"> {
+                r0 = ret.Error(0)
+        }</span>
+
+        <span class="cov0" title="0">return r0</span>
+}
+
+// MockCommands_CreateCheckPoint_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateCheckPoint'
+type MockCommands_CreateCheckPoint_Call struct {
+        *mock.Call
+}
+
+// CreateCheckPoint is a helper method to define mock.On call
+//   - ctx context.Context
+func (_e *MockCommands_Expecter) CreateCheckPoint(ctx interface{}) *MockCommands_CreateCheckPoint_Call <span class="cov0" title="0">{
+        return &amp;MockCommands_CreateCheckPoint_Call{Call: _e.mock.On("CreateCheckPoint", ctx)}
+}</span>
+
+func (_c *MockCommands_CreateCheckPoint_Call) Run(run func(ctx context.Context)) *MockCommands_CreateCheckPoint_Call <span class="cov0" title="0">{
+        _c.Call.Run(func(args mock.Arguments) </span><span class="cov0" title="0">{
+                run(args[0].(context.Context))
+        }</span>)
+        <span class="cov0" title="0">return _c</span>
+}
+
+func (_c *MockCommands_CreateCheckPoint_Call) Return(_a0 error) *MockCommands_CreateCheckPoint_Call <span class="cov0" title="0">{
+        _c.Call.Return(_a0)
+        return _c
+}</span>
+
+func (_c *MockCommands_CreateCheckPoint_Call) RunAndReturn(run func(context.Context) error) *MockCommands_CreateCheckPoint_Call <span class="cov0" title="0">{
+        _c.Call.Return(run)
+        return _c
+}</span>
+
+// StartAggregator provides a mock function with given fields: ctx
+func (_m *MockCommands) StartAggregator(ctx context.Context) error <span class="cov0" title="0">{
+        ret := _m.Called(ctx)
+
+        if len(ret) == 0 </span><span class="cov0" title="0">{
+                panic("no return value specified for StartAggregator")</span>
+        }
+
+        <span class="cov0" title="0">var r0 error
+        if rf, ok := ret.Get(0).(func(context.Context) error); ok </span><span class="cov0" title="0">{
+                r0 = rf(ctx)
+        }</span> else<span class="cov0" title="0"> {
+                r0 = ret.Error(0)
+        }</span>
+
+        <span class="cov0" title="0">return r0</span>
+}
+
+// MockCommands_StartAggregator_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'StartAggregator'
+type MockCommands_StartAggregator_Call struct {
+        *mock.Call
+}
+
+// StartAggregator is a helper method to define mock.On call
+//   - ctx context.Context
+func (_e *MockCommands_Expecter) StartAggregator(ctx interface{}) *MockCommands_StartAggregator_Call <span class="cov0" title="0">{
+        return &amp;MockCommands_StartAggregator_Call{Call: _e.mock.On("StartAggregator", ctx)}
+}</span>
+
+func (_c *MockCommands_StartAggregator_Call) Run(run func(ctx context.Context)) *MockCommands_StartAggregator_Call <span class="cov0" title="0">{
+        _c.Call.Run(func(args mock.Arguments) </span><span class="cov0" title="0">{
+                run(args[0].(context.Context))
+        }</span>)
+        <span class="cov0" title="0">return _c</span>
+}
+
+func (_c *MockCommands_StartAggregator_Call) Return(_a0 error) *MockCommands_StartAggregator_Call <span class="cov0" title="0">{
+        _c.Call.Return(_a0)
+        return _c
+}</span>
+
+func (_c *MockCommands_StartAggregator_Call) RunAndReturn(run func(context.Context) error) *MockCommands_StartAggregator_Call <span class="cov0" title="0">{
+        _c.Call.Return(run)
+        return _c
+}</span>
+
+// NewMockCommands creates a new instance of MockCommands. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
+// The first argument is typically a *testing.T value.
+func NewMockCommands(t interface {
+        mock.TestingT
+        Cleanup(func())
+}) *MockCommands <span class="cov0" title="0">{
+        mock := &amp;MockCommands{}
+        mock.Mock.Test(t)
+
+        t.Cleanup(func() </span><span class="cov0" title="0">{ mock.AssertExpectations(t) }</span>)
+
+        <span class="cov0" title="0">return mock</span>
+}
+</pre>
+		
+		<pre class="file" id="file27" style="display: none">// Code generated by mockery. DO NOT EDIT.
+
+//go:build !release
+
+package aggregation
+
+import mock "github.com/stretchr/testify/mock"
+
+// mockCounters is an autogenerated mock type for the counters type
+type mockCounters struct {
+        mock.Mock
+}
+
+type mockCounters_Expecter struct {
+        mock *mock.Mock
+}
+
+func (_m *mockCounters) EXPECT() *mockCounters_Expecter <span class="cov7" title="4">{
+        return &amp;mockCounters_Expecter{mock: &amp;_m.Mock}
+}</span>
+
+// getItemsCounters provides a mock function with given fields:
+func (_m *mockCounters) getItemsCounters() map[string]int64 <span class="cov0" title="0">{
+        ret := _m.Called()
+
+        if len(ret) == 0 </span><span class="cov0" title="0">{
+                panic("no return value specified for getItemsCounters")</span>
+        }
+
+        <span class="cov0" title="0">var r0 map[string]int64
+        if rf, ok := ret.Get(0).(func() map[string]int64); ok </span><span class="cov0" title="0">{
+                r0 = rf()
+        }</span> else<span class="cov0" title="0"> {
+                if ret.Get(0) != nil </span><span class="cov0" title="0">{
+                        r0 = ret.Get(0).(map[string]int64)
+                }</span>
+        }
+
+        <span class="cov0" title="0">return r0</span>
+}
+
+// mockCounters_getItemsCounters_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'getItemsCounters'
+type mockCounters_getItemsCounters_Call struct {
+        *mock.Call
+}
+
+// getItemsCounters is a helper method to define mock.On call
+func (_e *mockCounters_Expecter) getItemsCounters() *mockCounters_getItemsCounters_Call <span class="cov0" title="0">{
+        return &amp;mockCounters_getItemsCounters_Call{Call: _e.mock.On("getItemsCounters")}
+}</span>
+
+func (_c *mockCounters_getItemsCounters_Call) Run(run func()) *mockCounters_getItemsCounters_Call <span class="cov0" title="0">{
+        _c.Call.Run(func(args mock.Arguments) </span><span class="cov0" title="0">{
+                run()
+        }</span>)
+        <span class="cov0" title="0">return _c</span>
+}
+
+func (_c *mockCounters_getItemsCounters_Call) Return(_a0 map[string]int64) *mockCounters_getItemsCounters_Call <span class="cov0" title="0">{
+        _c.Call.Return(_a0)
+        return _c
+}</span>
+
+func (_c *mockCounters_getItemsCounters_Call) RunAndReturn(run func() map[string]int64) *mockCounters_getItemsCounters_Call <span class="cov0" title="0">{
+        _c.Call.Return(run)
+        return _c
+}</span>
+
+// getLastOffset provides a mock function with given fields:
+func (_m *mockCounters) getLastOffset() int64 <span class="cov9" title="7">{
+        ret := _m.Called()
+
+        if len(ret) == 0 </span><span class="cov0" title="0">{
+                panic("no return value specified for getLastOffset")</span>
+        }
+
+        <span class="cov9" title="7">var r0 int64
+        if rf, ok := ret.Get(0).(func() int64); ok </span><span class="cov0" title="0">{
+                r0 = rf()
+        }</span> else<span class="cov9" title="7"> {
+                r0 = ret.Get(0).(int64)
+        }</span>
+
+        <span class="cov9" title="7">return r0</span>
+}
+
+// mockCounters_getLastOffset_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'getLastOffset'
+type mockCounters_getLastOffset_Call struct {
+        *mock.Call
+}
+
+// getLastOffset is a helper method to define mock.On call
+func (_e *mockCounters_Expecter) getLastOffset() *mockCounters_getLastOffset_Call <span class="cov5" title="3">{
+        return &amp;mockCounters_getLastOffset_Call{Call: _e.mock.On("getLastOffset")}
+}</span>
+
+func (_c *mockCounters_getLastOffset_Call) Run(run func()) *mockCounters_getLastOffset_Call <span class="cov0" title="0">{
+        _c.Call.Run(func(args mock.Arguments) </span><span class="cov0" title="0">{
+                run()
+        }</span>)
+        <span class="cov0" title="0">return _c</span>
+}
+
+func (_c *mockCounters_getLastOffset_Call) Return(_a0 int64) *mockCounters_getLastOffset_Call <span class="cov5" title="3">{
+        _c.Call.Return(_a0)
+        return _c
+}</span>
+
+func (_c *mockCounters_getLastOffset_Call) RunAndReturn(run func() int64) *mockCounters_getLastOffset_Call <span class="cov0" title="0">{
+        _c.Call.Return(run)
+        return _c
+}</span>
+
+// updateItemsCount provides a mock function with given fields: lastOffset, increments
+func (_m *mockCounters) updateItemsCount(lastOffset int64, increments map[string]int64) <span class="cov1" title="1">{
+        _m.Called(lastOffset, increments)
+}</span>
+
+// mockCounters_updateItemsCount_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'updateItemsCount'
+type mockCounters_updateItemsCount_Call struct {
+        *mock.Call
+}
+
+// updateItemsCount is a helper method to define mock.On call
+//   - lastOffset int64
+//   - increments map[string]int64
+func (_e *mockCounters_Expecter) updateItemsCount(lastOffset interface{}, increments interface{}) *mockCounters_updateItemsCount_Call <span class="cov1" title="1">{
+        return &amp;mockCounters_updateItemsCount_Call{Call: _e.mock.On("updateItemsCount", lastOffset, increments)}
+}</span>
+
+func (_c *mockCounters_updateItemsCount_Call) Run(run func(lastOffset int64, increments map[string]int64)) *mockCounters_updateItemsCount_Call <span class="cov0" title="0">{
+        _c.Call.Run(func(args mock.Arguments) </span><span class="cov0" title="0">{
+                run(args[0].(int64), args[1].(map[string]int64))
+        }</span>)
+        <span class="cov0" title="0">return _c</span>
+}
+
+func (_c *mockCounters_updateItemsCount_Call) Return() *mockCounters_updateItemsCount_Call <span class="cov0" title="0">{
+        _c.Call.Return()
+        return _c
+}</span>
+
+func (_c *mockCounters_updateItemsCount_Call) RunAndReturn(run func(int64, map[string]int64)) *mockCounters_updateItemsCount_Call <span class="cov0" title="0">{
+        _c.Call.Return(run)
+        return _c
+}</span>
+
+// newMockCounters creates a new instance of mockCounters. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
+// The first argument is typically a *testing.T value.
+func newMockCounters(t interface {
+        mock.TestingT
+        Cleanup(func())
+}) *mockCounters <span class="cov10" title="8">{
+        mock := &amp;mockCounters{}
+        mock.Mock.Test(t)
+
+        t.Cleanup(func() </span><span class="cov10" title="8">{ mock.AssertExpectations(t) }</span>)
+
+        <span class="cov10" title="8">return mock</span>
+}
+</pre>
+		
+		<pre class="file" id="file28" style="display: none">// Code generated by mockery. DO NOT EDIT.
+
+//go:build !release
+
+package aggregation
+
+import mock "github.com/stretchr/testify/mock"
+
+// mockCountersFactory is an autogenerated mock type for the countersFactory type
+type mockCountersFactory struct {
+        mock.Mock
+}
+
+type mockCountersFactory_Expecter struct {
+        mock *mock.Mock
+}
+
+func (_m *mockCountersFactory) EXPECT() *mockCountersFactory_Expecter <span class="cov10" title="7">{
+        return &amp;mockCountersFactory_Expecter{mock: &amp;_m.Mock}
+}</span>
+
+// newCounters provides a mock function with given fields:
+func (_m *mockCountersFactory) newCounters() counters <span class="cov10" title="7">{
+        ret := _m.Called()
+
+        if len(ret) == 0 </span><span class="cov0" title="0">{
+                panic("no return value specified for newCounters")</span>
+        }
+
+        <span class="cov10" title="7">var r0 counters
+        if rf, ok := ret.Get(0).(func() counters); ok </span><span class="cov0" title="0">{
+                r0 = rf()
+        }</span> else<span class="cov10" title="7"> {
+                if ret.Get(0) != nil </span><span class="cov10" title="7">{
+                        r0 = ret.Get(0).(counters)
+                }</span>
+        }
+
+        <span class="cov10" title="7">return r0</span>
+}
+
+// mockCountersFactory_newCounters_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'newCounters'
+type mockCountersFactory_newCounters_Call struct {
+        *mock.Call
+}
+
+// newCounters is a helper method to define mock.On call
+func (_e *mockCountersFactory_Expecter) newCounters() *mockCountersFactory_newCounters_Call <span class="cov10" title="7">{
+        return &amp;mockCountersFactory_newCounters_Call{Call: _e.mock.On("newCounters")}
+}</span>
+
+func (_c *mockCountersFactory_newCounters_Call) Run(run func()) *mockCountersFactory_newCounters_Call <span class="cov0" title="0">{
+        _c.Call.Run(func(args mock.Arguments) </span><span class="cov0" title="0">{
+                run()
+        }</span>)
+        <span class="cov0" title="0">return _c</span>
+}
+
+func (_c *mockCountersFactory_newCounters_Call) Return(_a0 counters) *mockCountersFactory_newCounters_Call <span class="cov10" title="7">{
+        _c.Call.Return(_a0)
+        return _c
+}</span>
+
+func (_c *mockCountersFactory_newCounters_Call) RunAndReturn(run func() counters) *mockCountersFactory_newCounters_Call <span class="cov0" title="0">{
+        _c.Call.Return(run)
+        return _c
+}</span>
+
+// newMockCountersFactory creates a new instance of mockCountersFactory. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
+// The first argument is typically a *testing.T value.
+func newMockCountersFactory(t interface {
+        mock.TestingT
+        Cleanup(func())
+}) *mockCountersFactory <span class="cov10" title="7">{
+        mock := &amp;mockCountersFactory{}
+        mock.Mock.Test(t)
+
+        t.Cleanup(func() </span><span class="cov10" title="7">{ mock.AssertExpectations(t) }</span>)
+
+        <span class="cov10" title="7">return mock</span>
+}
+</pre>
+		
+		<pre class="file" id="file29" style="display: none">// Code generated by mockery. DO NOT EDIT.
+
+//go:build !release
+
+package aggregation
+
+import (
+        context "context"
+
+        mock "github.com/stretchr/testify/mock"
+)
+
+// mockItemEventsAggregator is an autogenerated mock type for the itemEventsAggregator type
+type mockItemEventsAggregator struct {
+        mock.Mock
+}
+
+type mockItemEventsAggregator_Expecter struct {
+        mock *mock.Mock
+}
+
+func (_m *mockItemEventsAggregator) EXPECT() *mockItemEventsAggregator_Expecter <span class="cov6" title="3">{
+        return &amp;mockItemEventsAggregator_Expecter{mock: &amp;_m.Mock}
+}</span>
+
+// beginAggregating provides a mock function with given fields: _a0, counters1, opts
+func (_m *mockItemEventsAggregator) beginAggregating(_a0 context.Context, counters1 counters, opts beginAggregatingOpts) error <span class="cov6" title="3">{
+        ret := _m.Called(_a0, counters1, opts)
+
+        if len(ret) == 0 </span><span class="cov0" title="0">{
+                panic("no return value specified for beginAggregating")</span>
+        }
+
+        <span class="cov6" title="3">var r0 error
+        if rf, ok := ret.Get(0).(func(context.Context, counters, beginAggregatingOpts) error); ok </span><span class="cov0" title="0">{
+                r0 = rf(_a0, counters1, opts)
+        }</span> else<span class="cov6" title="3"> {
+                r0 = ret.Error(0)
+        }</span>
+
+        <span class="cov6" title="3">return r0</span>
+}
+
+// mockItemEventsAggregator_beginAggregating_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'beginAggregating'
+type mockItemEventsAggregator_beginAggregating_Call struct {
+        *mock.Call
+}
+
+// beginAggregating is a helper method to define mock.On call
+//   - _a0 context.Context
+//   - counters1 counters
+//   - opts beginAggregatingOpts
+func (_e *mockItemEventsAggregator_Expecter) beginAggregating(_a0 interface{}, counters1 interface{}, opts interface{}) *mockItemEventsAggregator_beginAggregating_Call <span class="cov6" title="3">{
+        return &amp;mockItemEventsAggregator_beginAggregating_Call{Call: _e.mock.On("beginAggregating", _a0, counters1, opts)}
+}</span>
+
+func (_c *mockItemEventsAggregator_beginAggregating_Call) Run(run func(_a0 context.Context, counters1 counters, opts beginAggregatingOpts)) *mockItemEventsAggregator_beginAggregating_Call <span class="cov0" title="0">{
+        _c.Call.Run(func(args mock.Arguments) </span><span class="cov0" title="0">{
+                run(args[0].(context.Context), args[1].(counters), args[2].(beginAggregatingOpts))
+        }</span>)
+        <span class="cov0" title="0">return _c</span>
+}
+
+func (_c *mockItemEventsAggregator_beginAggregating_Call) Return(_a0 error) *mockItemEventsAggregator_beginAggregating_Call <span class="cov6" title="3">{
+        _c.Call.Return(_a0)
+        return _c
+}</span>
+
+func (_c *mockItemEventsAggregator_beginAggregating_Call) RunAndReturn(run func(context.Context, counters, beginAggregatingOpts) error) *mockItemEventsAggregator_beginAggregating_Call <span class="cov0" title="0">{
+        _c.Call.Return(run)
+        return _c
+}</span>
+
+// newMockItemEventsAggregator creates a new instance of mockItemEventsAggregator. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
+// The first argument is typically a *testing.T value.
+func newMockItemEventsAggregator(t interface {
+        mock.TestingT
+        Cleanup(func())
+}) *mockItemEventsAggregator <span class="cov10" title="7">{
+        mock := &amp;mockItemEventsAggregator{}
+        mock.Mock.Test(t)
+
+        t.Cleanup(func() </span><span class="cov10" title="7">{ mock.AssertExpectations(t) }</span>)
+
+        <span class="cov10" title="7">return mock</span>
+}
+</pre>
+		
+		<pre class="file" id="file30" style="display: none">// Code generated by mockery. DO NOT EDIT.
+
+//go:build !release
+
+package aggregation
+
+import (
+        context "context"
+
+        models "github.com/gemyago/top-k-system-go/internal/app/models"
+        mock "github.com/stretchr/testify/mock"
+)
+
+// mockItemEventsAggregatorModel is an autogenerated mock type for the itemEventsAggregatorModel type
+type mockItemEventsAggregatorModel struct {
+        mock.Mock
+}
+
+type mockItemEventsAggregatorModel_Expecter struct {
+        mock *mock.Mock
+}
+
+func (_m *mockItemEventsAggregatorModel) EXPECT() *mockItemEventsAggregatorModel_Expecter <span class="cov10" title="13">{
+        return &amp;mockItemEventsAggregatorModel_Expecter{mock: &amp;_m.Mock}
+}</span>
+
+// aggregateItemEvent provides a mock function with given fields: offset, evt
+func (_m *mockItemEventsAggregatorModel) aggregateItemEvent(offset int64, evt *models.ItemEvent) <span class="cov7" title="6">{
+        _m.Called(offset, evt)
+}</span>
+
+// mockItemEventsAggregatorModel_aggregateItemEvent_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'aggregateItemEvent'
+type mockItemEventsAggregatorModel_aggregateItemEvent_Call struct {
+        *mock.Call
+}
+
+// aggregateItemEvent is a helper method to define mock.On call
+//   - offset int64
+//   - evt *models.ItemEvent
+func (_e *mockItemEventsAggregatorModel_Expecter) aggregateItemEvent(offset interface{}, evt interface{}) *mockItemEventsAggregatorModel_aggregateItemEvent_Call <span class="cov7" title="6">{
+        return &amp;mockItemEventsAggregatorModel_aggregateItemEvent_Call{Call: _e.mock.On("aggregateItemEvent", offset, evt)}
+}</span>
+
+func (_c *mockItemEventsAggregatorModel_aggregateItemEvent_Call) Run(run func(offset int64, evt *models.ItemEvent)) *mockItemEventsAggregatorModel_aggregateItemEvent_Call <span class="cov0" title="0">{
+        _c.Call.Run(func(args mock.Arguments) </span><span class="cov0" title="0">{
+                run(args[0].(int64), args[1].(*models.ItemEvent))
+        }</span>)
+        <span class="cov0" title="0">return _c</span>
+}
+
+func (_c *mockItemEventsAggregatorModel_aggregateItemEvent_Call) Return() *mockItemEventsAggregatorModel_aggregateItemEvent_Call <span class="cov0" title="0">{
+        _c.Call.Return()
+        return _c
+}</span>
+
+func (_c *mockItemEventsAggregatorModel_aggregateItemEvent_Call) RunAndReturn(run func(int64, *models.ItemEvent)) *mockItemEventsAggregatorModel_aggregateItemEvent_Call <span class="cov0" title="0">{
+        _c.Call.Return(run)
+        return _c
+}</span>
+
+// fetchMessages provides a mock function with given fields: ctx
+func (_m *mockItemEventsAggregatorModel) fetchMessages(ctx context.Context) &lt;-chan fetchMessageResult <span class="cov6" title="5">{
+        ret := _m.Called(ctx)
+
+        if len(ret) == 0 </span><span class="cov0" title="0">{
+                panic("no return value specified for fetchMessages")</span>
+        }
+
+        <span class="cov6" title="5">var r0 &lt;-chan fetchMessageResult
+        if rf, ok := ret.Get(0).(func(context.Context) &lt;-chan fetchMessageResult); ok </span><span class="cov0" title="0">{
+                r0 = rf(ctx)
+        }</span> else<span class="cov6" title="5"> {
+                if ret.Get(0) != nil </span><span class="cov6" title="5">{
+                        r0 = ret.Get(0).(&lt;-chan fetchMessageResult)
+                }</span>
+        }
+
+        <span class="cov6" title="5">return r0</span>
+}
+
+// mockItemEventsAggregatorModel_fetchMessages_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'fetchMessages'
+type mockItemEventsAggregatorModel_fetchMessages_Call struct {
+        *mock.Call
+}
+
+// fetchMessages is a helper method to define mock.On call
+//   - ctx context.Context
+func (_e *mockItemEventsAggregatorModel_Expecter) fetchMessages(ctx interface{}) *mockItemEventsAggregatorModel_fetchMessages_Call <span class="cov6" title="5">{
+        return &amp;mockItemEventsAggregatorModel_fetchMessages_Call{Call: _e.mock.On("fetchMessages", ctx)}
+}</span>
+
+func (_c *mockItemEventsAggregatorModel_fetchMessages_Call) Run(run func(ctx context.Context)) *mockItemEventsAggregatorModel_fetchMessages_Call <span class="cov0" title="0">{
+        _c.Call.Run(func(args mock.Arguments) </span><span class="cov0" title="0">{
+                run(args[0].(context.Context))
+        }</span>)
+        <span class="cov0" title="0">return _c</span>
+}
+
+func (_c *mockItemEventsAggregatorModel_fetchMessages_Call) Return(_a0 &lt;-chan fetchMessageResult) *mockItemEventsAggregatorModel_fetchMessages_Call <span class="cov6" title="5">{
+        _c.Call.Return(_a0)
+        return _c
+}</span>
+
+func (_c *mockItemEventsAggregatorModel_fetchMessages_Call) RunAndReturn(run func(context.Context) &lt;-chan fetchMessageResult) *mockItemEventsAggregatorModel_fetchMessages_Call <span class="cov0" title="0">{
+        _c.Call.Return(run)
+        return _c
+}</span>
+
+// flushMessages provides a mock function with given fields: ctx, counters1
+func (_m *mockItemEventsAggregatorModel) flushMessages(ctx context.Context, counters1 counters) <span class="cov3" title="2">{
+        _m.Called(ctx, counters1)
+}</span>
+
+// mockItemEventsAggregatorModel_flushMessages_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'flushMessages'
+type mockItemEventsAggregatorModel_flushMessages_Call struct {
+        *mock.Call
+}
+
+// flushMessages is a helper method to define mock.On call
+//   - ctx context.Context
+//   - counters1 counters
+func (_e *mockItemEventsAggregatorModel_Expecter) flushMessages(ctx interface{}, counters1 interface{}) *mockItemEventsAggregatorModel_flushMessages_Call <span class="cov3" title="2">{
+        return &amp;mockItemEventsAggregatorModel_flushMessages_Call{Call: _e.mock.On("flushMessages", ctx, counters1)}
+}</span>
+
+func (_c *mockItemEventsAggregatorModel_flushMessages_Call) Run(run func(ctx context.Context, counters1 counters)) *mockItemEventsAggregatorModel_flushMessages_Call <span class="cov0" title="0">{
+        _c.Call.Run(func(args mock.Arguments) </span><span class="cov0" title="0">{
+                run(args[0].(context.Context), args[1].(counters))
+        }</span>)
+        <span class="cov0" title="0">return _c</span>
+}
+
+func (_c *mockItemEventsAggregatorModel_flushMessages_Call) Return() *mockItemEventsAggregatorModel_flushMessages_Call <span class="cov0" title="0">{
+        _c.Call.Return()
+        return _c
+}</span>
+
+func (_c *mockItemEventsAggregatorModel_flushMessages_Call) RunAndReturn(run func(context.Context, counters)) *mockItemEventsAggregatorModel_flushMessages_Call <span class="cov0" title="0">{
+        _c.Call.Return(run)
+        return _c
+}</span>
+
+// newMockItemEventsAggregatorModel creates a new instance of mockItemEventsAggregatorModel. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
+// The first argument is typically a *testing.T value.
+func newMockItemEventsAggregatorModel(t interface {
+        mock.TestingT
+        Cleanup(func())
+}) *mockItemEventsAggregatorModel <span class="cov6" title="5">{
+        mock := &amp;mockItemEventsAggregatorModel{}
+        mock.Mock.Test(t)
+
+        t.Cleanup(func() </span><span class="cov6" title="5">{ mock.AssertExpectations(t) }</span>)
+
+        <span class="cov6" title="5">return mock</span>
+}
+</pre>
+		
+		<pre class="file" id="file31" style="display: none">package aggregation
+
+import (
+        "github.com/gemyago/top-k-system-go/internal/di"
+        "github.com/gemyago/top-k-system-go/internal/services"
+        "go.uber.org/dig"
+)
+
+func Register(container *dig.Container) error <span class="cov10" title="4">{
+        return di.ProvideAll(container,
+                di.ProvideAs[services.ItemEventsKafkaReader, itemEventsKafkaReader],
+
+                NewCommands,
+
+                // package private deps
+                newItemEventsAggregatorModel,
+                newItemEventsAggregator,
+                newCheckPointerModel,
+                di.ProvideValue(countersFactory(countersFactoryFunc(newCounters))),
+                newCheckPointer,
+        )
+}</span>
+</pre>
+		
+		<pre class="file" id="file32" style="display: none">//go:build !release
+
+package aggregation
+
+import (
+        "math/rand/v2"
+
+        "github.com/go-faker/faker/v4"
+)
+
+func randomManifest() checkPointManifest <span class="cov7" title="4">{
+        return checkPointManifest{
+                LastOffset:           rand.Int64N(10000),
+                CountersBlobFileName: faker.Word(),
+        }
+}</span>
+
+func randomCountersValues() map[string]int64 <span class="cov10" title="6">{
+        return map[string]int64{
+                faker.UUIDHyphenated(): rand.Int64(),
+                faker.UUIDHyphenated(): rand.Int64(),
+                faker.UUIDHyphenated(): rand.Int64(),
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file33" style="display: none">package ingestion
+
+import (
+        "context"
+        "encoding/json"
+        "fmt"
+
+        "github.com/gemyago/top-k-system-go/internal/app/models"
+        "github.com/segmentio/kafka-go"
+        "go.uber.org/dig"
+)
+
+type itemEventsWriter interface {
+        WriteMessages(ctx context.Context, msgs ...kafka.Message) error
+}
+
+type CommandsDeps struct {
+        dig.In
+
+        ItemEventsWriter itemEventsWriter
+}
+
+type Commands struct {
+        deps CommandsDeps
+}
+
+func (c *Commands) IngestItemEvent(ctx context.Context, evt *models.ItemEvent) error <span class="cov5" title="2">{
+        msgValue, err := json.Marshal(evt)
+        if err != nil </span><span class="cov0" title="0">{ // coverage-ignore // unrealistic to simulate this error
+                return fmt.Errorf("failed to marshal event: %w", err)
+        }</span>
+
+        <span class="cov5" title="2">err = c.deps.ItemEventsWriter.WriteMessages(
+                // It's going to write in batches outside of the API call
+                // we don't want to cancel to abort it
+                context.WithoutCancel(ctx),
+                kafka.Message{
+                        Key:   []byte(evt.ItemID),
+                        Value: msgValue,
+                },
+        )
+        if err != nil </span><span class="cov1" title="1">{
+                return fmt.Errorf("failed to write item event (itemID=%v): %w", evt.ItemID, err)
+        }</span>
+        <span class="cov1" title="1">return nil</span>
+}
+
+func NewCommands(deps CommandsDeps) *Commands <span class="cov10" title="4">{
+        return &amp;Commands{deps}
+}</span>
+</pre>
+		
+		<pre class="file" id="file34" style="display: none">// Code generated by mockery. DO NOT EDIT.
+
+//go:build !release
+
+package ingestion
+
+import (
+        context "context"
+
+        models "github.com/gemyago/top-k-system-go/internal/app/models"
+        mock "github.com/stretchr/testify/mock"
+)
+
+// MockCommands is an autogenerated mock type for the mockCommands type
+type MockCommands struct {
+        mock.Mock
+}
+
+type MockCommands_Expecter struct {
+        mock *mock.Mock
+}
+
+func (_m *MockCommands) EXPECT() *MockCommands_Expecter <span class="cov10" title="2">{
+        return &amp;MockCommands_Expecter{mock: &amp;_m.Mock}
+}</span>
+
+// IngestItemEvent provides a mock function with given fields: ctx, evt
+func (_m *MockCommands) IngestItemEvent(ctx context.Context, evt *models.ItemEvent) error <span class="cov10" title="2">{
+        ret := _m.Called(ctx, evt)
+
+        if len(ret) == 0 </span><span class="cov0" title="0">{
+                panic("no return value specified for IngestItemEvent")</span>
+        }
+
+        <span class="cov10" title="2">var r0 error
+        if rf, ok := ret.Get(0).(func(context.Context, *models.ItemEvent) error); ok </span><span class="cov0" title="0">{
+                r0 = rf(ctx, evt)
+        }</span> else<span class="cov10" title="2"> {
+                r0 = ret.Error(0)
+        }</span>
+
+        <span class="cov10" title="2">return r0</span>
+}
+
+// MockCommands_IngestItemEvent_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'IngestItemEvent'
+type MockCommands_IngestItemEvent_Call struct {
+        *mock.Call
+}
+
+// IngestItemEvent is a helper method to define mock.On call
+//   - ctx context.Context
+//   - evt *models.ItemEvent
+func (_e *MockCommands_Expecter) IngestItemEvent(ctx interface{}, evt interface{}) *MockCommands_IngestItemEvent_Call <span class="cov10" title="2">{
+        return &amp;MockCommands_IngestItemEvent_Call{Call: _e.mock.On("IngestItemEvent", ctx, evt)}
+}</span>
+
+func (_c *MockCommands_IngestItemEvent_Call) Run(run func(ctx context.Context, evt *models.ItemEvent)) *MockCommands_IngestItemEvent_Call <span class="cov0" title="0">{
+        _c.Call.Run(func(args mock.Arguments) </span><span class="cov0" title="0">{
+                run(args[0].(context.Context), args[1].(*models.ItemEvent))
+        }</span>)
+        <span class="cov0" title="0">return _c</span>
+}
+
+func (_c *MockCommands_IngestItemEvent_Call) Return(_a0 error) *MockCommands_IngestItemEvent_Call <span class="cov10" title="2">{
+        _c.Call.Return(_a0)
+        return _c
+}</span>
+
+func (_c *MockCommands_IngestItemEvent_Call) RunAndReturn(run func(context.Context, *models.ItemEvent) error) *MockCommands_IngestItemEvent_Call <span class="cov0" title="0">{
+        _c.Call.Return(run)
+        return _c
+}</span>
+
+// NewMockCommands creates a new instance of MockCommands. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
+// The first argument is typically a *testing.T value.
+func NewMockCommands(t interface {
+        mock.TestingT
+        Cleanup(func())
+}) *MockCommands <span class="cov10" title="2">{
+        mock := &amp;MockCommands{}
+        mock.Mock.Test(t)
+
+        t.Cleanup(func() </span><span class="cov10" title="2">{ mock.AssertExpectations(t) }</span>)
+
+        <span class="cov10" title="2">return mock</span>
+}
+</pre>
+		
+		<pre class="file" id="file35" style="display: none">package ingestion
+
+import (
+        "github.com/gemyago/top-k-system-go/internal/di"
+        "github.com/gemyago/top-k-system-go/internal/services"
+        "go.uber.org/dig"
+)
+
+func Register(container *dig.Container) error <span class="cov10" title="4">{
+        return di.ProvideAll(container,
+                di.ProvideAs[services.ItemEventsKafkaWriter, itemEventsWriter],
+
+                NewCommands,
+        )
+}</span>
+</pre>
+		
+		<pre class="file" id="file36" style="display: none">//go:build !release
+
+package models
+
+import (
+        "time"
+
+        "github.com/go-faker/faker/v4"
+)
+
+func MakeRandomItemEvent() ItemEvent <span class="cov10" title="20">{
+        return ItemEvent{
+                ItemID:     faker.UUIDHyphenated(),
+                IngestedAt: time.UnixMilli(faker.RandomUnixTime()),
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file37" style="display: none">package config
+
+import (
+        "embed"
+        "fmt"
+
+        "github.com/spf13/viper"
+)
+
+//go:embed *.json
+var resources embed.FS
+
+func mergeResourceCfg(cfg *viper.Viper, resourceName string) error <span class="cov10" title="27">{
+        resourceStream, err := resources.Open(resourceName)
+        if err != nil </span><span class="cov5" title="5">{
+                return fmt.Errorf("failed to read config %v: %w", resourceName, err)
+        }</span>
+        <span class="cov9" title="22">defer resourceStream.Close()
+
+        if err = cfg.MergeConfig(resourceStream); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to load config %v: %w", resourceName, err)
+        }</span>
+        <span class="cov9" title="22">return nil</span>
+}
+
+type LoadOpts struct {
+        env                   string
+        defaultConfigFileName string
+}
+
+func (opts *LoadOpts) WithEnv(val string) *LoadOpts <span class="cov7" title="12">{
+        if val != "" </span><span class="cov5" title="5">{
+                opts.env = val
+        }</span>
+        <span class="cov7" title="12">return opts</span>
+}
+
+func NewLoadOpts() *LoadOpts <span class="cov8" title="14">{
+        return &amp;LoadOpts{
+                env:                   "local",
+                defaultConfigFileName: "default.json",
+        }
+}</span>
+
+func Load(opts *LoadOpts) (*viper.Viper, error) <span class="cov8" title="14">{
+        cfg := viper.New()
+        cfg.SetConfigType("json")
+
+        if err := mergeResourceCfg(cfg, opts.defaultConfigFileName); err != nil </span><span class="cov1" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="13">if err := mergeResourceCfg(cfg, opts.env+".json"); err != nil </span><span class="cov4" title="4">{
+                return nil, err
+        }</span>
+
+        <span class="cov7" title="9">return cfg, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file38" style="display: none">package config
+
+import (
+        "fmt"
+
+        "github.com/gemyago/top-k-system-go/internal/di"
+        "github.com/spf13/viper"
+        "go.uber.org/dig"
+)
+
+type configValueProvider struct {
+        cfg        *viper.Viper
+        configPath string
+        diPath     string
+}
+
+func provideConfigValue(cfg *viper.Viper, path string) configValueProvider <span class="cov10" title="57">{
+        if !cfg.IsSet(path) </span><span class="cov1" title="1">{
+                panic(fmt.Errorf("config key not found: %s", path))</span>
+        }
+        <span class="cov9" title="56">return configValueProvider{cfg, path, "config." + path}</span>
+}
+
+func (p configValueProvider) asInt() di.ConstructorWithOpts <span class="cov4" title="5">{
+        return di.ProvideValue(p.cfg.GetInt(p.configPath), dig.Name(p.diPath))
+}</span>
+
+func (p configValueProvider) asString() di.ConstructorWithOpts <span class="cov6" title="13">{
+        return di.ProvideValue(p.cfg.GetString(p.configPath), dig.Name(p.diPath))
+}</span>
+
+func (p configValueProvider) asBool() di.ConstructorWithOpts <span class="cov5" title="9">{
+        return di.ProvideValue(p.cfg.GetBool(p.configPath), dig.Name(p.diPath))
+}</span>
+
+func (p configValueProvider) asDuration() di.ConstructorWithOpts <span class="cov8" title="29">{
+        return di.ProvideValue(p.cfg.GetDuration(p.configPath), dig.Name(p.diPath))
+}</span>
+
+func Provide(container *dig.Container, cfg *viper.Viper) error <span class="cov4" title="4">{
+        return di.ProvideAll(container,
+                provideConfigValue(cfg, "gracefulShutdownTimeout").asDuration(),
+
+                // http server config
+                provideConfigValue(cfg, "httpServer.port").asInt(),
+                provideConfigValue(cfg, "httpServer.idleTimeout").asDuration(),
+                provideConfigValue(cfg, "httpServer.readHeaderTimeout").asDuration(),
+                provideConfigValue(cfg, "httpServer.readTimeout").asDuration(),
+                provideConfigValue(cfg, "httpServer.writeTimeout").asDuration(),
+
+                // kafka config
+                provideConfigValue(cfg, "kafka.address").asString(),
+                provideConfigValue(cfg, "kafka.itemEventsTopic").asString(),
+                provideConfigValue(cfg, "kafka.allowAutoTopicCreation").asBool(),
+                provideConfigValue(cfg, "kafka.readerMaxWait").asDuration(),
+
+                // aggregator
+                provideConfigValue(cfg, "aggregator.flushInterval").asDuration(),
+                provideConfigValue(cfg, "aggregator.verbose").asBool(),
+
+                // blob storage
+                provideConfigValue(cfg, "blobstorage.localFolder").asString(),
+        )
+}</span>
+</pre>
+		
+		<pre class="file" id="file39" style="display: none">package di
+
+import (
+        "fmt"
+
+        "go.uber.org/dig"
+)
+
+// Dig is used as DI toolkit https://pkg.go.dev/go.uber.org/dig
+// we are not creating any abstraction over it, but we do have a set of tools to make it easier to use
+
+type ConstructorWithOpts struct {
+        Constructor interface{}
+        Options     []dig.ProvideOption
+}
+
+func ProvideAll(container *dig.Container, providers ...interface{}) error <span class="cov7" title="34">{
+        for i, provider := range providers </span><span class="cov10" title="145">{
+                switch p := provider.(type) </span>{
+                case ConstructorWithOpts:<span class="cov8" title="73">
+                        if err := container.Provide(p.Constructor, p.Options...); err != nil </span><span class="cov1" title="1">{
+                                return fmt.Errorf("failed to provide %d-th dependency: %w", i, err)
+                        }</span>
+                default:<span class="cov8" title="72">
+                        if err := container.Provide(provider); err != nil </span><span class="cov1" title="1">{
+                                return fmt.Errorf("failed to provide %d-th dependency: %w", i, err)
+                        }</span>
+                }
+        }
+        <span class="cov7" title="32">return nil</span>
+}
+
+// ProvideValue will create a constructor (e.g func) from a given value.
+func ProvideValue[T any](val T, opts ...dig.ProvideOption) ConstructorWithOpts <span class="cov8" title="74">{
+        return ConstructorWithOpts{
+                Constructor: func() T </span><span class="cov7" title="35">{ return val }</span>,
+                Options:     opts,
+        }
+}
+
+// ProvideWithArg will create a constructor with a first arg explicitly provided
+// supposed return no error.
+func ProvideWithArg[
+        TArg any,
+        TConstructorArg any,
+        TRes any,
+](
+        arg TArg,
+        constructor func(arg TArg, cArg TConstructorArg) TRes,
+) func(TConstructorArg) TRes <span class="cov1" title="1">{
+        return func(cArg TConstructorArg) TRes </span><span class="cov1" title="1">{
+                return constructor(arg, cArg)
+        }</span>
+}
+
+// ProvideWithArgErr will create a constructor with a first arg explicitly provided
+// supposed return an error.
+func ProvideWithArgErr[
+        TArg any,
+        TConstructorArg any,
+        TDep any,
+](
+        arg TArg,
+        constructor func(arg TArg, cArg TConstructorArg) (TDep, error),
+) func(TConstructorArg) (TDep, error) <span class="cov1" title="1">{
+        return func(cArg TConstructorArg) (TDep, error) </span><span class="cov1" title="1">{
+                return constructor(arg, cArg)
+        }</span>
+}
+
+// ProvideAs is used to provide one type as another, typically
+// used to provide implementation struct as particular interface.
+func ProvideAs[TSource any, TTarget any](source TSource) (TTarget, error) <span class="cov3" title="4">{
+        target, ok := any(source).(TTarget)
+        if !ok </span><span class="cov0" title="0">{
+                return target, fmt.Errorf("failed to cast %T to %T", source, target)
+        }</span>
+        <span class="cov3" title="4">return target, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file40" style="display: none">package diag
+
+import "log/slog"
+
+func ErrAttr(err error) slog.Attr <span class="cov10" title="3">{
+        return slog.Any("err", err)
+}</span>
+</pre>
+		
+		<pre class="file" id="file41" style="display: none">// Code generated by mockery. DO NOT EDIT.
+
+//go:build !release
+
+package diag
+
+import (
+        context "context"
+        slog "log/slog"
+
+        mock "github.com/stretchr/testify/mock"
+)
+
+// MockSlogHandler is an autogenerated mock type for the Handler type
+type MockSlogHandler struct {
+        mock.Mock
+}
+
+type MockSlogHandler_Expecter struct {
+        mock *mock.Mock
+}
+
+func (_m *MockSlogHandler) EXPECT() *MockSlogHandler_Expecter <span class="cov8" title="3">{
+        return &amp;MockSlogHandler_Expecter{mock: &amp;_m.Mock}
+}</span>
+
+// Enabled provides a mock function with given fields: _a0, _a1
+func (_m *MockSlogHandler) Enabled(_a0 context.Context, _a1 slog.Level) bool <span class="cov0" title="0">{
+        ret := _m.Called(_a0, _a1)
+
+        if len(ret) == 0 </span><span class="cov0" title="0">{
+                panic("no return value specified for Enabled")</span>
+        }
+
+        <span class="cov0" title="0">var r0 bool
+        if rf, ok := ret.Get(0).(func(context.Context, slog.Level) bool); ok </span><span class="cov0" title="0">{
+                r0 = rf(_a0, _a1)
+        }</span> else<span class="cov0" title="0"> {
+                r0 = ret.Get(0).(bool)
+        }</span>
+
+        <span class="cov0" title="0">return r0</span>
+}
+
+// MockSlogHandler_Enabled_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Enabled'
+type MockSlogHandler_Enabled_Call struct {
+        *mock.Call
+}
+
+// Enabled is a helper method to define mock.On call
+//   - _a0 context.Context
+//   - _a1 slog.Level
+func (_e *MockSlogHandler_Expecter) Enabled(_a0 interface{}, _a1 interface{}) *MockSlogHandler_Enabled_Call <span class="cov0" title="0">{
+        return &amp;MockSlogHandler_Enabled_Call{Call: _e.mock.On("Enabled", _a0, _a1)}
+}</span>
+
+func (_c *MockSlogHandler_Enabled_Call) Run(run func(_a0 context.Context, _a1 slog.Level)) *MockSlogHandler_Enabled_Call <span class="cov0" title="0">{
+        _c.Call.Run(func(args mock.Arguments) </span><span class="cov0" title="0">{
+                run(args[0].(context.Context), args[1].(slog.Level))
+        }</span>)
+        <span class="cov0" title="0">return _c</span>
+}
+
+func (_c *MockSlogHandler_Enabled_Call) Return(_a0 bool) *MockSlogHandler_Enabled_Call <span class="cov0" title="0">{
+        _c.Call.Return(_a0)
+        return _c
+}</span>
+
+func (_c *MockSlogHandler_Enabled_Call) RunAndReturn(run func(context.Context, slog.Level) bool) *MockSlogHandler_Enabled_Call <span class="cov0" title="0">{
+        _c.Call.Return(run)
+        return _c
+}</span>
+
+// Handle provides a mock function with given fields: _a0, _a1
+func (_m *MockSlogHandler) Handle(_a0 context.Context, _a1 slog.Record) error <span class="cov5" title="2">{
+        ret := _m.Called(_a0, _a1)
+
+        if len(ret) == 0 </span><span class="cov0" title="0">{
+                panic("no return value specified for Handle")</span>
+        }
+
+        <span class="cov5" title="2">var r0 error
+        if rf, ok := ret.Get(0).(func(context.Context, slog.Record) error); ok </span><span class="cov0" title="0">{
+                r0 = rf(_a0, _a1)
+        }</span> else<span class="cov5" title="2"> {
+                r0 = ret.Error(0)
+        }</span>
+
+        <span class="cov5" title="2">return r0</span>
+}
+
+// MockSlogHandler_Handle_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Handle'
+type MockSlogHandler_Handle_Call struct {
+        *mock.Call
+}
+
+// Handle is a helper method to define mock.On call
+//   - _a0 context.Context
+//   - _a1 slog.Record
+func (_e *MockSlogHandler_Expecter) Handle(_a0 interface{}, _a1 interface{}) *MockSlogHandler_Handle_Call <span class="cov5" title="2">{
+        return &amp;MockSlogHandler_Handle_Call{Call: _e.mock.On("Handle", _a0, _a1)}
+}</span>
+
+func (_c *MockSlogHandler_Handle_Call) Run(run func(_a0 context.Context, _a1 slog.Record)) *MockSlogHandler_Handle_Call <span class="cov0" title="0">{
+        _c.Call.Run(func(args mock.Arguments) </span><span class="cov0" title="0">{
+                run(args[0].(context.Context), args[1].(slog.Record))
+        }</span>)
+        <span class="cov0" title="0">return _c</span>
+}
+
+func (_c *MockSlogHandler_Handle_Call) Return(_a0 error) *MockSlogHandler_Handle_Call <span class="cov5" title="2">{
+        _c.Call.Return(_a0)
+        return _c
+}</span>
+
+func (_c *MockSlogHandler_Handle_Call) RunAndReturn(run func(context.Context, slog.Record) error) *MockSlogHandler_Handle_Call <span class="cov0" title="0">{
+        _c.Call.Return(run)
+        return _c
+}</span>
+
+// WithAttrs provides a mock function with given fields: attrs
+func (_m *MockSlogHandler) WithAttrs(attrs []slog.Attr) slog.Handler <span class="cov1" title="1">{
+        ret := _m.Called(attrs)
+
+        if len(ret) == 0 </span><span class="cov0" title="0">{
+                panic("no return value specified for WithAttrs")</span>
+        }
+
+        <span class="cov1" title="1">var r0 slog.Handler
+        if rf, ok := ret.Get(0).(func([]slog.Attr) slog.Handler); ok </span><span class="cov0" title="0">{
+                r0 = rf(attrs)
+        }</span> else<span class="cov1" title="1"> {
+                if ret.Get(0) != nil </span><span class="cov1" title="1">{
+                        r0 = ret.Get(0).(slog.Handler)
+                }</span>
+        }
+
+        <span class="cov1" title="1">return r0</span>
+}
+
+// MockSlogHandler_WithAttrs_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'WithAttrs'
+type MockSlogHandler_WithAttrs_Call struct {
+        *mock.Call
+}
+
+// WithAttrs is a helper method to define mock.On call
+//   - attrs []slog.Attr
+func (_e *MockSlogHandler_Expecter) WithAttrs(attrs interface{}) *MockSlogHandler_WithAttrs_Call <span class="cov1" title="1">{
+        return &amp;MockSlogHandler_WithAttrs_Call{Call: _e.mock.On("WithAttrs", attrs)}
+}</span>
+
+func (_c *MockSlogHandler_WithAttrs_Call) Run(run func(attrs []slog.Attr)) *MockSlogHandler_WithAttrs_Call <span class="cov0" title="0">{
+        _c.Call.Run(func(args mock.Arguments) </span><span class="cov0" title="0">{
+                run(args[0].([]slog.Attr))
+        }</span>)
+        <span class="cov0" title="0">return _c</span>
+}
+
+func (_c *MockSlogHandler_WithAttrs_Call) Return(_a0 slog.Handler) *MockSlogHandler_WithAttrs_Call <span class="cov1" title="1">{
+        _c.Call.Return(_a0)
+        return _c
+}</span>
+
+func (_c *MockSlogHandler_WithAttrs_Call) RunAndReturn(run func([]slog.Attr) slog.Handler) *MockSlogHandler_WithAttrs_Call <span class="cov0" title="0">{
+        _c.Call.Return(run)
+        return _c
+}</span>
+
+// WithGroup provides a mock function with given fields: name
+func (_m *MockSlogHandler) WithGroup(name string) slog.Handler <span class="cov0" title="0">{
+        ret := _m.Called(name)
+
+        if len(ret) == 0 </span><span class="cov0" title="0">{
+                panic("no return value specified for WithGroup")</span>
+        }
+
+        <span class="cov0" title="0">var r0 slog.Handler
+        if rf, ok := ret.Get(0).(func(string) slog.Handler); ok </span><span class="cov0" title="0">{
+                r0 = rf(name)
+        }</span> else<span class="cov0" title="0"> {
+                if ret.Get(0) != nil </span><span class="cov0" title="0">{
+                        r0 = ret.Get(0).(slog.Handler)
+                }</span>
+        }
+
+        <span class="cov0" title="0">return r0</span>
+}
+
+// MockSlogHandler_WithGroup_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'WithGroup'
+type MockSlogHandler_WithGroup_Call struct {
+        *mock.Call
+}
+
+// WithGroup is a helper method to define mock.On call
+//   - name string
+func (_e *MockSlogHandler_Expecter) WithGroup(name interface{}) *MockSlogHandler_WithGroup_Call <span class="cov0" title="0">{
+        return &amp;MockSlogHandler_WithGroup_Call{Call: _e.mock.On("WithGroup", name)}
+}</span>
+
+func (_c *MockSlogHandler_WithGroup_Call) Run(run func(name string)) *MockSlogHandler_WithGroup_Call <span class="cov0" title="0">{
+        _c.Call.Run(func(args mock.Arguments) </span><span class="cov0" title="0">{
+                run(args[0].(string))
+        }</span>)
+        <span class="cov0" title="0">return _c</span>
+}
+
+func (_c *MockSlogHandler_WithGroup_Call) Return(_a0 slog.Handler) *MockSlogHandler_WithGroup_Call <span class="cov0" title="0">{
+        _c.Call.Return(_a0)
+        return _c
+}</span>
+
+func (_c *MockSlogHandler_WithGroup_Call) RunAndReturn(run func(string) slog.Handler) *MockSlogHandler_WithGroup_Call <span class="cov0" title="0">{
+        _c.Call.Return(run)
+        return _c
+}</span>
+
+// NewMockSlogHandler creates a new instance of MockSlogHandler. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
+// The first argument is typically a *testing.T value.
+func NewMockSlogHandler(t interface {
+        mock.TestingT
+        Cleanup(func())
+}) *MockSlogHandler <span class="cov10" title="4">{
+        mock := &amp;MockSlogHandler{}
+        mock.Mock.Test(t)
+
+        t.Cleanup(func() </span><span class="cov10" title="4">{ mock.AssertExpectations(t) }</span>)
+
+        <span class="cov10" title="4">return mock</span>
+}
+</pre>
+		
+		<pre class="file" id="file42" style="display: none">package diag
+
+import (
+        "context"
+        "io"
+        "log/slog"
+        "os"
+)
+
+type contextKey string
+
+const (
+        contextDiagAttrs = contextKey("diag.context-key.log-attribs")
+)
+
+type LogAttributes struct {
+        CorrelationID slog.Value
+}
+
+func GetLogAttributesFromContext(ctx context.Context) LogAttributes <span class="cov5" title="7">{
+        res, _ := ctx.Value(contextDiagAttrs).(LogAttributes)
+        return res
+}</span>
+
+func SetLogAttributesToContext(ctx context.Context, attributes LogAttributes) context.Context <span class="cov4" title="4">{
+        return context.WithValue(ctx, contextDiagAttrs, attributes)
+}</span>
+
+type diagLogHandler struct {
+        target slog.Handler
+}
+
+func (h *diagLogHandler) Enabled(ctx context.Context, lvl slog.Level) bool <span class="cov10" title="54">{
+        return h.target.Enabled(ctx, lvl)
+}</span>
+
+func (h *diagLogHandler) Handle(ctx context.Context, rec slog.Record) error <span class="cov9" title="49">{
+        if diagAttributes, ok := ctx.Value(contextDiagAttrs).(LogAttributes); ok </span><span class="cov1" title="1">{
+                rec.AddAttrs(
+                        slog.Attr{Key: "correlationId", Value: diagAttributes.CorrelationID},
+                )
+        }</span>
+
+        <span class="cov9" title="49">return h.target.Handle(ctx, rec)</span>
+}
+
+func (h *diagLogHandler) WithAttrs(attrs []slog.Attr) slog.Handler <span class="cov9" title="45">{
+        return &amp;diagLogHandler{target: h.target.WithAttrs(attrs)}
+}</span>
+
+func (h *diagLogHandler) WithGroup(name string) slog.Handler <span class="cov9" title="44">{
+        // Using WithAttrs here since group will nest all the attributes
+        // inside of it (including correlationId), which makes it harder to
+        // filter logs by the correlationId.
+        // Consumers can use slog.Group if some attributes needs to be grouped
+        return h.WithAttrs([]slog.Attr{slog.String("group", name)})
+}</span>
+
+var _ slog.Handler = &amp;diagLogHandler{}
+
+type RootLoggerOpts struct {
+        output io.Writer
+
+        jsonLogs bool
+
+        // Info is default (zero)
+        logLevel slog.Level
+}
+
+func (opts *RootLoggerOpts) WithJSONLogs(value bool) *RootLoggerOpts <span class="cov4" title="5">{
+        opts.jsonLogs = value
+        return opts
+}</span>
+
+func (opts *RootLoggerOpts) WithLogLevel(logLevel slog.Level) *RootLoggerOpts <span class="cov4" title="5">{
+        opts.logLevel = logLevel
+        return opts
+}</span>
+
+func (opts *RootLoggerOpts) WithOutput(output io.Writer) *RootLoggerOpts <span class="cov9" title="35">{
+        opts.output = output
+        return opts
+}</span>
+
+func (opts *RootLoggerOpts) WithOptionalOutputFile(outputFile string) *RootLoggerOpts <span class="cov4" title="4">{
+        if outputFile == "" </span><span class="cov0" title="0">{
+                return opts
+        }</span>
+        <span class="cov4" title="4">f, err := os.OpenFile(outputFile, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0o666)
+        if err != nil </span><span class="cov0" title="0">{
+                panic(err)</span>
+        }
+        <span class="cov4" title="4">opts.output = f
+        return opts</span>
+}
+
+func NewRootLoggerOpts() *RootLoggerOpts <span class="cov9" title="41">{
+        return &amp;RootLoggerOpts{
+                output: os.Stdout,
+        }
+}</span>
+
+func SetupRootLogger(opts *RootLoggerOpts) *slog.Logger <span class="cov9" title="41">{
+        logHandlerOpts := &amp;slog.HandlerOptions{Level: opts.logLevel}
+        var logHandler slog.Handler
+        if opts.jsonLogs </span><span class="cov1" title="1">{
+                logHandler = slog.NewJSONHandler(opts.output, logHandlerOpts)
+        }</span> else<span class="cov9" title="40"> {
+                logHandler = slog.NewTextHandler(opts.output, logHandlerOpts)
+        }</span>
+        <span class="cov9" title="41">return slog.New(&amp;diagLogHandler{target: logHandler})</span>
+}
+</pre>
+		
+		<pre class="file" id="file43" style="display: none">//go:build !release
+
+package diag
+
+import (
+        "fmt"
+        "log/slog"
+        "os"
+        "path/filepath"
+        "runtime"
+)
+
+// openTestLogFile will open a log file in a project root directory.
+func openTestLogFile() *os.File <span class="cov6" title="10">{
+        _, filename, _, _ := runtime.Caller(0) // Will be current file
+        testFilePath := filepath.Join(filename, "..", "..", "..", "test.log")
+        f, err := os.OpenFile(testFilePath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0o666)
+        if err != nil </span><span class="cov0" title="0">{
+                err = fmt.Errorf("fail to open log file %q for test logging: %w", testFilePath, err)
+                panic(err)</span>
+        }
+        <span class="cov6" title="10">return f</span>
+}
+
+var testOutput = openTestLogFile() //nolint:gochecknoglobals //it's ok for tests
+
+func RootTestLogger() *slog.Logger <span class="cov10" title="35">{
+        return SetupRootLogger(
+                NewRootLoggerOpts().WithOutput(testOutput),
+        )
+}</span>
+</pre>
+		
+		<pre class="file" id="file44" style="display: none">package blobstorage
+
+import (
+        "context"
+        "fmt"
+        "io"
+        "os"
+        "path"
+
+        "go.uber.org/dig"
+)
+
+type localStorage struct {
+        LocalStorageDeps
+}
+
+func (s *localStorage) Upload(_ context.Context, key string, contents io.Reader) error <span class="cov5" title="3">{
+        file, err := os.Create(path.Join(s.LocalStorageFolder, key))
+        if err != nil </span><span class="cov1" title="1">{
+                return fmt.Errorf("failed to create file %s: %w", key, err)
+        }</span>
+        <span class="cov4" title="2">defer file.Close()
+
+        _, err = io.Copy(file, contents)
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to write to file %s: %w", key, err)
+        }</span>
+        <span class="cov4" title="2">return nil</span>
+}
+
+func (s *localStorage) Download(_ context.Context, key string, out io.Writer) error <span class="cov4" title="2">{
+        filePath := path.Join(s.LocalStorageFolder, key)
+        file, err := os.Open(filePath)
+        if err != nil </span><span class="cov1" title="1">{
+                return fmt.Errorf("failed to open file %s: %w", filePath, err)
+        }</span>
+        <span class="cov1" title="1">defer file.Close()
+
+        if _, err = io.Copy(out, file); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to write to file %s: %w", filePath, err)
+        }</span>
+        <span class="cov1" title="1">return nil</span>
+}
+
+func (s *localStorage) Delete(_ context.Context, key string) error <span class="cov5" title="3">{
+        filePath := path.Join(s.LocalStorageFolder, key)
+        if err := os.Remove(filePath); err != nil </span><span class="cov4" title="2">{
+                return fmt.Errorf("failed to remove file %s: %w", filePath, err)
+        }</span>
+        <span class="cov1" title="1">return nil</span>
+}
+
+type LocalStorageDeps struct {
+        dig.In
+
+        // config
+        LocalStorageFolder string `name:"config.blobstorage.localFolder"`
+}
+
+func NewLocalStorage(deps LocalStorageDeps) Storage <span class="cov10" title="8">{
+        return &amp;localStorage{LocalStorageDeps: deps}
+}</span>
+</pre>
+		
+		<pre class="file" id="file45" style="display: none">// Code generated by mockery. DO NOT EDIT.
+
+//go:build !release
+
+package blobstorage
+
+import (
+        context "context"
+        io "io"
+
+        mock "github.com/stretchr/testify/mock"
+)
+
+// MockStorage is an autogenerated mock type for the Storage type
+type MockStorage struct {
+        mock.Mock
+}
+
+type MockStorage_Expecter struct {
+        mock *mock.Mock
+}
+
+func (_m *MockStorage) EXPECT() *MockStorage_Expecter <span class="cov10" title="9">{
+        return &amp;MockStorage_Expecter{mock: &amp;_m.Mock}
+}</span>
+
+// Delete provides a mock function with given fields: ctx, key
+func (_m *MockStorage) Delete(ctx context.Context, key string) error <span class="cov0" title="0">{
+        ret := _m.Called(ctx, key)
+
+        if len(ret) == 0 </span><span class="cov0" title="0">{
+                panic("no return value specified for Delete")</span>
+        }
+
+        <span class="cov0" title="0">var r0 error
+        if rf, ok := ret.Get(0).(func(context.Context, string) error); ok </span><span class="cov0" title="0">{
+                r0 = rf(ctx, key)
+        }</span> else<span class="cov0" title="0"> {
+                r0 = ret.Error(0)
+        }</span>
+
+        <span class="cov0" title="0">return r0</span>
+}
+
+// MockStorage_Delete_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Delete'
+type MockStorage_Delete_Call struct {
+        *mock.Call
+}
+
+// Delete is a helper method to define mock.On call
+//   - ctx context.Context
+//   - key string
+func (_e *MockStorage_Expecter) Delete(ctx interface{}, key interface{}) *MockStorage_Delete_Call <span class="cov0" title="0">{
+        return &amp;MockStorage_Delete_Call{Call: _e.mock.On("Delete", ctx, key)}
+}</span>
+
+func (_c *MockStorage_Delete_Call) Run(run func(ctx context.Context, key string)) *MockStorage_Delete_Call <span class="cov0" title="0">{
+        _c.Call.Run(func(args mock.Arguments) </span><span class="cov0" title="0">{
+                run(args[0].(context.Context), args[1].(string))
+        }</span>)
+        <span class="cov0" title="0">return _c</span>
+}
+
+func (_c *MockStorage_Delete_Call) Return(_a0 error) *MockStorage_Delete_Call <span class="cov0" title="0">{
+        _c.Call.Return(_a0)
+        return _c
+}</span>
+
+func (_c *MockStorage_Delete_Call) RunAndReturn(run func(context.Context, string) error) *MockStorage_Delete_Call <span class="cov0" title="0">{
+        _c.Call.Return(run)
+        return _c
+}</span>
+
+// Download provides a mock function with given fields: ctx, key, out
+func (_m *MockStorage) Download(ctx context.Context, key string, out io.Writer) error <span class="cov8" title="6">{
+        ret := _m.Called(ctx, key, out)
+
+        if len(ret) == 0 </span><span class="cov0" title="0">{
+                panic("no return value specified for Download")</span>
+        }
+
+        <span class="cov8" title="6">var r0 error
+        if rf, ok := ret.Get(0).(func(context.Context, string, io.Writer) error); ok </span><span class="cov6" title="4">{
+                r0 = rf(ctx, key, out)
+        }</span> else<span class="cov3" title="2"> {
+                r0 = ret.Error(0)
+        }</span>
+
+        <span class="cov8" title="6">return r0</span>
+}
+
+// MockStorage_Download_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Download'
+type MockStorage_Download_Call struct {
+        *mock.Call
+}
+
+// Download is a helper method to define mock.On call
+//   - ctx context.Context
+//   - key string
+//   - out io.Writer
+func (_e *MockStorage_Expecter) Download(ctx interface{}, key interface{}, out interface{}) *MockStorage_Download_Call <span class="cov8" title="6">{
+        return &amp;MockStorage_Download_Call{Call: _e.mock.On("Download", ctx, key, out)}
+}</span>
+
+func (_c *MockStorage_Download_Call) Run(run func(ctx context.Context, key string, out io.Writer)) *MockStorage_Download_Call <span class="cov0" title="0">{
+        _c.Call.Run(func(args mock.Arguments) </span><span class="cov0" title="0">{
+                run(args[0].(context.Context), args[1].(string), args[2].(io.Writer))
+        }</span>)
+        <span class="cov0" title="0">return _c</span>
+}
+
+func (_c *MockStorage_Download_Call) Return(_a0 error) *MockStorage_Download_Call <span class="cov3" title="2">{
+        _c.Call.Return(_a0)
+        return _c
+}</span>
+
+func (_c *MockStorage_Download_Call) RunAndReturn(run func(context.Context, string, io.Writer) error) *MockStorage_Download_Call <span class="cov6" title="4">{
+        _c.Call.Return(run)
+        return _c
+}</span>
+
+// Upload provides a mock function with given fields: ctx, key, contents
+func (_m *MockStorage) Upload(ctx context.Context, key string, contents io.Reader) error <span class="cov5" title="3">{
+        ret := _m.Called(ctx, key, contents)
+
+        if len(ret) == 0 </span><span class="cov0" title="0">{
+                panic("no return value specified for Upload")</span>
+        }
+
+        <span class="cov5" title="3">var r0 error
+        if rf, ok := ret.Get(0).(func(context.Context, string, io.Reader) error); ok </span><span class="cov3" title="2">{
+                r0 = rf(ctx, key, contents)
+        }</span> else<span class="cov1" title="1"> {
+                r0 = ret.Error(0)
+        }</span>
+
+        <span class="cov5" title="3">return r0</span>
+}
+
+// MockStorage_Upload_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Upload'
+type MockStorage_Upload_Call struct {
+        *mock.Call
+}
+
+// Upload is a helper method to define mock.On call
+//   - ctx context.Context
+//   - key string
+//   - contents io.Reader
+func (_e *MockStorage_Expecter) Upload(ctx interface{}, key interface{}, contents interface{}) *MockStorage_Upload_Call <span class="cov5" title="3">{
+        return &amp;MockStorage_Upload_Call{Call: _e.mock.On("Upload", ctx, key, contents)}
+}</span>
+
+func (_c *MockStorage_Upload_Call) Run(run func(ctx context.Context, key string, contents io.Reader)) *MockStorage_Upload_Call <span class="cov0" title="0">{
+        _c.Call.Run(func(args mock.Arguments) </span><span class="cov0" title="0">{
+                run(args[0].(context.Context), args[1].(string), args[2].(io.Reader))
+        }</span>)
+        <span class="cov0" title="0">return _c</span>
+}
+
+func (_c *MockStorage_Upload_Call) Return(_a0 error) *MockStorage_Upload_Call <span class="cov1" title="1">{
+        _c.Call.Return(_a0)
+        return _c
+}</span>
+
+func (_c *MockStorage_Upload_Call) RunAndReturn(run func(context.Context, string, io.Reader) error) *MockStorage_Upload_Call <span class="cov3" title="2">{
+        _c.Call.Return(run)
+        return _c
+}</span>
+
+// NewMockStorage creates a new instance of MockStorage. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
+// The first argument is typically a *testing.T value.
+func NewMockStorage(t interface {
+        mock.TestingT
+        Cleanup(func())
+}) *MockStorage <span class="cov10" title="9">{
+        mock := &amp;MockStorage{}
+        mock.Mock.Test(t)
+
+        t.Cleanup(func() </span><span class="cov10" title="9">{ mock.AssertExpectations(t) }</span>)
+
+        <span class="cov10" title="9">return mock</span>
+}
+</pre>
+		
+		<pre class="file" id="file46" style="display: none">package services
+
+import (
+        "log/slog"
+        "time"
+
+        "github.com/segmentio/kafka-go"
+        "go.uber.org/dig"
+)
+
+type ItemEventsKafkaWriter struct {
+        *kafka.Writer
+}
+
+type ItemEventsKafkaWriterDeps struct {
+        dig.In
+
+        RootLogger *slog.Logger
+
+        // config
+        KafkaTopic                  string `name:"config.kafka.itemEventsTopic"`
+        KafkaAddress                string `name:"config.kafka.address"`
+        KafkaAllowAutoTopicCreation bool   `name:"config.kafka.allowAutoTopicCreation"`
+
+        // services
+        *ShutdownHooks
+}
+
+func NewItemEventsKafkaWriter(deps ItemEventsKafkaWriterDeps) ItemEventsKafkaWriter <span class="cov10" title="2">{
+        writer := &amp;kafka.Writer{
+                Topic:                  deps.KafkaTopic,
+                AllowAutoTopicCreation: deps.KafkaAllowAutoTopicCreation,
+                Addr:                   kafka.TCP(deps.KafkaAddress),
+
+                // TODO: This may need some thinking
+                Async: true,
+        }
+
+        deps.ShutdownHooks.RegisterNoCtx("item-events-writer", writer.Close)
+
+        return ItemEventsKafkaWriter{Writer: writer}
+}</span>
+
+type ItemEventsKafkaReader struct {
+        *kafka.Reader
+}
+
+type ItemEventsKafkaReaderDeps struct {
+        dig.In
+
+        RootLogger *slog.Logger
+
+        // config
+        KafkaTopic    string        `name:"config.kafka.itemEventsTopic"`
+        KafkaAddress  string        `name:"config.kafka.address"`
+        ReaderMaxWait time.Duration `name:"config.kafka.readerMaxWait"`
+
+        // services
+        *ShutdownHooks
+}
+
+func NewItemEventsKafkaReader(deps ItemEventsKafkaReaderDeps) ItemEventsKafkaReader <span class="cov1" title="1">{
+        reader := kafka.NewReader(kafka.ReaderConfig{
+                Brokers: []string{deps.KafkaAddress},
+                Topic:   deps.KafkaTopic,
+                MaxWait: deps.ReaderMaxWait,
+        })
+
+        deps.ShutdownHooks.RegisterNoCtx("item-events-reader", reader.Close)
+
+        return ItemEventsKafkaReader{Reader: reader}
+}</span>
+</pre>
+		
+		<pre class="file" id="file47" style="display: none">// Code generated by mockery. DO NOT EDIT.
+
+//go:build !release
+
+package services
+
+import (
+        context "context"
+
+        kafka "github.com/segmentio/kafka-go"
+        mock "github.com/stretchr/testify/mock"
+)
+
+// MockKafkaReader is an autogenerated mock type for the mockKafkaReader type
+type MockKafkaReader struct {
+        mock.Mock
+}
+
+type MockKafkaReader_Expecter struct {
+        mock *mock.Mock
+}
+
+func (_m *MockKafkaReader) EXPECT() *MockKafkaReader_Expecter <span class="cov8" title="7">{
+        return &amp;MockKafkaReader_Expecter{mock: &amp;_m.Mock}
+}</span>
+
+// Close provides a mock function with given fields:
+func (_m *MockKafkaReader) Close() error <span class="cov0" title="0">{
+        ret := _m.Called()
+
+        if len(ret) == 0 </span><span class="cov0" title="0">{
+                panic("no return value specified for Close")</span>
+        }
+
+        <span class="cov0" title="0">var r0 error
+        if rf, ok := ret.Get(0).(func() error); ok </span><span class="cov0" title="0">{
+                r0 = rf()
+        }</span> else<span class="cov0" title="0"> {
+                r0 = ret.Error(0)
+        }</span>
+
+        <span class="cov0" title="0">return r0</span>
+}
+
+// MockKafkaReader_Close_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Close'
+type MockKafkaReader_Close_Call struct {
+        *mock.Call
+}
+
+// Close is a helper method to define mock.On call
+func (_e *MockKafkaReader_Expecter) Close() *MockKafkaReader_Close_Call <span class="cov0" title="0">{
+        return &amp;MockKafkaReader_Close_Call{Call: _e.mock.On("Close")}
+}</span>
+
+func (_c *MockKafkaReader_Close_Call) Run(run func()) *MockKafkaReader_Close_Call <span class="cov0" title="0">{
+        _c.Call.Run(func(args mock.Arguments) </span><span class="cov0" title="0">{
+                run()
+        }</span>)
+        <span class="cov0" title="0">return _c</span>
+}
+
+func (_c *MockKafkaReader_Close_Call) Return(_a0 error) *MockKafkaReader_Close_Call <span class="cov0" title="0">{
+        _c.Call.Return(_a0)
+        return _c
+}</span>
+
+func (_c *MockKafkaReader_Close_Call) RunAndReturn(run func() error) *MockKafkaReader_Close_Call <span class="cov0" title="0">{
+        _c.Call.Return(run)
+        return _c
+}</span>
+
+// CommitMessages provides a mock function with given fields: ctx, msgs
+func (_m *MockKafkaReader) CommitMessages(ctx context.Context, msgs ...kafka.Message) error <span class="cov0" title="0">{
+        _va := make([]interface{}, len(msgs))
+        for _i := range msgs </span><span class="cov0" title="0">{
+                _va[_i] = msgs[_i]
+        }</span>
+        <span class="cov0" title="0">var _ca []interface{}
+        _ca = append(_ca, ctx)
+        _ca = append(_ca, _va...)
+        ret := _m.Called(_ca...)
+
+        if len(ret) == 0 </span><span class="cov0" title="0">{
+                panic("no return value specified for CommitMessages")</span>
+        }
+
+        <span class="cov0" title="0">var r0 error
+        if rf, ok := ret.Get(0).(func(context.Context, ...kafka.Message) error); ok </span><span class="cov0" title="0">{
+                r0 = rf(ctx, msgs...)
+        }</span> else<span class="cov0" title="0"> {
+                r0 = ret.Error(0)
+        }</span>
+
+        <span class="cov0" title="0">return r0</span>
+}
+
+// MockKafkaReader_CommitMessages_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CommitMessages'
+type MockKafkaReader_CommitMessages_Call struct {
+        *mock.Call
+}
+
+// CommitMessages is a helper method to define mock.On call
+//   - ctx context.Context
+//   - msgs ...kafka.Message
+func (_e *MockKafkaReader_Expecter) CommitMessages(ctx interface{}, msgs ...interface{}) *MockKafkaReader_CommitMessages_Call <span class="cov0" title="0">{
+        return &amp;MockKafkaReader_CommitMessages_Call{Call: _e.mock.On("CommitMessages",
+                append([]interface{}{ctx}, msgs...)...)}
+}</span>
+
+func (_c *MockKafkaReader_CommitMessages_Call) Run(run func(ctx context.Context, msgs ...kafka.Message)) *MockKafkaReader_CommitMessages_Call <span class="cov0" title="0">{
+        _c.Call.Run(func(args mock.Arguments) </span><span class="cov0" title="0">{
+                variadicArgs := make([]kafka.Message, len(args)-1)
+                for i, a := range args[1:] </span><span class="cov0" title="0">{
+                        if a != nil </span><span class="cov0" title="0">{
+                                variadicArgs[i] = a.(kafka.Message)
+                        }</span>
+                }
+                <span class="cov0" title="0">run(args[0].(context.Context), variadicArgs...)</span>
+        })
+        <span class="cov0" title="0">return _c</span>
+}
+
+func (_c *MockKafkaReader_CommitMessages_Call) Return(_a0 error) *MockKafkaReader_CommitMessages_Call <span class="cov0" title="0">{
+        _c.Call.Return(_a0)
+        return _c
+}</span>
+
+func (_c *MockKafkaReader_CommitMessages_Call) RunAndReturn(run func(context.Context, ...kafka.Message) error) *MockKafkaReader_CommitMessages_Call <span class="cov0" title="0">{
+        _c.Call.Return(run)
+        return _c
+}</span>
+
+// FetchMessage provides a mock function with given fields: ctx
+func (_m *MockKafkaReader) FetchMessage(ctx context.Context) (kafka.Message, error) <span class="cov6" title="4">{
+        ret := _m.Called(ctx)
+
+        if len(ret) == 0 </span><span class="cov0" title="0">{
+                panic("no return value specified for FetchMessage")</span>
+        }
+
+        <span class="cov6" title="4">var r0 kafka.Message
+        var r1 error
+        if rf, ok := ret.Get(0).(func(context.Context) (kafka.Message, error)); ok </span><span class="cov6" title="4">{
+                return rf(ctx)
+        }</span>
+        <span class="cov0" title="0">if rf, ok := ret.Get(0).(func(context.Context) kafka.Message); ok </span><span class="cov0" title="0">{
+                r0 = rf(ctx)
+        }</span> else<span class="cov0" title="0"> {
+                r0 = ret.Get(0).(kafka.Message)
+        }</span>
+
+        <span class="cov0" title="0">if rf, ok := ret.Get(1).(func(context.Context) error); ok </span><span class="cov0" title="0">{
+                r1 = rf(ctx)
+        }</span> else<span class="cov0" title="0"> {
+                r1 = ret.Error(1)
+        }</span>
+
+        <span class="cov0" title="0">return r0, r1</span>
+}
+
+// MockKafkaReader_FetchMessage_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'FetchMessage'
+type MockKafkaReader_FetchMessage_Call struct {
+        *mock.Call
+}
+
+// FetchMessage is a helper method to define mock.On call
+//   - ctx context.Context
+func (_e *MockKafkaReader_Expecter) FetchMessage(ctx interface{}) *MockKafkaReader_FetchMessage_Call <span class="cov1" title="1">{
+        return &amp;MockKafkaReader_FetchMessage_Call{Call: _e.mock.On("FetchMessage", ctx)}
+}</span>
+
+func (_c *MockKafkaReader_FetchMessage_Call) Run(run func(ctx context.Context)) *MockKafkaReader_FetchMessage_Call <span class="cov0" title="0">{
+        _c.Call.Run(func(args mock.Arguments) </span><span class="cov0" title="0">{
+                run(args[0].(context.Context))
+        }</span>)
+        <span class="cov0" title="0">return _c</span>
+}
+
+func (_c *MockKafkaReader_FetchMessage_Call) Return(_a0 kafka.Message, _a1 error) *MockKafkaReader_FetchMessage_Call <span class="cov0" title="0">{
+        _c.Call.Return(_a0, _a1)
+        return _c
+}</span>
+
+func (_c *MockKafkaReader_FetchMessage_Call) RunAndReturn(run func(context.Context) (kafka.Message, error)) *MockKafkaReader_FetchMessage_Call <span class="cov1" title="1">{
+        _c.Call.Return(run)
+        return _c
+}</span>
+
+// Offset provides a mock function with given fields:
+func (_m *MockKafkaReader) Offset() int64 <span class="cov0" title="0">{
+        ret := _m.Called()
+
+        if len(ret) == 0 </span><span class="cov0" title="0">{
+                panic("no return value specified for Offset")</span>
+        }
+
+        <span class="cov0" title="0">var r0 int64
+        if rf, ok := ret.Get(0).(func() int64); ok </span><span class="cov0" title="0">{
+                r0 = rf()
+        }</span> else<span class="cov0" title="0"> {
+                r0 = ret.Get(0).(int64)
+        }</span>
+
+        <span class="cov0" title="0">return r0</span>
+}
+
+// MockKafkaReader_Offset_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Offset'
+type MockKafkaReader_Offset_Call struct {
+        *mock.Call
+}
+
+// Offset is a helper method to define mock.On call
+func (_e *MockKafkaReader_Expecter) Offset() *MockKafkaReader_Offset_Call <span class="cov0" title="0">{
+        return &amp;MockKafkaReader_Offset_Call{Call: _e.mock.On("Offset")}
+}</span>
+
+func (_c *MockKafkaReader_Offset_Call) Run(run func()) *MockKafkaReader_Offset_Call <span class="cov0" title="0">{
+        _c.Call.Run(func(args mock.Arguments) </span><span class="cov0" title="0">{
+                run()
+        }</span>)
+        <span class="cov0" title="0">return _c</span>
+}
+
+func (_c *MockKafkaReader_Offset_Call) Return(_a0 int64) *MockKafkaReader_Offset_Call <span class="cov0" title="0">{
+        _c.Call.Return(_a0)
+        return _c
+}</span>
+
+func (_c *MockKafkaReader_Offset_Call) RunAndReturn(run func() int64) *MockKafkaReader_Offset_Call <span class="cov0" title="0">{
+        _c.Call.Return(run)
+        return _c
+}</span>
+
+// ReadLag provides a mock function with given fields: ctx
+func (_m *MockKafkaReader) ReadLag(ctx context.Context) (int64, error) <span class="cov6" title="4">{
+        ret := _m.Called(ctx)
+
+        if len(ret) == 0 </span><span class="cov0" title="0">{
+                panic("no return value specified for ReadLag")</span>
+        }
+
+        <span class="cov6" title="4">var r0 int64
+        var r1 error
+        if rf, ok := ret.Get(0).(func(context.Context) (int64, error)); ok </span><span class="cov0" title="0">{
+                return rf(ctx)
+        }</span>
+        <span class="cov6" title="4">if rf, ok := ret.Get(0).(func(context.Context) int64); ok </span><span class="cov0" title="0">{
+                r0 = rf(ctx)
+        }</span> else<span class="cov6" title="4"> {
+                r0 = ret.Get(0).(int64)
+        }</span>
+
+        <span class="cov6" title="4">if rf, ok := ret.Get(1).(func(context.Context) error); ok </span><span class="cov0" title="0">{
+                r1 = rf(ctx)
+        }</span> else<span class="cov6" title="4"> {
+                r1 = ret.Error(1)
+        }</span>
+
+        <span class="cov6" title="4">return r0, r1</span>
+}
+
+// MockKafkaReader_ReadLag_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ReadLag'
+type MockKafkaReader_ReadLag_Call struct {
+        *mock.Call
+}
+
+// ReadLag is a helper method to define mock.On call
+//   - ctx context.Context
+func (_e *MockKafkaReader_Expecter) ReadLag(ctx interface{}) *MockKafkaReader_ReadLag_Call <span class="cov6" title="4">{
+        return &amp;MockKafkaReader_ReadLag_Call{Call: _e.mock.On("ReadLag", ctx)}
+}</span>
+
+func (_c *MockKafkaReader_ReadLag_Call) Run(run func(ctx context.Context)) *MockKafkaReader_ReadLag_Call <span class="cov0" title="0">{
+        _c.Call.Run(func(args mock.Arguments) </span><span class="cov0" title="0">{
+                run(args[0].(context.Context))
+        }</span>)
+        <span class="cov0" title="0">return _c</span>
+}
+
+func (_c *MockKafkaReader_ReadLag_Call) Return(lag int64, err error) *MockKafkaReader_ReadLag_Call <span class="cov6" title="4">{
+        _c.Call.Return(lag, err)
+        return _c
+}</span>
+
+func (_c *MockKafkaReader_ReadLag_Call) RunAndReturn(run func(context.Context) (int64, error)) *MockKafkaReader_ReadLag_Call <span class="cov0" title="0">{
+        _c.Call.Return(run)
+        return _c
+}</span>
+
+// SetOffset provides a mock function with given fields: offset
+func (_m *MockKafkaReader) SetOffset(offset int64) error <span class="cov3" title="2">{
+        ret := _m.Called(offset)
+
+        if len(ret) == 0 </span><span class="cov0" title="0">{
+                panic("no return value specified for SetOffset")</span>
+        }
+
+        <span class="cov3" title="2">var r0 error
+        if rf, ok := ret.Get(0).(func(int64) error); ok </span><span class="cov0" title="0">{
+                r0 = rf(offset)
+        }</span> else<span class="cov3" title="2"> {
+                r0 = ret.Error(0)
+        }</span>
+
+        <span class="cov3" title="2">return r0</span>
+}
+
+// MockKafkaReader_SetOffset_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'SetOffset'
+type MockKafkaReader_SetOffset_Call struct {
+        *mock.Call
+}
+
+// SetOffset is a helper method to define mock.On call
+//   - offset int64
+func (_e *MockKafkaReader_Expecter) SetOffset(offset interface{}) *MockKafkaReader_SetOffset_Call <span class="cov3" title="2">{
+        return &amp;MockKafkaReader_SetOffset_Call{Call: _e.mock.On("SetOffset", offset)}
+}</span>
+
+func (_c *MockKafkaReader_SetOffset_Call) Run(run func(offset int64)) *MockKafkaReader_SetOffset_Call <span class="cov0" title="0">{
+        _c.Call.Run(func(args mock.Arguments) </span><span class="cov0" title="0">{
+                run(args[0].(int64))
+        }</span>)
+        <span class="cov0" title="0">return _c</span>
+}
+
+func (_c *MockKafkaReader_SetOffset_Call) Return(_a0 error) *MockKafkaReader_SetOffset_Call <span class="cov3" title="2">{
+        _c.Call.Return(_a0)
+        return _c
+}</span>
+
+func (_c *MockKafkaReader_SetOffset_Call) RunAndReturn(run func(int64) error) *MockKafkaReader_SetOffset_Call <span class="cov0" title="0">{
+        _c.Call.Return(run)
+        return _c
+}</span>
+
+// Stats provides a mock function with given fields:
+func (_m *MockKafkaReader) Stats() kafka.ReaderStats <span class="cov0" title="0">{
+        ret := _m.Called()
+
+        if len(ret) == 0 </span><span class="cov0" title="0">{
+                panic("no return value specified for Stats")</span>
+        }
+
+        <span class="cov0" title="0">var r0 kafka.ReaderStats
+        if rf, ok := ret.Get(0).(func() kafka.ReaderStats); ok </span><span class="cov0" title="0">{
+                r0 = rf()
+        }</span> else<span class="cov0" title="0"> {
+                r0 = ret.Get(0).(kafka.ReaderStats)
+        }</span>
+
+        <span class="cov0" title="0">return r0</span>
+}
+
+// MockKafkaReader_Stats_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Stats'
+type MockKafkaReader_Stats_Call struct {
+        *mock.Call
+}
+
+// Stats is a helper method to define mock.On call
+func (_e *MockKafkaReader_Expecter) Stats() *MockKafkaReader_Stats_Call <span class="cov0" title="0">{
+        return &amp;MockKafkaReader_Stats_Call{Call: _e.mock.On("Stats")}
+}</span>
+
+func (_c *MockKafkaReader_Stats_Call) Run(run func()) *MockKafkaReader_Stats_Call <span class="cov0" title="0">{
+        _c.Call.Run(func(args mock.Arguments) </span><span class="cov0" title="0">{
+                run()
+        }</span>)
+        <span class="cov0" title="0">return _c</span>
+}
+
+func (_c *MockKafkaReader_Stats_Call) Return(_a0 kafka.ReaderStats) *MockKafkaReader_Stats_Call <span class="cov0" title="0">{
+        _c.Call.Return(_a0)
+        return _c
+}</span>
+
+func (_c *MockKafkaReader_Stats_Call) RunAndReturn(run func() kafka.ReaderStats) *MockKafkaReader_Stats_Call <span class="cov0" title="0">{
+        _c.Call.Return(run)
+        return _c
+}</span>
+
+// NewMockKafkaReader creates a new instance of MockKafkaReader. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
+// The first argument is typically a *testing.T value.
+func NewMockKafkaReader(t interface {
+        mock.TestingT
+        Cleanup(func())
+}) *MockKafkaReader <span class="cov10" title="11">{
+        mock := &amp;MockKafkaReader{}
+        mock.Mock.Test(t)
+
+        t.Cleanup(func() </span><span class="cov10" title="11">{ mock.AssertExpectations(t) }</span>)
+
+        <span class="cov10" title="11">return mock</span>
+}
+</pre>
+		
+		<pre class="file" id="file48" style="display: none">// Code generated by mockery. DO NOT EDIT.
+
+//go:build !release
+
+package services
+
+import (
+        context "context"
+
+        kafka "github.com/segmentio/kafka-go"
+        mock "github.com/stretchr/testify/mock"
+)
+
+// MockKafkaWriter is an autogenerated mock type for the mockKafkaWriter type
+type MockKafkaWriter struct {
+        mock.Mock
+}
+
+type MockKafkaWriter_Expecter struct {
+        mock *mock.Mock
+}
+
+func (_m *MockKafkaWriter) EXPECT() *MockKafkaWriter_Expecter <span class="cov10" title="2">{
+        return &amp;MockKafkaWriter_Expecter{mock: &amp;_m.Mock}
+}</span>
+
+// Close provides a mock function with given fields:
+func (_m *MockKafkaWriter) Close() error <span class="cov0" title="0">{
+        ret := _m.Called()
+
+        if len(ret) == 0 </span><span class="cov0" title="0">{
+                panic("no return value specified for Close")</span>
+        }
+
+        <span class="cov0" title="0">var r0 error
+        if rf, ok := ret.Get(0).(func() error); ok </span><span class="cov0" title="0">{
+                r0 = rf()
+        }</span> else<span class="cov0" title="0"> {
+                r0 = ret.Error(0)
+        }</span>
+
+        <span class="cov0" title="0">return r0</span>
+}
+
+// MockKafkaWriter_Close_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Close'
+type MockKafkaWriter_Close_Call struct {
+        *mock.Call
+}
+
+// Close is a helper method to define mock.On call
+func (_e *MockKafkaWriter_Expecter) Close() *MockKafkaWriter_Close_Call <span class="cov0" title="0">{
+        return &amp;MockKafkaWriter_Close_Call{Call: _e.mock.On("Close")}
+}</span>
+
+func (_c *MockKafkaWriter_Close_Call) Run(run func()) *MockKafkaWriter_Close_Call <span class="cov0" title="0">{
+        _c.Call.Run(func(args mock.Arguments) </span><span class="cov0" title="0">{
+                run()
+        }</span>)
+        <span class="cov0" title="0">return _c</span>
+}
+
+func (_c *MockKafkaWriter_Close_Call) Return(_a0 error) *MockKafkaWriter_Close_Call <span class="cov0" title="0">{
+        _c.Call.Return(_a0)
+        return _c
+}</span>
+
+func (_c *MockKafkaWriter_Close_Call) RunAndReturn(run func() error) *MockKafkaWriter_Close_Call <span class="cov0" title="0">{
+        _c.Call.Return(run)
+        return _c
+}</span>
+
+// WriteMessages provides a mock function with given fields: ctx, msgs
+func (_m *MockKafkaWriter) WriteMessages(ctx context.Context, msgs ...kafka.Message) error <span class="cov10" title="2">{
+        _va := make([]interface{}, len(msgs))
+        for _i := range msgs </span><span class="cov10" title="2">{
+                _va[_i] = msgs[_i]
+        }</span>
+        <span class="cov10" title="2">var _ca []interface{}
+        _ca = append(_ca, ctx)
+        _ca = append(_ca, _va...)
+        ret := _m.Called(_ca...)
+
+        if len(ret) == 0 </span><span class="cov0" title="0">{
+                panic("no return value specified for WriteMessages")</span>
+        }
+
+        <span class="cov10" title="2">var r0 error
+        if rf, ok := ret.Get(0).(func(context.Context, ...kafka.Message) error); ok </span><span class="cov0" title="0">{
+                r0 = rf(ctx, msgs...)
+        }</span> else<span class="cov10" title="2"> {
+                r0 = ret.Error(0)
+        }</span>
+
+        <span class="cov10" title="2">return r0</span>
+}
+
+// MockKafkaWriter_WriteMessages_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'WriteMessages'
+type MockKafkaWriter_WriteMessages_Call struct {
+        *mock.Call
+}
+
+// WriteMessages is a helper method to define mock.On call
+//   - ctx context.Context
+//   - msgs ...kafka.Message
+func (_e *MockKafkaWriter_Expecter) WriteMessages(ctx interface{}, msgs ...interface{}) *MockKafkaWriter_WriteMessages_Call <span class="cov10" title="2">{
+        return &amp;MockKafkaWriter_WriteMessages_Call{Call: _e.mock.On("WriteMessages",
+                append([]interface{}{ctx}, msgs...)...)}
+}</span>
+
+func (_c *MockKafkaWriter_WriteMessages_Call) Run(run func(ctx context.Context, msgs ...kafka.Message)) *MockKafkaWriter_WriteMessages_Call <span class="cov0" title="0">{
+        _c.Call.Run(func(args mock.Arguments) </span><span class="cov0" title="0">{
+                variadicArgs := make([]kafka.Message, len(args)-1)
+                for i, a := range args[1:] </span><span class="cov0" title="0">{
+                        if a != nil </span><span class="cov0" title="0">{
+                                variadicArgs[i] = a.(kafka.Message)
+                        }</span>
+                }
+                <span class="cov0" title="0">run(args[0].(context.Context), variadicArgs...)</span>
+        })
+        <span class="cov0" title="0">return _c</span>
+}
+
+func (_c *MockKafkaWriter_WriteMessages_Call) Return(_a0 error) *MockKafkaWriter_WriteMessages_Call <span class="cov10" title="2">{
+        _c.Call.Return(_a0)
+        return _c
+}</span>
+
+func (_c *MockKafkaWriter_WriteMessages_Call) RunAndReturn(run func(context.Context, ...kafka.Message) error) *MockKafkaWriter_WriteMessages_Call <span class="cov0" title="0">{
+        _c.Call.Return(run)
+        return _c
+}</span>
+
+// NewMockKafkaWriter creates a new instance of MockKafkaWriter. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
+// The first argument is typically a *testing.T value.
+func NewMockKafkaWriter(t interface {
+        mock.TestingT
+        Cleanup(func())
+}) *MockKafkaWriter <span class="cov10" title="2">{
+        mock := &amp;MockKafkaWriter{}
+        mock.Mock.Test(t)
+
+        t.Cleanup(func() </span><span class="cov10" title="2">{ mock.AssertExpectations(t) }</span>)
+
+        <span class="cov10" title="2">return mock</span>
+}
+</pre>
+		
+		<pre class="file" id="file49" style="display: none">package services
+
+import (
+        "time"
+
+        "github.com/gemyago/top-k-system-go/internal/di"
+        "github.com/gemyago/top-k-system-go/internal/services/blobstorage"
+        "go.uber.org/dig"
+)
+
+func Register(container *dig.Container) error <span class="cov10" title="4">{
+        return di.ProvideAll(container,
+                NewTimeProvider,
+                NewUUIDGenerator,
+                NewItemEventsKafkaReader,
+                NewItemEventsKafkaWriter,
+                NewShutdownHooks,
+                di.ProvideValue(time.NewTicker),
+                blobstorage.NewLocalStorage,
+        )
+}</span>
+</pre>
+		
+		<pre class="file" id="file50" style="display: none">// ShutdownHooks are used to implement a graceful shutdown
+// of the application. This may include closing database connections, flushing pending
+// events to the queue, shutting down the http server, etc.
+
+package services
+
+import (
+        "context"
+        "fmt"
+        "log/slog"
+        "reflect"
+        "time"
+
+        "go.uber.org/dig"
+        "golang.org/x/sync/errgroup"
+)
+
+type shutdownHook struct {
+        name       string
+        shutdownFn func(ctx context.Context) error
+}
+
+type ShutdownHooks struct {
+        logger *slog.Logger
+        hooks  []shutdownHook
+        deps   ShutdownHooksRegistryDeps
+}
+
+// HasHook checks if a shutdown hook with the given name is registered.
+// Typical usage is in tests and must be carefully considered for production scenarios.
+func (h *ShutdownHooks) HasHook(name string, method any) bool <span class="cov5" title="4">{
+        for _, hook := range h.hooks </span><span class="cov4" title="3">{
+                if hook.name == name </span><span class="cov3" title="2">{
+                        return reflect.ValueOf(hook.shutdownFn).Pointer() == reflect.ValueOf(method).Pointer()
+                }</span>
+        }
+        <span class="cov3" title="2">return false</span>
+}
+
+func (h *ShutdownHooks) Register(name string, shutdown func(ctx context.Context) error) <span class="cov10" title="15">{
+        h.hooks = append(h.hooks, shutdownHook{name: name, shutdownFn: shutdown})
+}</span>
+
+func (h *ShutdownHooks) RegisterNoCtx(name string, shutdown func() error) <span class="cov6" title="6">{
+        h.Register(name, func(_ context.Context) error </span><span class="cov6" title="5">{
+                return shutdown()
+        }</span>)
+}
+
+func (h *ShutdownHooks) PerformShutdown(ctx context.Context) error <span class="cov6" title="5">{
+        ctx, cancel := context.WithTimeout(ctx, h.deps.GracefulShutdownTimeout)
+        defer cancel()
+
+        errGrp := errgroup.Group{}
+        for _, hook := range h.hooks </span><span class="cov9" title="12">{
+                errGrp.Go(func() error </span><span class="cov9" title="12">{
+                        hookName := hook.name
+                        h.logger.InfoContext(ctx, fmt.Sprintf("Shutting down %s", hookName))
+                        if err := hook.shutdownFn(ctx); err != nil </span><span class="cov1" title="1">{
+                                return fmt.Errorf("failed to perform shutdown hook %s: %w", hookName, err)
+                        }</span>
+                        <span class="cov8" title="11">return nil</span>
+                })
+        }
+
+        <span class="cov6" title="5">done := make(chan error)
+        go func() </span><span class="cov6" title="5">{
+                done &lt;- errGrp.Wait()
+        }</span>()
+
+        <span class="cov6" title="5">select </span>{
+        case err := &lt;-done:<span class="cov6" title="5">
+                return err</span>
+        case &lt;-ctx.Done():<span class="cov0" title="0">
+                return ctx.Err()</span>
+        }
+}
+
+type ShutdownHooksRegistryDeps struct {
+        dig.In
+
+        RootLogger *slog.Logger
+
+        // config
+        GracefulShutdownTimeout time.Duration `name:"config.gracefulShutdownTimeout"`
+}
+
+func NewShutdownHooks(deps ShutdownHooksRegistryDeps) *ShutdownHooks <span class="cov7" title="8">{
+        return &amp;ShutdownHooks{
+                logger: deps.RootLogger.WithGroup("shutdown"),
+                deps:   deps,
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file51" style="display: none">//go:build !release
+
+package services
+
+import (
+        "time"
+
+        "github.com/gemyago/top-k-system-go/internal/diag"
+        "github.com/go-faker/faker/v4"
+)
+
+type MockNow struct {
+        value time.Time
+}
+
+var _ TimeProvider = &amp;MockNow{}
+
+func (m *MockNow) SetValue(t time.Time) <span class="cov0" title="0">{
+        m.value = t
+}</span>
+
+func (m *MockNow) Now() time.Time <span class="cov10" title="4">{
+        return m.value
+}</span>
+
+func NewMockNow() *MockNow <span class="cov5" title="2">{
+        return &amp;MockNow{
+                value: time.UnixMilli(faker.RandomUnixTime()),
+        }
+}</span>
+
+func MockNowValue(p TimeProvider) time.Time <span class="cov0" title="0">{
+        mp, ok := p.(*MockNow)
+        if !ok </span><span class="cov0" title="0">{
+                panic("provided TimeProvider is not a MockNow")</span>
+        }
+        <span class="cov0" title="0">return mp.value</span>
+}
+
+const defaultTestShutdownTimeout = 30 * time.Second
+
+func NewTestShutdownHooks() *ShutdownHooks <span class="cov1" title="1">{
+        return NewShutdownHooks(ShutdownHooksRegistryDeps{
+                RootLogger:              diag.RootTestLogger(),
+                GracefulShutdownTimeout: defaultTestShutdownTimeout,
+        })
+}</span>
+</pre>
+		
+		<pre class="file" id="file52" style="display: none">package services
+
+import "time"
+
+type TimeProvider interface {
+        Now() time.Time
+}
+
+type timeProviderFn func() time.Time
+
+func (fn timeProviderFn) Now() time.Time <span class="cov1" title="1">{
+        return fn()
+}</span>
+
+func NewTimeProvider() TimeProvider <span class="cov10" title="2">{
+        return timeProviderFn(time.Now)
+}</span>
+</pre>
+		
+		<pre class="file" id="file53" style="display: none">package services
+
+import "github.com/gofrs/uuid/v5"
+
+type UUIDGenerator func() string
+
+func NewUUIDGenerator() UUIDGenerator <span class="cov8" title="1">{
+        return func() string </span><span class="cov8" title="1">{
+                return uuid.Must(uuid.NewV4()).String()
+        }</span>
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
