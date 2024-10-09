@@ -31,12 +31,14 @@ type CommandsDeps struct {
 	RootLogger *slog.Logger
 
 	// app layer
-	CheckPointer
-	ItemEventsAggregator
 	CountersFactory
 
 	// service layer
 	ItemEventsReader itemEventsKafkaReader
+
+	// package private components
+	itemEventsAggregator
+	checkPointer
 }
 
 type commands struct {
@@ -47,7 +49,7 @@ type commands struct {
 func (c *commands) StartAggregator(ctx context.Context) error {
 	c.logger.InfoContext(ctx, "Restoring counters state")
 	counters := c.CountersFactory.NewCounters()
-	if err := c.CheckPointer.restoreState(ctx, counters); err != nil {
+	if err := c.checkPointer.restoreState(ctx, counters); err != nil {
 		return fmt.Errorf("failed to restore state while starting aggregator: %w", err)
 	}
 
@@ -55,14 +57,14 @@ func (c *commands) StartAggregator(ctx context.Context) error {
 	// so then API layer could query them
 
 	c.logger.InfoContext(ctx, "Starting aggregation")
-	return c.ItemEventsAggregator.BeginAggregating(ctx, counters, BeginAggregatingOpts{})
+	return c.itemEventsAggregator.beginAggregating(ctx, counters, beginAggregatingOpts{})
 }
 
 func (c *commands) CreateCheckPoint(ctx context.Context) error {
 	counters := c.CountersFactory.NewCounters()
 
 	c.logger.InfoContext(ctx, "Starting creating check point. Restoring last state.")
-	if err := c.CheckPointer.restoreState(ctx, counters); err != nil {
+	if err := c.checkPointer.restoreState(ctx, counters); err != nil {
 		return fmt.Errorf("failed to restore state while creating check point: %w", err)
 	}
 
@@ -98,14 +100,14 @@ func (c *commands) CreateCheckPoint(ctx context.Context) error {
 		slog.Int64("sinceOffset", counters.getLastOffset()),
 		slog.Int64("tillOffset", tillOffset),
 	)
-	if err = c.ItemEventsAggregator.BeginAggregating(ctx, counters, BeginAggregatingOpts{
+	if err = c.itemEventsAggregator.beginAggregating(ctx, counters, beginAggregatingOpts{
 		TillOffset: tillOffset,
 	}); err != nil {
 		return fmt.Errorf("failed to aggregate till offset: %w", err)
 	}
 
 	c.logger.InfoContext(ctx, "Producing new state")
-	if err = c.CheckPointer.dumpState(ctx, counters); err != nil {
+	if err = c.checkPointer.dumpState(ctx, counters); err != nil {
 		return fmt.Errorf("failed to dump state: %w", err)
 	}
 

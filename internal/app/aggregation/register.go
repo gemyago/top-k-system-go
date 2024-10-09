@@ -8,10 +8,12 @@ import (
 func Register(container *dig.Container) error {
 	return di.ProvideAll(container,
 		NewCommands,
-		NewItemEventsAggregator,
-		NewItemEventsAggregatorModel,
 		di.ProvideValue(CountersFactory(CountersFactoryFunc(NewCounters))),
 		NewCheckPointer,
-		NewCheckPointerModel,
+
+		// package private deps
+		newItemEventsAggregatorModel,
+		newItemEventsAggregator,
+		newCheckPointerModel,
 	)
 }

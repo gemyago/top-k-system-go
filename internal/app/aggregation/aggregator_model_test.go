@@ -27,7 +27,7 @@ func TestAggregatorModel(t *testing.T) {
 	t.Run("aggregateItemEvent", func(t *testing.T) {
 		t.Run("should set new counters to 1", func(t *testing.T) {
 			mockDeps := newMockDeps(t)
-			model := NewItemEventsAggregatorModel(mockDeps)
+			model := newItemEventsAggregatorModel(mockDeps)
 
 			baseOffset := rand.Int63()
 			itemEvents := []models.ItemEvent{
@@ -39,7 +39,7 @@ func TestAggregatorModel(t *testing.T) {
 				model.aggregateItemEvent(baseOffset+int64(i), &e)
 			}
 
-			modelImpl, _ := model.(*itemEventsAggregatorModel)
+			modelImpl, _ := model.(*itemEventsAggregatorModelImpl)
 			assert.Equal(t, baseOffset+int64(len(itemEvents)-1), modelImpl.lastAggregatedOffset)
 			for _, e := range itemEvents {
 				assert.Equal(t, int64(1), modelImpl.aggregatedItems[e.ItemID])
@@ -47,7 +47,7 @@ func TestAggregatorModel(t *testing.T) {
 		})
 		t.Run("should increment existing counters", func(t *testing.T) {
 			mockDeps := newMockDeps(t)
-			model := NewItemEventsAggregatorModel(mockDeps)
+			model := newItemEventsAggregatorModel(mockDeps)
 
 			baseCounter := rand.Int63()
 			baseOffset := rand.Int63()
@@ -56,7 +56,7 @@ func TestAggregatorModel(t *testing.T) {
 				models.MakeRandomItemEvent(),
 				models.MakeRandomItemEvent(),
 			}
-			modelImpl, _ := model.(*itemEventsAggregatorModel)
+			modelImpl, _ := model.(*itemEventsAggregatorModelImpl)
 			for i, e := range itemEvents {
 				modelImpl.aggregatedItems[e.ItemID] = baseCounter + int64(i)
 				model.aggregateItemEvent(baseOffset+int64(i), &e)
@@ -72,7 +72,7 @@ func TestAggregatorModel(t *testing.T) {
 	t.Run("fetchMessages", func(t *testing.T) {
 		t.Run("should deserialize and feed messages to the channel", func(t *testing.T) {
 			mockDeps := newMockDeps(t)
-			model := NewItemEventsAggregatorModel(mockDeps)
+			model := newItemEventsAggregatorModel(mockDeps)
 
 			baseOffset := rand.Int63()
 			itemEvents := []models.ItemEvent{
@@ -129,7 +129,7 @@ func TestAggregatorModel(t *testing.T) {
 	t.Run("flushMessages", func(t *testing.T) {
 		t.Run("should update counters and reset the aggregated values", func(t *testing.T) {
 			mockDeps := newMockDeps(t)
-			model := NewItemEventsAggregatorModel(mockDeps)
+			model := newItemEventsAggregatorModel(mockDeps)
 
 			baseOffset := rand.Int63()
 			itemEvents := []models.ItemEvent{
@@ -141,7 +141,7 @@ func TestAggregatorModel(t *testing.T) {
 				model.aggregateItemEvent(baseOffset+int64(i), &e)
 			}
 
-			modelImpl, _ := model.(*itemEventsAggregatorModel)
+			modelImpl, _ := model.(*itemEventsAggregatorModelImpl)
 
 			mockCounters := NewMockCounters(t)
 			mockCounters.EXPECT().updateItemsCount(modelImpl.lastAggregatedOffset, modelImpl.aggregatedItems)

@@ -10,7 +10,7 @@ import (
 	"go.uber.org/dig"
 )
 
-type CheckPointer interface {
+type checkPointer interface {
 	restoreState(ctx context.Context, counters Counters) error
 	dumpState(ctx context.Context, counters Counters) error
 }
@@ -20,17 +20,17 @@ type CheckPointerDeps struct {
 
 	RootLogger *slog.Logger
 
-	// app layer
-	CheckPointerModel
+	// package private components
+	checkPointerModel
 }
 
-type checkPointer struct {
+type checkPointerImpl struct {
 	logger *slog.Logger
 	CheckPointerDeps
 }
 
-func (cp *checkPointer) restoreState(ctx context.Context, counters Counters) error {
-	manifest, err := cp.CheckPointerModel.readManifest(ctx)
+func (cp *checkPointerImpl) restoreState(ctx context.Context, counters Counters) error {
+	manifest, err := cp.checkPointerModel.readManifest(ctx)
 	if err != nil {
 		if errors.Is(err, fs.ErrNotExist) {
 			cp.logger.InfoContext(ctx, "Manifest not found. No state to restore from.")
@@ -38,7 +38,7 @@ func (cp *checkPointer) restoreState(ctx context.Context, counters Counters) err
 		}
 		return err
 	}
-	values, err := cp.CheckPointerModel.readCounters(ctx, manifest.CountersBlobFileName)
+	values, err := cp.checkPointerModel.readCounters(ctx, manifest.CountersBlobFileName)
 	if err != nil {
 		return err
 	}
@@ -46,26 +46,26 @@ func (cp *checkPointer) restoreState(ctx context.Context, counters Counters) err
 	return nil
 }
 
-func (cp *checkPointer) dumpState(ctx context.Context, counters Counters) error {
+func (cp *checkPointerImpl) dumpState(ctx context.Context, counters Counters) error {
 	countersFileName := fmt.Sprintf("counters-%d", counters.getLastOffset())
 	newManifest := checkPointManifest{
 		LastOffset:           counters.getLastOffset(),
 		CountersBlobFileName: countersFileName,
 	}
-	if err := cp.CheckPointerModel.writeCounters(ctx, countersFileName, counters.getItemsCounters()); err != nil {
+	if err := cp.checkPointerModel.writeCounters(ctx, countersFileName, counters.getItemsCounters()); err != nil {
 		return err
 	}
 
 	// We write manifest last so if counters fail, the manifest will point on the last
 	// counters
-	if err := cp.CheckPointerModel.writeManifest(ctx, newManifest); err != nil {
+	if err := cp.checkPointerModel.writeManifest(ctx, newManifest); err != nil {
 		return err
 	}
 	return nil
 }
 
-func NewCheckPointer(deps CheckPointerDeps) CheckPointer {
-	return &checkPointer{
+func NewCheckPointer(deps CheckPointerDeps) checkPointer {
+	return &checkPointerImpl{
 		logger:           deps.RootLogger.WithGroup("check-pointer"),
 		CheckPointerDeps: deps,
 	}

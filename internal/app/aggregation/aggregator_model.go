@@ -16,12 +16,6 @@ type fetchMessageResult struct {
 	err    error
 }
 
-type ItemEventsAggregatorModel interface {
-	aggregateItemEvent(offset int64, evt *models.ItemEvent)
-	flushMessages(ctx context.Context, counters Counters)
-	fetchMessages(ctx context.Context) <-chan fetchMessageResult
-}
-
 type ItemEventsAggregatorModelDeps struct {
 	dig.In
 
@@ -34,7 +28,13 @@ type ItemEventsAggregatorModelDeps struct {
 	ItemEventsReader itemEventsKafkaReader
 }
 
-type itemEventsAggregatorModel struct {
+type itemEventsAggregatorModel interface {
+	aggregateItemEvent(offset int64, evt *models.ItemEvent)
+	flushMessages(ctx context.Context, counters Counters)
+	fetchMessages(ctx context.Context) <-chan fetchMessageResult
+}
+
+type itemEventsAggregatorModelImpl struct {
 	lastAggregatedOffset int64
 	aggregatedItems      map[string]int64
 	logger               *slog.Logger
@@ -44,7 +44,7 @@ type itemEventsAggregatorModel struct {
 
 // aggregateItemEvent method is not thread safe, should be only called from a same
 // goroutine as flushMessages.
-func (m *itemEventsAggregatorModel) aggregateItemEvent(offset int64, evt *models.ItemEvent) {
+func (m *itemEventsAggregatorModelImpl) aggregateItemEvent(offset int64, evt *models.ItemEvent) {
 	m.lastAggregatedOffset = offset
 	curVal := m.aggregatedItems[evt.ItemID]
 	m.aggregatedItems[evt.ItemID] = curVal + 1
@@ -52,13 +52,13 @@ func (m *itemEventsAggregatorModel) aggregateItemEvent(offset int64, evt *models
 
 // flushMessages method is not thread safe, should be only called from a same
 // goroutine as aggregateItemEvent.
-func (m *itemEventsAggregatorModel) flushMessages(ctx context.Context, counters Counters) {
+func (m *itemEventsAggregatorModelImpl) flushMessages(ctx context.Context, counters Counters) {
 	m.logger.DebugContext(ctx, "Flushing aggregated messages")
 	counters.updateItemsCount(m.lastAggregatedOffset, m.aggregatedItems)
 	clear(m.aggregatedItems)
 }
 
-func (m *itemEventsAggregatorModel) fetchMessages(ctx context.Context) <-chan fetchMessageResult {
+func (m *itemEventsAggregatorModelImpl) fetchMessages(ctx context.Context) <-chan fetchMessageResult {
 	resultsChan := make(chan fetchMessageResult)
 	go func() {
 		for {
@@ -82,10 +82,10 @@ func (m *itemEventsAggregatorModel) fetchMessages(ctx context.Context) <-chan fe
 	return resultsChan
 }
 
-func NewItemEventsAggregatorModel(
+func newItemEventsAggregatorModel(
 	deps ItemEventsAggregatorModelDeps,
-) ItemEventsAggregatorModel {
-	return &itemEventsAggregatorModel{
+) itemEventsAggregatorModel {
+	return &itemEventsAggregatorModelImpl{
 		logger:          deps.RootLogger.WithGroup("item-events-aggregator-model"),
 		aggregatedItems: make(map[string]int64),
 		deps:            deps,

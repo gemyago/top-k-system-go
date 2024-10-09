@@ -25,7 +25,7 @@ func TestCheckPointerModel(t *testing.T) {
 	t.Run("readManifest", func(t *testing.T) {
 		t.Run("should load the manifest from blob storage", func(t *testing.T) {
 			deps := newMockDeps(t)
-			model := NewCheckPointerModel(deps)
+			model := newCheckPointerModel(deps)
 
 			ctx := context.Background()
 
@@ -43,7 +43,7 @@ func TestCheckPointerModel(t *testing.T) {
 		})
 		t.Run("should return error if failed to read manifest", func(t *testing.T) {
 			deps := newMockDeps(t)
-			model := NewCheckPointerModel(deps)
+			model := newCheckPointerModel(deps)
 
 			ctx := context.Background()
 			wantErr := errors.New(faker.Sentence())
@@ -58,7 +58,7 @@ func TestCheckPointerModel(t *testing.T) {
 		})
 		t.Run("should return error if failed to decode manifest", func(t *testing.T) {
 			deps := newMockDeps(t)
-			model := NewCheckPointerModel(deps)
+			model := newCheckPointerModel(deps)
 
 			ctx := context.Background()
 
@@ -78,7 +78,7 @@ func TestCheckPointerModel(t *testing.T) {
 	t.Run("writeManifest", func(t *testing.T) {
 		t.Run("should upload manifest to blob storage", func(t *testing.T) {
 			deps := newMockDeps(t)
-			model := NewCheckPointerModel(deps)
+			model := newCheckPointerModel(deps)
 
 			ctx := context.Background()
 
@@ -100,7 +100,7 @@ func TestCheckPointerModel(t *testing.T) {
 	t.Run("readCounters", func(t *testing.T) {
 		t.Run("should read counters from a given file", func(t *testing.T) {
 			deps := newMockDeps(t)
-			model := NewCheckPointerModel(deps)
+			model := newCheckPointerModel(deps)
 
 			wantCounters := map[string]int64{
 				faker.UUIDHyphenated(): rand.Int64(),
@@ -124,7 +124,7 @@ func TestCheckPointerModel(t *testing.T) {
 		})
 		t.Run("should return error if failed to read counters", func(t *testing.T) {
 			deps := newMockDeps(t)
-			model := NewCheckPointerModel(deps)
+			model := newCheckPointerModel(deps)
 
 			wantFile := faker.Word()
 			wantErr := errors.New(faker.Sentence())
@@ -141,7 +141,7 @@ func TestCheckPointerModel(t *testing.T) {
 		})
 		t.Run("should return error if failed to decode counters", func(t *testing.T) {
 			deps := newMockDeps(t)
-			model := NewCheckPointerModel(deps)
+			model := newCheckPointerModel(deps)
 
 			wantFile := faker.Word()
 
@@ -163,7 +163,7 @@ func TestCheckPointerModel(t *testing.T) {
 	t.Run("writeCounters", func(t *testing.T) {
 		t.Run("should write counters to a given file", func(t *testing.T) {
 			deps := newMockDeps(t)
-			model := NewCheckPointerModel(deps)
+			model := newCheckPointerModel(deps)
 
 			wantCounters := randomCountersValues()
 			wantFile := faker.Word()
@@ -186,7 +186,7 @@ func TestCheckPointerModel(t *testing.T) {
 
 		t.Run("should return error if failed to upload counters", func(t *testing.T) {
 			deps := newMockDeps(t)
-			model := NewCheckPointerModel(deps)
+			model := newCheckPointerModel(deps)
 
 			wantCounters := randomCountersValues()
 			wantFile := faker.Word()

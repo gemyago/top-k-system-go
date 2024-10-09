@@ -9,13 +9,13 @@ import (
 	"go.uber.org/dig"
 )
 
-type BeginAggregatingOpts struct {
+type beginAggregatingOpts struct {
 	// TillOffset indicates the offset to aggregate until
 	TillOffset int64
 }
 
-type ItemEventsAggregator interface {
-	BeginAggregating(context context.Context, counters Counters, opts BeginAggregatingOpts) error
+type itemEventsAggregator interface {
+	beginAggregating(context context.Context, counters Counters, opts beginAggregatingOpts) error
 }
 
 type ItemEventsAggregatorDeps struct {
@@ -27,22 +27,22 @@ type ItemEventsAggregatorDeps struct {
 	FlushInterval time.Duration `name:"config.aggregator.flushInterval"`
 	Verbose       bool          `name:"config.aggregator.verbose"`
 
-	// app layer
-	AggregatorModel ItemEventsAggregatorModel
-
 	// service layer
 	TickerFactory func(d time.Duration) *time.Ticker
+
+	// package private components
+	AggregatorModel itemEventsAggregatorModel
 }
 
-type itemEventsAggregator struct {
+type itemEventsAggregatorImpl struct {
 	logger *slog.Logger
 	ItemEventsAggregatorDeps
 }
 
-func (a *itemEventsAggregator) BeginAggregating(
+func (a *itemEventsAggregatorImpl) beginAggregating(
 	ctx context.Context,
 	counters Counters,
-	opts BeginAggregatingOpts,
+	opts beginAggregatingOpts,
 ) error {
 	// TODO: Set the offset to start fetching from
 	// and keep fetching until the offset provided
@@ -79,8 +79,8 @@ func (a *itemEventsAggregator) BeginAggregating(
 	}
 }
 
-func NewItemEventsAggregator(deps ItemEventsAggregatorDeps) ItemEventsAggregator {
-	return &itemEventsAggregator{
+func newItemEventsAggregator(deps ItemEventsAggregatorDeps) itemEventsAggregator {
+	return &itemEventsAggregatorImpl{
 		logger:                   deps.RootLogger.WithGroup("item-events-aggregator"),
 		ItemEventsAggregatorDeps: deps,
 	}

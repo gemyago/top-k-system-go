@@ -28,7 +28,7 @@ func TestItemEventsAggregator(t *testing.T) {
 			flushTickerChan: flushTickerChan,
 			deps: ItemEventsAggregatorDeps{
 				RootLogger:      diag.RootTestLogger(),
-				AggregatorModel: NewMockItemEventsAggregatorModel(t),
+				AggregatorModel: newMockItemEventsAggregatorModel(t),
 				FlushInterval:   flushInterval,
 				TickerFactory: func(d time.Duration) *time.Ticker {
 					assert.Equal(t, flushInterval, d)
@@ -43,9 +43,9 @@ func TestItemEventsAggregator(t *testing.T) {
 			deps := newMockDeps(t)
 			deps.deps.Verbose = true
 			ctx, cancel := context.WithCancel(context.Background())
-			aggregator := NewItemEventsAggregator(deps.deps)
+			aggregator := newItemEventsAggregator(deps.deps)
 
-			mockModel, _ := deps.deps.AggregatorModel.(*MockItemEventsAggregatorModel)
+			mockModel, _ := deps.deps.AggregatorModel.(*mockItemEventsAggregatorModel)
 
 			offsetBase := rand.Int63n(1000)
 			wantItems := []models.ItemEvent{
@@ -61,7 +61,7 @@ func TestItemEventsAggregator(t *testing.T) {
 
 			exit := make(chan error)
 			go func() {
-				exit <- aggregator.BeginAggregating(ctx, counters, BeginAggregatingOpts{})
+				exit <- aggregator.beginAggregating(ctx, counters, beginAggregatingOpts{})
 			}()
 			for i, v := range wantItems {
 				mockModel.EXPECT().aggregateItemEvent(int64(i)+offsetBase, &v)
@@ -78,9 +78,9 @@ func TestItemEventsAggregator(t *testing.T) {
 			deps.deps.Verbose = true
 			ctx, cancel := context.WithCancel(context.Background())
 			defer cancel()
-			aggregator := NewItemEventsAggregator(deps.deps)
+			aggregator := newItemEventsAggregator(deps.deps)
 
-			mockModel, _ := deps.deps.AggregatorModel.(*MockItemEventsAggregatorModel)
+			mockModel, _ := deps.deps.AggregatorModel.(*mockItemEventsAggregatorModel)
 
 			offsetBase := rand.Int63n(1000)
 			wantItems := []models.ItemEvent{
@@ -96,7 +96,7 @@ func TestItemEventsAggregator(t *testing.T) {
 
 			exit := make(chan error)
 			go func() {
-				exit <- aggregator.BeginAggregating(ctx, counters, BeginAggregatingOpts{
+				exit <- aggregator.beginAggregating(ctx, counters, beginAggregatingOpts{
 					TillOffset: offsetBase + int64(len(wantItems)-1),
 				})
 			}()
@@ -110,9 +110,9 @@ func TestItemEventsAggregator(t *testing.T) {
 		t.Run("should handle errors when fetch messages", func(t *testing.T) {
 			deps := newMockDeps(t)
 			ctx, cancel := context.WithCancel(context.Background())
-			aggregator := NewItemEventsAggregator(deps.deps)
+			aggregator := newItemEventsAggregator(deps.deps)
 
-			mockModel, _ := deps.deps.AggregatorModel.(*MockItemEventsAggregatorModel)
+			mockModel, _ := deps.deps.AggregatorModel.(*mockItemEventsAggregatorModel)
 
 			fetchResultChan := make(chan fetchMessageResult)
 			mockModel.EXPECT().fetchMessages(ctx).Return(fetchResultChan)
@@ -120,7 +120,7 @@ func TestItemEventsAggregator(t *testing.T) {
 
 			exit := make(chan error)
 			go func() {
-				exit <- aggregator.BeginAggregating(ctx, counters, BeginAggregatingOpts{})
+				exit <- aggregator.beginAggregating(ctx, counters, beginAggregatingOpts{})
 			}()
 			fetchResultChan <- fetchMessageResult{err: errors.New(faker.Word())}
 
@@ -132,17 +132,17 @@ func TestItemEventsAggregator(t *testing.T) {
 		t.Run("should exit when context cancelled", func(t *testing.T) {
 			deps := newMockDeps(t)
 			ctx, cancel := context.WithCancel(context.Background())
-			aggregator := NewItemEventsAggregator(deps.deps)
+			aggregator := newItemEventsAggregator(deps.deps)
 
 			fetchResultChan := make(chan fetchMessageResult)
 
-			mockModel, _ := deps.deps.AggregatorModel.(*MockItemEventsAggregatorModel)
+			mockModel, _ := deps.deps.AggregatorModel.(*mockItemEventsAggregatorModel)
 			mockModel.EXPECT().fetchMessages(ctx).Return(fetchResultChan)
 			counters := NewCounters()
 
 			exit := make(chan error)
 			go func() {
-				exit <- aggregator.BeginAggregating(ctx, counters, BeginAggregatingOpts{})
+				exit <- aggregator.beginAggregating(ctx, counters, beginAggregatingOpts{})
 			}()
 			cancel()
 			gotErr := <-exit
@@ -151,9 +151,9 @@ func TestItemEventsAggregator(t *testing.T) {
 		t.Run("should flush messages on timer", func(t *testing.T) {
 			deps := newMockDeps(t)
 			ctx, cancel := context.WithCancel(context.Background())
-			aggregator := NewItemEventsAggregator(deps.deps)
+			aggregator := newItemEventsAggregator(deps.deps)
 
-			mockModel, _ := deps.deps.AggregatorModel.(*MockItemEventsAggregatorModel)
+			mockModel, _ := deps.deps.AggregatorModel.(*mockItemEventsAggregatorModel)
 			counters := NewCounters()
 
 			fetchResultChan := make(chan fetchMessageResult)
@@ -162,7 +162,7 @@ func TestItemEventsAggregator(t *testing.T) {
 
 			exit := make(chan error)
 			go func() {
-				exit <- aggregator.BeginAggregating(ctx, counters, BeginAggregatingOpts{})
+				exit <- aggregator.beginAggregating(ctx, counters, beginAggregatingOpts{})
 			}()
 			deps.flushTickerChan <- time.Now()
 
