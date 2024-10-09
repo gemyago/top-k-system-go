@@ -71,7 +71,6 @@ func TestItemEventsAggregator(t *testing.T) {
 			cancel()
 			gotErr := <-exit
 			require.NoError(t, gotErr)
-			mockModel.AssertExpectations(t)
 		})
 		t.Run("should stop and flush at given offset", func(t *testing.T) {
 			deps := newMockDeps(t)
@@ -127,7 +126,6 @@ func TestItemEventsAggregator(t *testing.T) {
 			cancel()
 			gotErr := <-exit
 			require.NoError(t, gotErr)
-			mockModel.AssertExpectations(t)
 		})
 		t.Run("should exit when context cancelled", func(t *testing.T) {
 			deps := newMockDeps(t)
@@ -169,7 +167,6 @@ func TestItemEventsAggregator(t *testing.T) {
 			cancel()
 			gotErr := <-exit
 			require.NoError(t, gotErr)
-			mockModel.AssertExpectations(t)
 		})
 	})
 }

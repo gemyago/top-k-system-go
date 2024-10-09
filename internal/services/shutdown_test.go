@@ -70,10 +70,6 @@ func TestShutdownHooks(t *testing.T) {
 
 			err := registry.PerformShutdown(ctx)
 			require.NoError(t, err)
-
-			for _, hook := range hooks {
-				hook.AssertExpectations(t)
-			}
 		})
 
 		t.Run("should call hooks without context", func(t *testing.T) {
@@ -95,10 +91,6 @@ func TestShutdownHooks(t *testing.T) {
 
 			err := registry.PerformShutdown(ctx)
 			require.NoError(t, err)
-
-			for _, hook := range hooks {
-				hook.AssertExpectations(t)
-			}
 		})
 
 		t.Run("should return error if any hook fails", func(t *testing.T) {
@@ -125,10 +117,6 @@ func TestShutdownHooks(t *testing.T) {
 
 			err := registry.PerformShutdown(ctx)
 			require.Error(t, err)
-
-			for _, hook := range hooks {
-				hook.AssertExpectations(t)
-			}
 		})
 	})
 }

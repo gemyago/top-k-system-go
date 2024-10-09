@@ -43,9 +43,6 @@ func TestCommands(t *testing.T) {
 				Return(nil)
 
 			require.NoError(t, commands.StartAggregator(ctx))
-			countersFactory.AssertExpectations(t)
-			checkPointer.AssertExpectations(t)
-			aggregator.AssertExpectations(t)
 		})
 
 		t.Run("should return error if restore state failed", func(t *testing.T) {

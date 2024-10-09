@@ -149,8 +149,6 @@ func TestAggregatorModel(t *testing.T) {
 			model.flushMessages(context.Background(), mockCounters)
 			assert.Equal(t, baseOffset+int64(len(itemEvents)-1), modelImpl.lastAggregatedOffset)
 			assert.Empty(t, modelImpl.aggregatedItems)
-
-			mockCounters.AssertExpectations(t)
 		})
 	})
 }
