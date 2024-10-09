@@ -1,11 +1,11 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 	"time"
 
-	"github.com/gemyago/top-k-system-go/internal/app/ingestion"
 	"github.com/gemyago/top-k-system-go/internal/app/models"
 	"github.com/gemyago/top-k-system-go/internal/services"
 	"github.com/gofrs/uuid/v5"
@@ -14,6 +14,15 @@ import (
 	"go.uber.org/dig"
 )
 
+type testEventsSender interface {
+	sendTestEvent(ctx context.Context, itemID string, eventsNumber int) error
+	sendTestEvents(ctx context.Context, itemIDsFile string, eventsNumber int) error
+}
+
+type ingestionCommands interface {
+	IngestItemEvent(ctx context.Context, evt *models.ItemEvent) error
+}
+
 func newSendTestEventCmd(container *dig.Container) *cobra.Command {
 	type invokeCmdParams struct {
 		dig.In
@@ -21,7 +30,7 @@ func newSendTestEventCmd(container *dig.Container) *cobra.Command {
 		RootLogger *slog.Logger
 
 		// app layer
-		IngestionCommands *ingestion.Commands
+		IngestionCommands ingestionCommands
 
 		// service layer
 		ItemEventsWriter services.ItemEventsKafkaWriter
