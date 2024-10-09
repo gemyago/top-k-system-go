@@ -115,8 +115,14 @@ gow run ./cmd/service/
 
 ## Testing
 
+When generating random data for testing, it is useful to have a fixed set of random itemIDs. Please use a command below to generate the list of random itemIDs:
+```bash
+go run ./cmd/mockdata/ generate-item-ids -n 10000 -o 10k-items.txt
+```
+This will generate 10k random itemIDs and save them to a file `tmp/blobs/10k-items.txt` (when running locally).
+
 In order to produce test events a command below can be used:
 ```sh
-go run ./cmd/local_broker/ send-test-events -n 10
+go run ./cmd/mockdata/ send-test-events -n 10
 ```
 This will write 10 test events for a randomly generated item. You can optionally use --item-id parameter and specify the itemId to send test events for.
