@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/gemyago/top-k-system-go/config"
-	"github.com/gemyago/top-k-system-go/pkg/app/aggregation"
-	"github.com/gemyago/top-k-system-go/pkg/app/ingestion"
-	"github.com/gemyago/top-k-system-go/pkg/di"
-	"github.com/gemyago/top-k-system-go/pkg/diag"
-	"github.com/gemyago/top-k-system-go/pkg/services"
+	"github.com/gemyago/top-k-system-go/internal/app/aggregation"
+	"github.com/gemyago/top-k-system-go/internal/app/ingestion"
+	"github.com/gemyago/top-k-system-go/internal/config"
+	"github.com/gemyago/top-k-system-go/internal/di"
+	"github.com/gemyago/top-k-system-go/internal/diag"
+	"github.com/gemyago/top-k-system-go/internal/services"
 	"github.com/spf13/cobra"
 	"go.uber.org/dig"
 )
@@ -21,8 +21,9 @@ func newRootCmd(container *dig.Container) *cobra.Command {
 	env := ""
 
 	cmd := &cobra.Command{
-		Use:   "local-broker",
-		Short: "Commands to setup and interact with local broker",
+		Use:          "local-broker",
+		Short:        "Commands to setup and interact with local broker",
+		SilenceUsage: true,
 	}
 	cmd.SilenceUsage = true
 	cmd.PersistentFlags().StringP("log-level", "l", "", "Produce logs with given level. Default is env specific.")

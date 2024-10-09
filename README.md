@@ -1,5 +1,9 @@
 # top-k-system-go
 
+[![Tests](https://github.com/gemyago/top-k-system-go/actions/workflows/run-tests.yml/badge.svg)](https://github.com/gemyago/top-k-system-go/actions/workflows/run-tests.yml)
+[![Coverage](https://raw.githubusercontent.com/gemyago/top-k-system-go/test-artifacts/coverage/golang-coverage.svg)](https://htmlpreview.github.io/?https://raw.githubusercontent.com/gemyago/top-k-system-go/test-artifacts/coverage/golang-coverage.html)
+
+
 Example **GoLang** implementation of a system that will allow querying top k most popular items for a given time period (1 hour, 1 day, 1 month or all time). The implementation will use a precise calculation rather than doing a probabilistic/approximate calculation (e.g using [count-min sketch](https://en.wikipedia.org/wiki/Count–min_sketch)).
 
 The design is inspired by the [Top-K Youtube Videos](https://www.hellointerview.com/learn/system-design/answer-keys/top-k).

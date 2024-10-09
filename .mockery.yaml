@@ -13,23 +13,33 @@ packages:
           dir: 'pkg/diag'
           filename: "mock_slog_handler.go"
           mockname: MockSlogHandler
-  github.com/gemyago/top-k-system-go/pkg/app/ingestion:
+  github.com/gemyago/top-k-system-go/internal/app/ingestion:
+    config:
+      filename: "{{.InterfaceNameSnake}}.go"
+      mockname: "{{ .InterfaceName | camelcase }}"
     interfaces:
-      Commands:
-  github.com/gemyago/top-k-system-go/pkg/app/aggregation:
+      mockCommands:
+  github.com/gemyago/top-k-system-go/internal/app/aggregation:
+    config:
+      mockname: "mock{{ .InterfaceName | camelcase }}"
     interfaces:
-      CheckPointer:
-      CountersFactory:
-      Counters:
-      ItemEventsAggregator:
-      ItemEventsAggregatorModel:
-      CheckPointerModel:
-  github.com/gemyago/top-k-system-go/pkg/services:
+      mockCommands:
+        config:
+          mockname: "{{ .InterfaceName | camelcase }}"
+          filename: "{{.InterfaceNameSnake}}.go"
+      countersFactory:
+      counters:
+      checkPointer:
+      checkPointerModel:
+      itemEventsAggregator:
+      itemEventsAggregatorModel:
+  github.com/gemyago/top-k-system-go/internal/services:
+    config:
+      filename: "{{.InterfaceNameSnake}}.go"
+      mockname: "{{ .InterfaceName | camelcase }}"
     interfaces:
-      KafkaReader:
-      KafkaWriter:
-      ShutdownHook:
-      ShutdownHooks:
-  github.com/gemyago/top-k-system-go/pkg/services/blobstorage:
+      mockKafkaWriter:
+      mockKafkaReader:
+  github.com/gemyago/top-k-system-go/internal/services/blobstorage:
     interfaces:
       Storage:

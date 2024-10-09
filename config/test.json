@@ -1,6 +1,0 @@
-{
-  "kafka": {
-    "allowAutoTopicCreation": true,
-    "itemEventsTopic": "item-events-test"
-  }
-}

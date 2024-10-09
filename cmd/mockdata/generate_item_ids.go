@@ -8,8 +8,8 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/gemyago/top-k-system-go/pkg/services"
-	"github.com/gemyago/top-k-system-go/pkg/services/blobstorage"
+	"github.com/gemyago/top-k-system-go/internal/services"
+	"github.com/gemyago/top-k-system-go/internal/services/blobstorage"
 	"github.com/spf13/cobra"
 	"go.uber.org/dig"
 )
