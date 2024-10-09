@@ -21,8 +21,9 @@ func newRootCmd(container *dig.Container) *cobra.Command {
 	env := ""
 
 	cmd := &cobra.Command{
-		Use:   "local-broker",
-		Short: "Commands to setup and interact with local broker",
+		Use:          "local-broker",
+		Short:        "Commands to setup and interact with local broker",
+		SilenceUsage: true,
 	}
 	cmd.SilenceUsage = true
 	cmd.PersistentFlags().StringP("log-level", "l", "", "Produce logs with given level. Default is env specific.")

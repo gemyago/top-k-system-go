@@ -21,7 +21,7 @@ func newSendTestEventCmd(container *dig.Container) *cobra.Command {
 		RootLogger *slog.Logger
 
 		// app layer
-		IngestionCommands ingestion.Commands
+		IngestionCommands *ingestion.Commands
 
 		// service layer
 		ItemEventsWriter services.ItemEventsKafkaWriter

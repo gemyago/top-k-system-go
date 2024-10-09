@@ -23,7 +23,7 @@ type createCheckPointParams struct {
 
 	RootLogger *slog.Logger
 
-	AggregationCommands aggregation.Commands
+	AggregationCommands *aggregation.Commands
 
 	*services.ShutdownHooks
 

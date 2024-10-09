@@ -21,8 +21,9 @@ func newRootCmd(container *dig.Container) *cobra.Command {
 	env := ""
 
 	cmd := &cobra.Command{
-		Use:   "checkpointer",
-		Short: "Command to start checkpointer jobs",
+		Use:          "checkpointer",
+		Short:        "Command to start checkpointer jobs",
+		SilenceUsage: true,
 	}
 	cmd.PersistentFlags().StringP("log-level", "l", "", "Produce logs with given level. Default is env specific.")
 	cmd.PersistentFlags().StringVar(

@@ -11,7 +11,7 @@ import (
 	"go.uber.org/dig"
 )
 
-type itemsCommands interface {
+type ingestionCommands interface {
 	IngestItemEvent(ctx context.Context, evt *models.ItemEvent) error
 }
 
@@ -21,7 +21,7 @@ type ItemsRoutesDeps struct {
 	RootLogger *slog.Logger
 
 	// app layer
-	Commands itemsCommands
+	Commands ingestionCommands
 
 	// service layer
 	Time services.TimeProvider
