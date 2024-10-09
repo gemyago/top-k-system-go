@@ -1,15 +1,19 @@
 package routes
 
 import (
+	"context"
 	"log/slog"
 	"net/http"
 
-	"github.com/gemyago/top-k-system-go/internal/app/ingestion"
 	"github.com/gemyago/top-k-system-go/internal/app/models"
 	"github.com/gemyago/top-k-system-go/internal/diag"
 	"github.com/gemyago/top-k-system-go/internal/services"
 	"go.uber.org/dig"
 )
+
+type itemsCommands interface {
+	IngestItemEvent(ctx context.Context, evt *models.ItemEvent) error
+}
 
 type ItemsRoutesDeps struct {
 	dig.In
@@ -17,7 +21,7 @@ type ItemsRoutesDeps struct {
 	RootLogger *slog.Logger
 
 	// app layer
-	Commands ingestion.Commands
+	Commands itemsCommands
 
 	// service layer
 	Time services.TimeProvider

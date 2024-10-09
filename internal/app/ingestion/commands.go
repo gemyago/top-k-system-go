@@ -14,27 +14,23 @@ type itemEventsWriter interface {
 	WriteMessages(ctx context.Context, msgs ...kafka.Message) error
 }
 
-type Commands interface {
-	IngestItemEvent(ctx context.Context, evt *models.ItemEvent) error
-}
-
 type CommandsDeps struct {
 	dig.In
 
 	ItemEventsWriter itemEventsWriter
 }
 
-type commands struct {
-	CommandsDeps
+type Commands struct {
+	deps CommandsDeps
 }
 
-func (c *commands) IngestItemEvent(ctx context.Context, evt *models.ItemEvent) error {
+func (c *Commands) IngestItemEvent(ctx context.Context, evt *models.ItemEvent) error {
 	msgValue, err := json.Marshal(evt)
 	if err != nil { // coverage-ignore // unrealistic to simulate this error
 		return fmt.Errorf("failed to marshal event: %w", err)
 	}
 
-	err = c.ItemEventsWriter.WriteMessages(
+	err = c.deps.ItemEventsWriter.WriteMessages(
 		// It's going to write in batches outside of the API call
 		// we don't want to cancel to abort it
 		context.WithoutCancel(ctx),
@@ -49,6 +45,6 @@ func (c *commands) IngestItemEvent(ctx context.Context, evt *models.ItemEvent) e
 	return nil
 }
 
-func NewCommands(deps CommandsDeps) Commands {
-	return &commands{deps}
+func NewCommands(deps CommandsDeps) *Commands {
+	return &Commands{deps}
 }

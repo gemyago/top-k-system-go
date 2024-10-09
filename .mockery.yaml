@@ -14,8 +14,11 @@ packages:
           filename: "mock_slog_handler.go"
           mockname: MockSlogHandler
   github.com/gemyago/top-k-system-go/internal/app/ingestion:
+    config:
+      filename: "{{.InterfaceNameSnake}}.go"
+      mockname: "{{ .InterfaceName | camelcase }}"
     interfaces:
-      Commands:
+      mockCommands:
   github.com/gemyago/top-k-system-go/internal/app/aggregation:
     interfaces:
       CheckPointer:
