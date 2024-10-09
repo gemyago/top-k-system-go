@@ -19,6 +19,9 @@ type itemEventsAggregator interface {
 }
 
 type ItemEventsAggregatorDeps struct {
+	// all injectable fields must be exported
+	// to let dig inject them
+
 	dig.In
 
 	RootLogger *slog.Logger

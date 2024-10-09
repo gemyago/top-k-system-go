@@ -18,7 +18,7 @@ func TestCheckPointer(t *testing.T) {
 	newMockDeps := func(t *testing.T) CheckPointerDeps {
 		return CheckPointerDeps{
 			RootLogger:        diag.RootTestLogger(),
-			checkPointerModel: newMockCheckPointerModel(t),
+			CheckPointerModel: newMockCheckPointerModel(t),
 		}
 	}
 
@@ -31,7 +31,7 @@ func TestCheckPointer(t *testing.T) {
 			manifest := randomManifest()
 			values := randomCountersValues()
 
-			mockModel, _ := deps.checkPointerModel.(*mockCheckPointerModel)
+			mockModel, _ := deps.CheckPointerModel.(*mockCheckPointerModel)
 			mockModel.EXPECT().readManifest(ctx).Return(manifest, nil)
 			mockModel.EXPECT().readCounters(ctx, manifest.CountersBlobFileName).Return(values, nil)
 
@@ -47,7 +47,7 @@ func TestCheckPointer(t *testing.T) {
 
 			ctx := context.Background()
 
-			mockModel, _ := deps.checkPointerModel.(*mockCheckPointerModel)
+			mockModel, _ := deps.CheckPointerModel.(*mockCheckPointerModel)
 			mockModel.EXPECT().readManifest(ctx).Return(checkPointManifest{}, fmt.Errorf("empty state: %w", fs.ErrNotExist))
 
 			counters, _ := newCounters().(*countersImpl)
@@ -62,7 +62,7 @@ func TestCheckPointer(t *testing.T) {
 
 			ctx := context.Background()
 
-			mockModel, _ := deps.checkPointerModel.(*mockCheckPointerModel)
+			mockModel, _ := deps.CheckPointerModel.(*mockCheckPointerModel)
 			wantErr := errors.New(faker.Sentence())
 			manifest := randomManifest()
 
@@ -78,7 +78,7 @@ func TestCheckPointer(t *testing.T) {
 
 			ctx := context.Background()
 
-			mockModel, _ := deps.checkPointerModel.(*mockCheckPointerModel)
+			mockModel, _ := deps.CheckPointerModel.(*mockCheckPointerModel)
 			wantErr := errors.New(faker.Sentence())
 			mockModel.EXPECT().readManifest(ctx).Return(checkPointManifest{}, wantErr)
 
@@ -97,7 +97,7 @@ func TestCheckPointer(t *testing.T) {
 			cnt := newCounters()
 			cnt.updateItemsCount(rand.Int64(), values)
 
-			mockModel, _ := deps.checkPointerModel.(*mockCheckPointerModel)
+			mockModel, _ := deps.CheckPointerModel.(*mockCheckPointerModel)
 			mockModel.EXPECT().writeCounters(
 				ctx,
 				fmt.Sprintf("counters-%d", cnt.getLastOffset()),
@@ -122,7 +122,7 @@ func TestCheckPointer(t *testing.T) {
 			cnt := newCounters()
 			cnt.updateItemsCount(rand.Int64(), values)
 
-			mockModel, _ := deps.checkPointerModel.(*mockCheckPointerModel)
+			mockModel, _ := deps.CheckPointerModel.(*mockCheckPointerModel)
 			wantErr := errors.New(faker.Sentence())
 			mockModel.EXPECT().writeCounters(
 				ctx,
@@ -141,7 +141,7 @@ func TestCheckPointer(t *testing.T) {
 			cnt := newCounters()
 			cnt.updateItemsCount(rand.Int64(), values)
 
-			mockModel, _ := deps.checkPointerModel.(*mockCheckPointerModel)
+			mockModel, _ := deps.CheckPointerModel.(*mockCheckPointerModel)
 			wantErr := errors.New(faker.Sentence())
 			mockModel.EXPECT().writeCounters(
 				ctx,

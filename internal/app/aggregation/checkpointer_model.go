@@ -23,6 +23,9 @@ type checkPointerModel interface {
 }
 
 type CheckPointerModelDeps struct {
+	// all injectable fields must be exported
+	// to let dig inject them
+
 	dig.In
 
 	// services

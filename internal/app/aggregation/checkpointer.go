@@ -16,21 +16,24 @@ type checkPointer interface {
 }
 
 type CheckPointerDeps struct {
+	// all injectable fields must be exported
+	// to let dig inject them
+
 	dig.In
 
 	RootLogger *slog.Logger
 
 	// package private components
-	checkPointerModel
+	CheckPointerModel checkPointerModel
 }
 
 type checkPointerImpl struct {
 	logger *slog.Logger
-	CheckPointerDeps
+	deps   CheckPointerDeps
 }
 
 func (cp *checkPointerImpl) restoreState(ctx context.Context, counters counters) error {
-	manifest, err := cp.checkPointerModel.readManifest(ctx)
+	manifest, err := cp.deps.CheckPointerModel.readManifest(ctx)
 	if err != nil {
 		if errors.Is(err, fs.ErrNotExist) {
 			cp.logger.InfoContext(ctx, "Manifest not found. No state to restore from.")
@@ -38,7 +41,7 @@ func (cp *checkPointerImpl) restoreState(ctx context.Context, counters counters)
 		}
 		return err
 	}
-	values, err := cp.checkPointerModel.readCounters(ctx, manifest.CountersBlobFileName)
+	values, err := cp.deps.CheckPointerModel.readCounters(ctx, manifest.CountersBlobFileName)
 	if err != nil {
 		return err
 	}
@@ -52,13 +55,13 @@ func (cp *checkPointerImpl) dumpState(ctx context.Context, counters counters) er
 		LastOffset:           counters.getLastOffset(),
 		CountersBlobFileName: countersFileName,
 	}
-	if err := cp.checkPointerModel.writeCounters(ctx, countersFileName, counters.getItemsCounters()); err != nil {
+	if err := cp.deps.CheckPointerModel.writeCounters(ctx, countersFileName, counters.getItemsCounters()); err != nil {
 		return err
 	}
 
 	// We write manifest last so if counters fail, the manifest will point on the last
 	// counters
-	if err := cp.checkPointerModel.writeManifest(ctx, newManifest); err != nil {
+	if err := cp.deps.CheckPointerModel.writeManifest(ctx, newManifest); err != nil {
 		return err
 	}
 	return nil
@@ -66,7 +69,7 @@ func (cp *checkPointerImpl) dumpState(ctx context.Context, counters counters) er
 
 func newCheckPointer(deps CheckPointerDeps) checkPointer {
 	return &checkPointerImpl{
-		logger:           deps.RootLogger.WithGroup("check-pointer"),
-		CheckPointerDeps: deps,
+		logger: deps.RootLogger.WithGroup("check-pointer"),
+		deps:   deps,
 	}
 }

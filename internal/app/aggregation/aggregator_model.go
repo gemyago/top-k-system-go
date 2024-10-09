@@ -17,6 +17,9 @@ type fetchMessageResult struct {
 }
 
 type ItemEventsAggregatorModelDeps struct {
+	// all injectable fields must be exported
+	// to let dig inject them
+
 	dig.In
 
 	RootLogger *slog.Logger

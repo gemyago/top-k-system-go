@@ -23,6 +23,10 @@ packages:
     config:
       mockname: "mock{{ .InterfaceName | camelcase }}"
     interfaces:
+      mockCommands:
+        config:
+          mockname: "{{ .InterfaceName | camelcase }}"
+          filename: "{{.InterfaceNameSnake}}.go"
       countersFactory:
       counters:
       checkPointer:
