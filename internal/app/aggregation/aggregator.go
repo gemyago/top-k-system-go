@@ -15,7 +15,7 @@ type beginAggregatingOpts struct {
 }
 
 type itemEventsAggregator interface {
-	beginAggregating(context context.Context, counters Counters, opts beginAggregatingOpts) error
+	beginAggregating(context context.Context, counters counters, opts beginAggregatingOpts) error
 }
 
 type ItemEventsAggregatorDeps struct {
@@ -41,7 +41,7 @@ type itemEventsAggregatorImpl struct {
 
 func (a *itemEventsAggregatorImpl) beginAggregating(
 	ctx context.Context,
-	counters Counters,
+	counters counters,
 	opts beginAggregatingOpts,
 ) error {
 	// TODO: Set the offset to start fetching from

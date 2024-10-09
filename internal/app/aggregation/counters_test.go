@@ -12,7 +12,7 @@ func TestCounters(t *testing.T) {
 	t.Run("updateItemsCount", func(t *testing.T) {
 		t.Run("should update items counters with new values", func(t *testing.T) {
 			// Doing factory func just to test it
-			c := CountersFactoryFunc(NewCounters).NewCounters()
+			c := countersFactoryFunc(newCounters).newCounters()
 
 			initialBaseOffset := rand.Int63n(1000)
 			existingData := map[string]int64{
@@ -22,7 +22,7 @@ func TestCounters(t *testing.T) {
 				faker.UUIDHyphenated(): rand.Int63n(1000),
 			}
 
-			cImpl, _ := c.(*counters)
+			cImpl, _ := c.(*countersImpl)
 			cImpl.lastOffset = initialBaseOffset
 			for k, v := range existingData {
 				cImpl.itemCounters[k] = v

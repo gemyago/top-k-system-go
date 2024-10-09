@@ -20,21 +20,15 @@ packages:
     interfaces:
       mockCommands:
   github.com/gemyago/top-k-system-go/internal/app/aggregation:
+    config:
+      mockname: "mock{{ .InterfaceName | camelcase }}"
     interfaces:
-      CountersFactory:
-      Counters:
+      countersFactory:
+      counters:
       checkPointer:
-        config:
-          mockname: "mock{{ .InterfaceName | camelcase }}"
       checkPointerModel:
-        config:
-          mockname: "mock{{ .InterfaceName | camelcase }}"
       itemEventsAggregator:
-        config:
-          mockname: "mock{{ .InterfaceName | camelcase }}"
       itemEventsAggregatorModel:
-        config:
-          mockname: "mock{{ .InterfaceName | camelcase }}"
   github.com/gemyago/top-k-system-go/internal/services:
     config:
       filename: "{{.InterfaceNameSnake}}.go"

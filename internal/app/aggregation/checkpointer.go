@@ -11,8 +11,8 @@ import (
 )
 
 type checkPointer interface {
-	restoreState(ctx context.Context, counters Counters) error
-	dumpState(ctx context.Context, counters Counters) error
+	restoreState(ctx context.Context, counters counters) error
+	dumpState(ctx context.Context, counters counters) error
 }
 
 type CheckPointerDeps struct {
@@ -29,7 +29,7 @@ type checkPointerImpl struct {
 	CheckPointerDeps
 }
 
-func (cp *checkPointerImpl) restoreState(ctx context.Context, counters Counters) error {
+func (cp *checkPointerImpl) restoreState(ctx context.Context, counters counters) error {
 	manifest, err := cp.checkPointerModel.readManifest(ctx)
 	if err != nil {
 		if errors.Is(err, fs.ErrNotExist) {
@@ -46,7 +46,7 @@ func (cp *checkPointerImpl) restoreState(ctx context.Context, counters Counters)
 	return nil
 }
 
-func (cp *checkPointerImpl) dumpState(ctx context.Context, counters Counters) error {
+func (cp *checkPointerImpl) dumpState(ctx context.Context, counters counters) error {
 	countersFileName := fmt.Sprintf("counters-%d", counters.getLastOffset())
 	newManifest := checkPointManifest{
 		LastOffset:           counters.getLastOffset(),
@@ -64,7 +64,7 @@ func (cp *checkPointerImpl) dumpState(ctx context.Context, counters Counters) er
 	return nil
 }
 
-func NewCheckPointer(deps CheckPointerDeps) checkPointer {
+func newCheckPointer(deps CheckPointerDeps) checkPointer {
 	return &checkPointerImpl{
 		logger:           deps.RootLogger.WithGroup("check-pointer"),
 		CheckPointerDeps: deps,

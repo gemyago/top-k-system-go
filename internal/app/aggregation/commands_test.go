@@ -19,7 +19,7 @@ func TestCommands(t *testing.T) {
 			checkPointer:         newMockCheckPointer(t),
 			itemEventsAggregator: newMockItemEventsAggregator(t),
 			ItemEventsReader:     services.NewMockKafkaReader(t),
-			CountersFactory:      NewMockCountersFactory(t),
+			countersFactory:      newMockCountersFactory(t),
 		}
 	}
 
@@ -30,9 +30,9 @@ func TestCommands(t *testing.T) {
 
 			ctx := context.Background()
 
-			wantCounters := NewMockCounters(t)
-			countersFactory, _ := mockDeps.CountersFactory.(*MockCountersFactory)
-			countersFactory.EXPECT().NewCounters().Return(wantCounters)
+			wantCounters := newMockCounters(t)
+			countersFactory, _ := mockDeps.countersFactory.(*mockCountersFactory)
+			countersFactory.EXPECT().newCounters().Return(wantCounters)
 
 			checkPointer, _ := mockDeps.checkPointer.(*mockCheckPointer)
 			checkPointer.EXPECT().restoreState(ctx, wantCounters).Return(nil)
@@ -51,9 +51,9 @@ func TestCommands(t *testing.T) {
 
 			ctx := context.Background()
 
-			wantCounters := NewMockCounters(t)
-			countersFactory, _ := mockDeps.CountersFactory.(*MockCountersFactory)
-			countersFactory.EXPECT().NewCounters().Return(wantCounters)
+			wantCounters := newMockCounters(t)
+			countersFactory, _ := mockDeps.countersFactory.(*mockCountersFactory)
+			countersFactory.EXPECT().newCounters().Return(wantCounters)
 
 			checkPointer, _ := mockDeps.checkPointer.(*mockCheckPointer)
 			wantErr := errors.New(faker.Sentence())
@@ -70,12 +70,12 @@ func TestCommands(t *testing.T) {
 
 			ctx := context.Background()
 
-			wantCounters := NewMockCounters(t)
+			wantCounters := newMockCounters(t)
 
 			wantCounters.EXPECT().getLastOffset().Return(0)
 
-			countersFactory, _ := mockDeps.CountersFactory.(*MockCountersFactory)
-			countersFactory.EXPECT().NewCounters().Return(wantCounters)
+			countersFactory, _ := mockDeps.countersFactory.(*mockCountersFactory)
+			countersFactory.EXPECT().newCounters().Return(wantCounters)
 
 			checkPointer, _ := mockDeps.checkPointer.(*mockCheckPointer)
 			checkPointer.EXPECT().restoreState(ctx, wantCounters).Return(nil)
@@ -101,13 +101,13 @@ func TestCommands(t *testing.T) {
 
 			ctx := context.Background()
 
-			wantCounters := NewMockCounters(t)
+			wantCounters := newMockCounters(t)
 
 			lastOffset := rand.Int64()
 			wantCounters.EXPECT().getLastOffset().Return(lastOffset)
 
-			countersFactory, _ := mockDeps.CountersFactory.(*MockCountersFactory)
-			countersFactory.EXPECT().NewCounters().Return(wantCounters)
+			countersFactory, _ := mockDeps.countersFactory.(*mockCountersFactory)
+			countersFactory.EXPECT().newCounters().Return(wantCounters)
 
 			checkPointer, _ := mockDeps.checkPointer.(*mockCheckPointer)
 			checkPointer.EXPECT().restoreState(ctx, wantCounters).Return(nil)
@@ -134,13 +134,13 @@ func TestCommands(t *testing.T) {
 
 			ctx := context.Background()
 
-			wantCounters := NewMockCounters(t)
+			wantCounters := newMockCounters(t)
 
 			lastOffset := rand.Int64()
 			wantCounters.EXPECT().getLastOffset().Return(lastOffset)
 
-			countersFactory, _ := mockDeps.CountersFactory.(*MockCountersFactory)
-			countersFactory.EXPECT().NewCounters().Return(wantCounters)
+			countersFactory, _ := mockDeps.countersFactory.(*mockCountersFactory)
+			countersFactory.EXPECT().newCounters().Return(wantCounters)
 
 			checkPointer, _ := mockDeps.checkPointer.(*mockCheckPointer)
 			checkPointer.EXPECT().restoreState(ctx, wantCounters).Return(nil)
@@ -157,10 +157,10 @@ func TestCommands(t *testing.T) {
 
 			ctx := context.Background()
 
-			wantCounters := NewMockCounters(t)
+			wantCounters := newMockCounters(t)
 
-			countersFactory, _ := mockDeps.CountersFactory.(*MockCountersFactory)
-			countersFactory.EXPECT().NewCounters().Return(wantCounters)
+			countersFactory, _ := mockDeps.countersFactory.(*mockCountersFactory)
+			countersFactory.EXPECT().newCounters().Return(wantCounters)
 
 			checkPointer, _ := mockDeps.checkPointer.(*mockCheckPointer)
 			wantErr := errors.New(faker.Sentence())
@@ -174,10 +174,10 @@ func TestCommands(t *testing.T) {
 
 			ctx := context.Background()
 
-			wantCounters := NewMockCounters(t)
+			wantCounters := newMockCounters(t)
 
-			countersFactory, _ := mockDeps.CountersFactory.(*MockCountersFactory)
-			countersFactory.EXPECT().NewCounters().Return(wantCounters)
+			countersFactory, _ := mockDeps.countersFactory.(*mockCountersFactory)
+			countersFactory.EXPECT().newCounters().Return(wantCounters)
 
 			checkPointer, _ := mockDeps.checkPointer.(*mockCheckPointer)
 			checkPointer.EXPECT().restoreState(ctx, wantCounters).Return(nil)

@@ -31,7 +31,7 @@ type CommandsDeps struct {
 	RootLogger *slog.Logger
 
 	// app layer
-	CountersFactory
+	countersFactory
 
 	// service layer
 	ItemEventsReader itemEventsKafkaReader
@@ -48,8 +48,8 @@ type commands struct {
 
 func (c *commands) StartAggregator(ctx context.Context) error {
 	c.logger.InfoContext(ctx, "Restoring counters state")
-	counters := c.CountersFactory.NewCounters()
-	if err := c.checkPointer.restoreState(ctx, counters); err != nil {
+	cnt := c.countersFactory.newCounters()
+	if err := c.checkPointer.restoreState(ctx, cnt); err != nil {
 		return fmt.Errorf("failed to restore state while starting aggregator: %w", err)
 	}
 
@@ -57,14 +57,14 @@ func (c *commands) StartAggregator(ctx context.Context) error {
 	// so then API layer could query them
 
 	c.logger.InfoContext(ctx, "Starting aggregation")
-	return c.itemEventsAggregator.beginAggregating(ctx, counters, beginAggregatingOpts{})
+	return c.itemEventsAggregator.beginAggregating(ctx, cnt, beginAggregatingOpts{})
 }
 
 func (c *commands) CreateCheckPoint(ctx context.Context) error {
-	counters := c.CountersFactory.NewCounters()
+	ctn := c.countersFactory.newCounters()
 
 	c.logger.InfoContext(ctx, "Starting creating check point. Restoring last state.")
-	if err := c.checkPointer.restoreState(ctx, counters); err != nil {
+	if err := c.checkPointer.restoreState(ctx, ctn); err != nil {
 		return fmt.Errorf("failed to restore state while creating check point: %w", err)
 	}
 
@@ -73,7 +73,7 @@ func (c *commands) CreateCheckPoint(ctx context.Context) error {
 		return fmt.Errorf("failed to read the lag: %w", err)
 	}
 
-	lastOffset := counters.getLastOffset()
+	lastOffset := ctn.getLastOffset()
 	if lastOffset > 0 {
 		// We want to consume starting form the next offset, so doing +1
 		if err = c.ItemEventsReader.SetOffset(lastOffset + 1); err != nil {
@@ -97,21 +97,21 @@ func (c *commands) CreateCheckPoint(ctx context.Context) error {
 
 	c.logger.InfoContext(ctx,
 		"Aggregating remaining messages",
-		slog.Int64("sinceOffset", counters.getLastOffset()),
+		slog.Int64("sinceOffset", ctn.getLastOffset()),
 		slog.Int64("tillOffset", tillOffset),
 	)
-	if err = c.itemEventsAggregator.beginAggregating(ctx, counters, beginAggregatingOpts{
+	if err = c.itemEventsAggregator.beginAggregating(ctx, ctn, beginAggregatingOpts{
 		TillOffset: tillOffset,
 	}); err != nil {
 		return fmt.Errorf("failed to aggregate till offset: %w", err)
 	}
 
 	c.logger.InfoContext(ctx, "Producing new state")
-	if err = c.checkPointer.dumpState(ctx, counters); err != nil {
+	if err = c.checkPointer.dumpState(ctx, ctn); err != nil {
 		return fmt.Errorf("failed to dump state: %w", err)
 	}
 
-	c.logger.InfoContext(ctx, "Checkpoint created", slog.Int64("lastOffset", counters.getLastOffset()))
+	c.logger.InfoContext(ctx, "Checkpoint created", slog.Int64("lastOffset", ctn.getLastOffset()))
 
 	return nil
 }
