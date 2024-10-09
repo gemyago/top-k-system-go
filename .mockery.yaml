@@ -25,11 +25,12 @@ packages:
       ItemEventsAggregatorModel:
       CheckPointerModel:
   github.com/gemyago/top-k-system-go/internal/services:
+    config:
+      filename: "{{.InterfaceNameSnake}}.go"
+      mockname: "{{ .InterfaceName | camelcase }}"
     interfaces:
-      KafkaReader:
-      KafkaWriter:
-      ShutdownHook:
-      ShutdownHooks:
+      mockKafkaWriter:
+      mockKafkaReader:
   github.com/gemyago/top-k-system-go/internal/services/blobstorage:
     interfaces:
       Storage:

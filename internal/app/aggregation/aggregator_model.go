@@ -7,7 +7,6 @@ import (
 	"log/slog"
 
 	"github.com/gemyago/top-k-system-go/internal/app/models"
-	"github.com/gemyago/top-k-system-go/internal/services"
 	"go.uber.org/dig"
 )
 
@@ -32,7 +31,7 @@ type ItemEventsAggregatorModelDeps struct {
 	Verbose bool `name:"config.aggregator.verbose"`
 
 	// service layer
-	ItemEventsReader services.ItemEventsKafkaReader
+	ItemEventsReader itemEventsKafkaReader
 }
 
 type itemEventsAggregatorModel struct {

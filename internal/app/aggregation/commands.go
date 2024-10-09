@@ -5,9 +5,15 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/gemyago/top-k-system-go/internal/services"
+	"github.com/segmentio/kafka-go"
 	"go.uber.org/dig"
 )
+
+type itemEventsKafkaReader interface {
+	FetchMessage(ctx context.Context) (kafka.Message, error)
+	SetOffset(offset int64) error
+	ReadLag(ctx context.Context) (lag int64, err error)
+}
 
 type Commands interface {
 	// StartAggregator will restore last state and start aggregating
@@ -30,7 +36,7 @@ type CommandsDeps struct {
 	CountersFactory
 
 	// service layer
-	ItemEventsReader services.ItemEventsKafkaReader
+	ItemEventsReader itemEventsKafkaReader
 }
 
 type commands struct {

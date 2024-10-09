@@ -1,7 +1,6 @@
 package services
 
 import (
-	"context"
 	"log/slog"
 	"time"
 
@@ -9,12 +8,9 @@ import (
 	"go.uber.org/dig"
 )
 
-type KafkaWriter interface {
-	WriteMessages(ctx context.Context, msgs ...kafka.Message) error
-	Close() error
+type ItemEventsKafkaWriter struct {
+	*kafka.Writer
 }
-
-type ItemEventsKafkaWriter KafkaWriter
 
 type ItemEventsKafkaWriterDeps struct {
 	dig.In
@@ -42,20 +38,12 @@ func NewItemEventsKafkaWriter(deps ItemEventsKafkaWriterDeps) ItemEventsKafkaWri
 
 	deps.ShutdownHooks.RegisterNoCtx("item-events-writer", writer.Close)
 
-	return writer
+	return ItemEventsKafkaWriter{Writer: writer}
 }
 
-type KafkaReader interface {
-	Close() error
-	CommitMessages(ctx context.Context, msgs ...kafka.Message) error
-	FetchMessage(ctx context.Context) (kafka.Message, error)
-	Offset() int64
-	SetOffset(offset int64) error
-	Stats() kafka.ReaderStats
-	ReadLag(ctx context.Context) (lag int64, err error)
+type ItemEventsKafkaReader struct {
+	*kafka.Reader
 }
-
-type ItemEventsKafkaReader KafkaReader
 
 type ItemEventsKafkaReaderDeps struct {
 	dig.In
@@ -80,5 +68,5 @@ func NewItemEventsKafkaReader(deps ItemEventsKafkaReaderDeps) ItemEventsKafkaRea
 
 	deps.ShutdownHooks.RegisterNoCtx("item-events-reader", reader.Close)
 
-	return reader
+	return ItemEventsKafkaReader{Reader: reader}
 }

@@ -6,10 +6,13 @@ import (
 	"fmt"
 
 	"github.com/gemyago/top-k-system-go/internal/app/models"
-	"github.com/gemyago/top-k-system-go/internal/services"
 	"github.com/segmentio/kafka-go"
 	"go.uber.org/dig"
 )
+
+type itemEventsWriter interface {
+	WriteMessages(ctx context.Context, msgs ...kafka.Message) error
+}
 
 type Commands interface {
 	IngestItemEvent(ctx context.Context, evt *models.ItemEvent) error
@@ -18,7 +21,7 @@ type Commands interface {
 type CommandsDeps struct {
 	dig.In
 
-	ItemEventsWriter services.ItemEventsKafkaWriter
+	ItemEventsWriter itemEventsWriter
 }
 
 type commands struct {
