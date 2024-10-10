@@ -84,7 +84,7 @@ func newRootCmd(container *dig.Container) *cobra.Command {
 
 				// package internal
 				di.ProvideAs[*ingestion.Commands, ingestionCommands],
-				func(s eventsSenderImpl) eventsSender { return &s },
+				func(s defaultEventsSender) eventsSender { return &s },
 				di.ProvideValue[randIntN](rand.IntN),
 			),
 		)

@@ -13,6 +13,11 @@ packages:
           dir: 'pkg/diag'
           filename: "mock_slog_handler.go"
           mockname: MockSlogHandler
+  github.com/gemyago/top-k-system-go/cmd/mockdata:
+    interfaces:
+      eventsSender:
+        config:
+          mockname: "mock{{ .InterfaceName | camelcase }}"
   github.com/gemyago/top-k-system-go/internal/app/ingestion:
     config:
       filename: "{{.InterfaceNameSnake}}.go"

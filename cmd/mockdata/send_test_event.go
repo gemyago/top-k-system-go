@@ -13,15 +13,6 @@ import (
 	"go.uber.org/dig"
 )
 
-type eventsSender interface {
-	sendTestEvent(ctx context.Context, itemID string, eventsNumber int) error
-	sendTestEvents(ctx context.Context,
-		itemIDsFile string,
-		eventsMin int,
-		eventsMax int,
-	) error
-}
-
 type ingestionCommands interface {
 	IngestItemEvent(ctx context.Context, evt *models.ItemEvent) error
 }
@@ -71,6 +62,12 @@ func newSendTestEventCmd(container *dig.Container) *cobra.Command {
 		Use:   "send-test-events",
 		Short: "Send test item events",
 		RunE: func(cmd *cobra.Command, _ []string) error {
+			if err := container.Decorate(func(rootLogger *slog.Logger, sender eventsSender) eventsSender {
+				return newNoopEventsSender(rootLogger, sender, noop)
+			}); err != nil {
+				return fmt.Errorf("failed to decorate events sender: %w", err)
+			}
+
 			return container.Invoke(func(params invokeCmdParams) error {
 				logger := params.RootLogger.WithGroup("send-test-event")
 				logger.InfoContext(cmd.Context(), "Sending test item event")
