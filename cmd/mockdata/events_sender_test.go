@@ -75,7 +75,7 @@ func Test_eventsSender(t *testing.T) {
 				storage, _ := sender.Storage.(*blobstorage.MockStorage)
 				storage.EXPECT().Download(ctx, wantItemsFile, mock.Anything).RunAndReturn(
 					func(_ context.Context, _ string, w io.Writer) error {
-						_, err := io.Copy(w, bytes.NewBufferString(strings.Join(itemIDs, "\n")))
+						_, err := io.Copy(w, bytes.NewBufferString(strings.Join(itemIDs, "\n")+"\n"))
 						return err
 					},
 				)

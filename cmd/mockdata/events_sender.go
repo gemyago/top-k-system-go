@@ -72,7 +72,7 @@ func (impl *defaultEventsSender) sendTestEvents(
 	if err := impl.Storage.Download(ctx, itemIDsFile, &data); err != nil {
 		return fmt.Errorf("failed to download item IDs from file %s: %w", itemIDsFile, err)
 	}
-	itemIDs := strings.Split(strings.Trim(data.String(), ""), "\n")
+	itemIDs := strings.Split(strings.Trim(data.String(), "\n"), "\n")
 	for _, itemID := range itemIDs {
 		eventsNumber := impl.RandIntN(eventsMax-eventsMin) + eventsMin
 		if err := impl.sendTestEvent(ctx, itemID, eventsNumber); err != nil {
