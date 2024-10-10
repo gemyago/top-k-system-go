@@ -3,6 +3,7 @@ package aggregation
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"io"
 	"math/rand"
 	"testing"
@@ -10,6 +11,7 @@ import (
 	"github.com/gemyago/top-k-system-go/internal/app/models"
 	"github.com/gemyago/top-k-system-go/internal/diag"
 	"github.com/gemyago/top-k-system-go/internal/services"
+	"github.com/go-faker/faker/v4"
 	"github.com/samber/lo"
 	"github.com/segmentio/kafka-go"
 	"github.com/stretchr/testify/assert"
@@ -125,6 +127,20 @@ func TestAggregatorModel(t *testing.T) {
 					event:  &wantItem,
 				}, gotResult)
 			}
+		})
+
+		t.Run("should return error if failed to set offset", func(t *testing.T) {
+			mockDeps := newMockDeps(t)
+			model := newItemEventsAggregatorModel(mockDeps)
+
+			ctx := context.Background()
+			wantErr := errors.New(faker.Sentence())
+			mockReader, _ := mockDeps.ItemEventsReader.(*services.MockKafkaReader)
+			wantOffset := rand.Int63n(1000)
+			mockReader.EXPECT().SetOffset(wantOffset).Return(wantErr)
+
+			res := <-model.fetchMessages(ctx, wantOffset)
+			require.ErrorIs(t, res.err, wantErr)
 		})
 	})
 

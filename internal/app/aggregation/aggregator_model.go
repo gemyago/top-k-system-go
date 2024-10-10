@@ -64,8 +64,10 @@ func (m *itemEventsAggregatorModelImpl) flushMessages(ctx context.Context, count
 func (m *itemEventsAggregatorModelImpl) fetchMessages(ctx context.Context, fromOffset int64) <-chan fetchMessageResult {
 	resultsChan := make(chan fetchMessageResult)
 	if err := m.deps.ItemEventsReader.SetOffset(fromOffset); err != nil {
-		resultsChan <- fetchMessageResult{err: fmt.Errorf("failed to set offset: %w", err)}
-		close(resultsChan)
+		go func() {
+			resultsChan <- fetchMessageResult{err: fmt.Errorf("failed to set offset: %w", err)}
+			close(resultsChan)
+		}()
 		return resultsChan
 	}
 
