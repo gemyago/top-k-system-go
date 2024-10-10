@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 
@@ -68,29 +69,26 @@ func newSendTestEventCmd(container *dig.Container) *cobra.Command {
 				return fmt.Errorf("failed to decorate events sender: %w", err)
 			}
 
-			return container.Invoke(func(params invokeCmdParams) error {
+			return container.Invoke(func(params invokeCmdParams) (err error) {
 				logger := params.RootLogger.WithGroup("send-test-event")
+
+				defer func() {
+					if closeErr := params.ItemEventsWriter.Close(); closeErr != nil {
+						err = errors.Join(err, fmt.Errorf("failed to flush pending events: %w", closeErr))
+						return
+					}
+				}()
+
 				logger.InfoContext(cmd.Context(), "Sending test item event")
 
 				if itemID == "" {
 					itemID = lo.Must(uuid.NewV4()).String()
 				}
-				if noop {
-					logger.InfoContext(
-						cmd.Context(),
-						"NOOP: Producing test events",
-						slog.String("itemID", itemID),
-						slog.String("itemIDsFile", itemIDsFile),
-					)
-				} else {
-					return doSend(cmd.Context(), params)
-				}
 
-				if err := params.ItemEventsWriter.Close(); err != nil {
-					return fmt.Errorf("failed to flush pending events: %w", err)
+				if err = doSend(cmd.Context(), params); err != nil {
+					err = fmt.Errorf("failed to send test event: %w", err)
 				}
-
-				return nil
+				return err
 			})
 		},
 	}
