@@ -128,6 +128,32 @@ func TestCommands(t *testing.T) {
 
 			require.NoError(t, commands.CreateCheckPoint(ctx))
 		})
+		t.Run("should fail if failed to set the offset", func(t *testing.T) {
+			mockDeps := newMockDeps(t)
+			commands := NewCommands(mockDeps)
+
+			ctx := context.Background()
+
+			wantCounters := newMockCounters(t)
+
+			lastOffset := rand.Int64()
+			wantCounters.EXPECT().getLastOffset().Return(lastOffset)
+
+			countersFactory, _ := mockDeps.CountersFactory.(*mockCountersFactory)
+			countersFactory.EXPECT().newCounters().Return(wantCounters)
+
+			checkPointer, _ := mockDeps.CheckPointer.(*mockCheckPointer)
+			checkPointer.EXPECT().restoreState(ctx, wantCounters).Return(nil)
+
+			wantTail := lastOffset + 100
+			reader, _ := mockDeps.ItemEventsReader.(*services.MockKafkaReader)
+			reader.EXPECT().ReadLastOffset(ctx).Return(wantTail, nil)
+
+			wantErr := errors.New(faker.Sentence())
+			reader.EXPECT().SetOffset(lastOffset + 1).Return(wantErr)
+
+			require.ErrorIs(t, commands.CreateCheckPoint(ctx), wantErr)
+		})
 		t.Run("should not aggregate if no new messages", func(t *testing.T) {
 			mockDeps := newMockDeps(t)
 			commands := NewCommands(mockDeps)
