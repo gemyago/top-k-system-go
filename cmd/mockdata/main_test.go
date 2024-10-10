@@ -17,6 +17,18 @@ func TestMain(t *testing.T) {
 			rootCmd.SetArgs([]string{"send-test-events", "--noop", "--logs-file", "../../test.log"})
 			require.NoError(t, rootCmd.Execute())
 		})
+		t.Run("should send events in noop mode with file source", func(t *testing.T) {
+			rootCmd := setupCommands()
+			rootCmd.SetArgs([]string{
+				"send-test-events",
+				"--noop",
+				"--item-ids-file",
+				faker.Word(),
+				"--logs-file",
+				"../../test.log",
+			})
+			require.NoError(t, rootCmd.Execute())
+		})
 		t.Run("should fail if bad log level", func(t *testing.T) {
 			rootCmd := setupCommands()
 			rootCmd.SilenceErrors = true

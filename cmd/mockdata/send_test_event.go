@@ -43,31 +43,23 @@ func newSendTestEventCmd(container *dig.Container) *cobra.Command {
 
 	doSend := func(ctx context.Context, params invokeCmdParams) error {
 		if itemIDsFile != "" {
-			if err := params.EventsSender.sendTestEvents(
+			return params.EventsSender.sendTestEvents(
 				ctx,
 				itemIDsFile,
 				eventsNumber,
 				lo.If(eventsNumberMax == 0, eventsNumber+eventsNumberMaxDefault).Else(eventsNumberMax),
-			); err != nil {
-				return fmt.Errorf("failed to send test event: %w", err)
-			}
-		} else {
-			if err := params.EventsSender.sendTestEvent(ctx, itemID, eventsNumber); err != nil {
-				return fmt.Errorf("failed to send test event: %w", err)
-			}
+			)
 		}
-		return nil
+		return params.EventsSender.sendTestEvent(ctx, itemID, eventsNumber)
 	}
 
 	cmd := &cobra.Command{
 		Use:   "send-test-events",
 		Short: "Send test item events",
 		RunE: func(cmd *cobra.Command, _ []string) error {
-			if err := container.Decorate(func(rootLogger *slog.Logger, sender eventsSender) eventsSender {
+			lo.Must0(container.Decorate(func(rootLogger *slog.Logger, sender eventsSender) eventsSender {
 				return newNoopEventsSender(rootLogger, sender, noop)
-			}); err != nil {
-				return fmt.Errorf("failed to decorate events sender: %w", err)
-			}
+			}))
 
 			return container.Invoke(func(params invokeCmdParams) (err error) {
 				logger := params.RootLogger.WithGroup("send-test-event")
