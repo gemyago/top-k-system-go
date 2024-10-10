@@ -46,8 +46,27 @@ func newSendTestEventCmd(container *dig.Container) *cobra.Command {
 	var itemIDsFile string
 	var eventsNumber int
 	var eventsNumberMax int
-
+	const eventsNumberMaxDefault = 10
 	noop := false
+
+	doSend := func(ctx context.Context, params invokeCmdParams) error {
+		if itemIDsFile != "" {
+			if err := params.EventsSender.sendTestEvents(
+				ctx,
+				itemIDsFile,
+				eventsNumber,
+				lo.If(eventsNumberMax == 0, eventsNumber+eventsNumberMaxDefault).Else(eventsNumberMax),
+			); err != nil {
+				return fmt.Errorf("failed to send test event: %w", err)
+			}
+		} else {
+			if err := params.EventsSender.sendTestEvent(ctx, itemID, eventsNumber); err != nil {
+				return fmt.Errorf("failed to send test event: %w", err)
+			}
+		}
+		return nil
+	}
+
 	cmd := &cobra.Command{
 		Use:   "send-test-events",
 		Short: "Send test item events",
@@ -67,20 +86,7 @@ func newSendTestEventCmd(container *dig.Container) *cobra.Command {
 						slog.String("itemIDsFile", itemIDsFile),
 					)
 				} else {
-					if itemIDsFile != "" {
-						if err := params.EventsSender.sendTestEvents(
-							cmd.Context(),
-							itemIDsFile,
-							eventsNumber,
-							lo.If(eventsNumberMax == 0, eventsNumber+10).Else(eventsNumberMax),
-						); err != nil {
-							return fmt.Errorf("failed to send test event: %w", err)
-						}
-					} else {
-						if err := params.EventsSender.sendTestEvent(cmd.Context(), itemID, eventsNumber); err != nil {
-							return fmt.Errorf("failed to send test event: %w", err)
-						}
-					}
+					return doSend(cmd.Context(), params)
 				}
 
 				if err := params.ItemEventsWriter.Close(); err != nil {
