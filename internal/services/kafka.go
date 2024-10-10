@@ -48,6 +48,8 @@ type ItemEventsKafkaReader struct {
 	*kafka.Reader
 }
 
+// ReadLastOffset reads the last offset from the kafka topic. This is going to be an offset
+// for the next message produced.
 func (r *ItemEventsKafkaReader) ReadLastOffset(ctx context.Context) (int64, error) {
 	// TODO: Make partition configurable
 	conn, err := kafka.DialLeader(ctx, "tcp", r.deps.KafkaAddress, r.deps.KafkaTopic, 0)

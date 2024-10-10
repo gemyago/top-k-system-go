@@ -34,7 +34,7 @@ type ItemEventsAggregatorModelDeps struct {
 type itemEventsAggregatorModel interface {
 	aggregateItemEvent(offset int64, evt *models.ItemEvent)
 	flushMessages(ctx context.Context, counters counters)
-	fetchMessages(ctx context.Context) <-chan fetchMessageResult
+	fetchMessages(ctx context.Context, fromOffset int64) <-chan fetchMessageResult
 }
 
 type itemEventsAggregatorModelImpl struct {
@@ -61,8 +61,14 @@ func (m *itemEventsAggregatorModelImpl) flushMessages(ctx context.Context, count
 	clear(m.aggregatedItems)
 }
 
-func (m *itemEventsAggregatorModelImpl) fetchMessages(ctx context.Context) <-chan fetchMessageResult {
+func (m *itemEventsAggregatorModelImpl) fetchMessages(ctx context.Context, fromOffset int64) <-chan fetchMessageResult {
 	resultsChan := make(chan fetchMessageResult)
+	if err := m.deps.ItemEventsReader.SetOffset(fromOffset); err != nil {
+		resultsChan <- fetchMessageResult{err: fmt.Errorf("failed to set offset: %w", err)}
+		close(resultsChan)
+		return resultsChan
+	}
+
 	go func() {
 		for {
 			msg, err := m.deps.ItemEventsReader.FetchMessage(ctx)

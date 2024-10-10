@@ -88,7 +88,7 @@ func (c *Commands) CreateCheckPoint(ctx context.Context) error {
 		slog.Int64("streamTail", streamTail),
 	)
 	if err = c.deps.ItemEventsAggregator.beginAggregating(ctx, ctn, beginAggregatingOpts{
-		TillOffset: streamTail,
+		tillOffset: streamTail - 1,
 	}); err != nil {
 		return fmt.Errorf("failed to aggregate till offset: %w", err)
 	}

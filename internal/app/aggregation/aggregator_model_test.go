@@ -84,6 +84,8 @@ func TestAggregatorModel(t *testing.T) {
 			mockReader, _ := mockDeps.ItemEventsReader.(*services.MockKafkaReader)
 
 			fetchMessageCounter := 0
+			fromOffset := rand.Int63n(1000)
+			mockReader.EXPECT().SetOffset(fromOffset).Return(nil)
 			mockReader.EXPECT().FetchMessage(ctx).RunAndReturn(
 				func(_ context.Context) (kafka.Message, error) {
 					defer func() {
@@ -105,7 +107,7 @@ func TestAggregatorModel(t *testing.T) {
 			gotResults := make([]fetchMessageResult, 0, len(itemEvents))
 			syncChan := make(chan struct{})
 			go func() {
-				for res := range model.fetchMessages(ctx) {
+				for res := range model.fetchMessages(ctx, fromOffset) {
 					gotResults = append(gotResults, res)
 					if len(gotResults) == len(itemEvents) {
 						syncChan <- struct{}{}
