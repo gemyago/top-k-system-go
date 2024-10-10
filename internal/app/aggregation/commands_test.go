@@ -87,7 +87,7 @@ func TestCommands(t *testing.T) {
 			aggregator, _ := mockDeps.ItemEventsAggregator.(*mockItemEventsAggregator)
 			aggregator.EXPECT().
 				beginAggregating(ctx, wantCounters, beginAggregatingOpts{
-					tillOffset: wantTail,
+					tillOffset: wantTail - 1,
 				}).
 				Return(nil)
 
@@ -120,7 +120,7 @@ func TestCommands(t *testing.T) {
 			aggregator, _ := mockDeps.ItemEventsAggregator.(*mockItemEventsAggregator)
 			aggregator.EXPECT().
 				beginAggregating(ctx, wantCounters, beginAggregatingOpts{
-					tillOffset: wantTail,
+					tillOffset: wantTail - 1,
 				}).
 				Return(nil)
 
