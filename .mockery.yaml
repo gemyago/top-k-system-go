@@ -45,6 +45,10 @@ packages:
     interfaces:
       mockKafkaWriter:
       mockKafkaReader:
+      kafkaConn:
+        config: 
+          filename: "mock_{{.InterfaceNameSnake}}.go"
+          mockname: "mock{{ .InterfaceName | camelcase }}"
   github.com/gemyago/top-k-system-go/internal/services/blobstorage:
     interfaces:
       Storage:
