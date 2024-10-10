@@ -44,6 +44,12 @@ func (impl *eventsSenderImpl) sendTestEvent(ctx context.Context, itemID string, 
 			return fmt.Errorf("failed to ingest item event: %w", err)
 		}
 	}
+	impl.RootLogger.DebugContext(
+		ctx,
+		"Test events sent",
+		slog.Int("number", eventsNumber),
+		slog.String("itemId", itemID),
+	)
 	return nil
 }
 
@@ -57,12 +63,19 @@ func (impl *eventsSenderImpl) sendTestEvents(
 	if err := impl.Storage.Download(ctx, itemIDsFile, &data); err != nil {
 		return fmt.Errorf("failed to download item IDs from file %s: %w", itemIDsFile, err)
 	}
-	itemIDs := strings.Split(data.String(), "\n")
+	itemIDs := strings.Split(strings.Trim(data.String(), "\n"), "\n")
 	for _, itemID := range itemIDs {
 		eventsNumber := impl.RandIntN(eventsMax-eventsMin) + eventsMin
 		if err := impl.sendTestEvent(ctx, itemID, eventsNumber); err != nil {
 			return fmt.Errorf("failed to send test events for item %s: %w", itemID, err)
 		}
 	}
+	impl.RootLogger.InfoContext(
+		ctx,
+		"Test events sent",
+		slog.Int("itemIDsNumber", len(itemIDs)),
+		slog.Int("eventsMin", eventsMin),
+		slog.Int("eventsMax", eventsMax),
+	)
 	return nil
 }

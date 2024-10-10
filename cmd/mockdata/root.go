@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"math/rand/v2"
 
 	"github.com/gemyago/top-k-system-go/internal/app/aggregation"
 	"github.com/gemyago/top-k-system-go/internal/app/ingestion"
@@ -82,7 +83,9 @@ func newRootCmd(container *dig.Container) *cobra.Command {
 				di.ProvideValue(rootLogger),
 
 				// package internal
-				di.ProvideAs[*eventsSenderImpl, eventsSender],
+				di.ProvideAs[*ingestion.Commands, ingestionCommands],
+				func(s eventsSenderImpl) eventsSender { return &s },
+				di.ProvideValue[randIntN](rand.IntN),
 			),
 		)
 		if err != nil {

@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"time"
 
 	"github.com/gemyago/top-k-system-go/internal/app/models"
 	"github.com/gemyago/top-k-system-go/internal/services"
@@ -16,7 +15,11 @@ import (
 
 type eventsSender interface {
 	sendTestEvent(ctx context.Context, itemID string, eventsNumber int) error
-	sendTestEvents(ctx context.Context, itemIDsFile string, eventsNumber int) error
+	sendTestEvents(ctx context.Context,
+		itemIDsFile string,
+		eventsMin int,
+		eventsMax int,
+	) error
 }
 
 type ingestionCommands interface {
@@ -40,7 +43,9 @@ func newSendTestEventCmd(container *dig.Container) *cobra.Command {
 	}
 
 	var itemID string
+	var itemIDsFile string
 	var eventsNumber int
+	var eventsNumberMax int
 
 	noop := false
 	cmd := &cobra.Command{
@@ -54,19 +59,26 @@ func newSendTestEventCmd(container *dig.Container) *cobra.Command {
 				if itemID == "" {
 					itemID = lo.Must(uuid.NewV4()).String()
 				}
-				now := time.Now()
-				for range eventsNumber {
-					if noop {
-						logger.InfoContext(cmd.Context(), "NOOP: Ingesting event", slog.String("itemID", itemID))
-					} else { // coverage-ignore // our test is high level and it's hard cover this step
-						event := models.ItemEvent{
-							ItemID:     itemID,
-							IngestedAt: now,
-						}
-						if err := params.IngestionCommands.IngestItemEvent(
-							cmd.Context(), &event,
+				if noop {
+					logger.InfoContext(
+						cmd.Context(),
+						"NOOP: Producing test events",
+						slog.String("itemID", itemID),
+						slog.String("itemIDsFile", itemIDsFile),
+					)
+				} else {
+					if itemIDsFile != "" {
+						if err := params.EventsSender.sendTestEvents(
+							cmd.Context(),
+							itemIDsFile,
+							eventsNumber,
+							lo.If(eventsNumberMax == 0, eventsNumber+10).Else(eventsNumberMax),
 						); err != nil {
-							return fmt.Errorf("failed to write event: %w", err)
+							return fmt.Errorf("failed to send test event: %w", err)
+						}
+					} else {
+						if err := params.EventsSender.sendTestEvent(cmd.Context(), itemID, eventsNumber); err != nil {
+							return fmt.Errorf("failed to send test event: %w", err)
 						}
 					}
 				}
@@ -74,13 +86,6 @@ func newSendTestEventCmd(container *dig.Container) *cobra.Command {
 				if err := params.ItemEventsWriter.Close(); err != nil {
 					return fmt.Errorf("failed to flush pending events: %w", err)
 				}
-
-				logger.InfoContext(
-					cmd.Context(),
-					"Test events sent",
-					slog.Int("number", eventsNumber),
-					slog.String("itemId", itemID),
-				)
 
 				return nil
 			})
@@ -95,6 +100,18 @@ func newSendTestEventCmd(container *dig.Container) *cobra.Command {
 	cmd.Flags().StringVar(
 		&itemID, "item-id", "", "ItemID to produce the events for. If not provided - random is generated.",
 	)
+	cmd.Flags().StringVar(
+		&itemIDsFile,
+		"item-ids-file",
+		"",
+		"File name with generated item IDs to produce events for (alternative to item-id).",
+	)
 	cmd.Flags().IntVarP(&eventsNumber, "events-number", "n", 1, "Number of events to produce")
+	cmd.Flags().IntVarP(&eventsNumberMax,
+		"events-number-max",
+		"m", 0,
+		"If provided, will generate random number of events between n and m (for file mode only)."+
+			" If not provided - n + 10.",
+	)
 	return cmd
 }
