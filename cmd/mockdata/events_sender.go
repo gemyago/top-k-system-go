@@ -1,13 +1,19 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"log/slog"
+	"strings"
 
 	"github.com/gemyago/top-k-system-go/internal/app/models"
+	"github.com/gemyago/top-k-system-go/internal/services"
+	"github.com/gemyago/top-k-system-go/internal/services/blobstorage"
 	"go.uber.org/dig"
 )
+
+type randIntN func(n int) int
 
 type eventsSenderImpl struct {
 	// all injectable fields must be exported
@@ -19,11 +25,19 @@ type eventsSenderImpl struct {
 
 	// app layer
 	IngestionCommands ingestionCommands
+
+	// service layer
+	Time services.TimeProvider
+	blobstorage.Storage
+
+	// package internal
+	RandIntN randIntN
 }
 
 func (impl *eventsSenderImpl) sendTestEvent(ctx context.Context, itemID string, eventsNumber int) error {
 	evt := &models.ItemEvent{
-		ItemID: itemID,
+		ItemID:     itemID,
+		IngestedAt: impl.Time.Now(),
 	}
 	for range eventsNumber {
 		if err := impl.IngestionCommands.IngestItemEvent(ctx, evt); err != nil {
@@ -33,6 +47,22 @@ func (impl *eventsSenderImpl) sendTestEvent(ctx context.Context, itemID string, 
 	return nil
 }
 
-func (impl *eventsSenderImpl) sendTestEvents(ctx context.Context, itemIDsFile string, eventsNumber int) error {
+func (impl *eventsSenderImpl) sendTestEvents(
+	ctx context.Context,
+	itemIDsFile string,
+	eventsMin int,
+	eventsMax int,
+) error {
+	var data bytes.Buffer
+	if err := impl.Storage.Download(ctx, itemIDsFile, &data); err != nil {
+		return fmt.Errorf("failed to download item IDs from file %s: %w", itemIDsFile, err)
+	}
+	itemIDs := strings.Split(data.String(), "\n")
+	for _, itemID := range itemIDs {
+		eventsNumber := impl.RandIntN(eventsMax-eventsMin) + eventsMin
+		if err := impl.sendTestEvent(ctx, itemID, eventsNumber); err != nil {
+			return fmt.Errorf("failed to send test events for item %s: %w", itemID, err)
+		}
+	}
 	return nil
 }

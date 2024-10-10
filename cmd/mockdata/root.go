@@ -80,6 +80,9 @@ func newRootCmd(container *dig.Container) *cobra.Command {
 
 			di.ProvideAll(container,
 				di.ProvideValue(rootLogger),
+
+				// package internal
+				di.ProvideAs[*eventsSenderImpl, eventsSender],
 			),
 		)
 		if err != nil {

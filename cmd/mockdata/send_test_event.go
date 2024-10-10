@@ -14,7 +14,7 @@ import (
 	"go.uber.org/dig"
 )
 
-type testEventsSender interface {
+type eventsSender interface {
 	sendTestEvent(ctx context.Context, itemID string, eventsNumber int) error
 	sendTestEvents(ctx context.Context, itemIDsFile string, eventsNumber int) error
 }
@@ -34,6 +34,9 @@ func newSendTestEventCmd(container *dig.Container) *cobra.Command {
 
 		// service layer
 		ItemEventsWriter services.ItemEventsKafkaWriter
+
+		// package internal
+		EventsSender eventsSender
 	}
 
 	var itemID string
