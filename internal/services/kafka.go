@@ -1,6 +1,8 @@
 package services
 
 import (
+	"context"
+	"fmt"
 	"log/slog"
 	"time"
 
@@ -42,7 +44,23 @@ func NewItemEventsKafkaWriter(deps ItemEventsKafkaWriterDeps) ItemEventsKafkaWri
 }
 
 type ItemEventsKafkaReader struct {
+	deps ItemEventsKafkaReaderDeps
 	*kafka.Reader
+}
+
+func (r *ItemEventsKafkaReader) ReadLastOffset(ctx context.Context) (int64, error) {
+	// TODO: Make partition configurable
+	conn, err := kafka.DialLeader(ctx, "tcp", r.deps.KafkaAddress, r.deps.KafkaTopic, 0)
+	if err != nil {
+		return 0, fmt.Errorf("failed to dial kafka to read current offset: %w", err)
+	}
+	defer conn.Close()
+
+	offset, err := conn.ReadLastOffset()
+	if err != nil {
+		return 0, fmt.Errorf("failed to read last offset: %w", err)
+	}
+	return offset, nil
 }
 
 type ItemEventsKafkaReaderDeps struct {
@@ -59,14 +77,16 @@ type ItemEventsKafkaReaderDeps struct {
 	*ShutdownHooks
 }
 
-func NewItemEventsKafkaReader(deps ItemEventsKafkaReaderDeps) ItemEventsKafkaReader {
+func NewItemEventsKafkaReader(deps ItemEventsKafkaReaderDeps) *ItemEventsKafkaReader {
 	reader := kafka.NewReader(kafka.ReaderConfig{
 		Brokers: []string{deps.KafkaAddress},
 		Topic:   deps.KafkaTopic,
 		MaxWait: deps.ReaderMaxWait,
+
+		// TODO: Make partition configurable
 	})
 
 	deps.ShutdownHooks.RegisterNoCtx("item-events-reader", reader.Close)
 
-	return ItemEventsKafkaReader{Reader: reader}
+	return &ItemEventsKafkaReader{deps: deps, Reader: reader}
 }

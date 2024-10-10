@@ -80,14 +80,14 @@ func TestCommands(t *testing.T) {
 			checkPointer, _ := mockDeps.CheckPointer.(*mockCheckPointer)
 			checkPointer.EXPECT().restoreState(ctx, wantCounters).Return(nil)
 
-			wantLag := rand.Int64()
+			wantTail := rand.Int64()
 			reader, _ := mockDeps.ItemEventsReader.(*services.MockKafkaReader)
-			reader.EXPECT().ReadLag(ctx).Return(wantLag, nil)
+			reader.EXPECT().ReadLastOffset(ctx).Return(wantTail, nil)
 
 			aggregator, _ := mockDeps.ItemEventsAggregator.(*mockItemEventsAggregator)
 			aggregator.EXPECT().
 				beginAggregating(ctx, wantCounters, beginAggregatingOpts{
-					TillOffset: wantLag - 1,
+					TillOffset: wantTail,
 				}).
 				Return(nil)
 
@@ -112,15 +112,15 @@ func TestCommands(t *testing.T) {
 			checkPointer, _ := mockDeps.CheckPointer.(*mockCheckPointer)
 			checkPointer.EXPECT().restoreState(ctx, wantCounters).Return(nil)
 
-			wantLag := lastOffset + 100
+			wantTail := lastOffset + 100
 			reader, _ := mockDeps.ItemEventsReader.(*services.MockKafkaReader)
-			reader.EXPECT().ReadLag(ctx).Return(wantLag, nil)
+			reader.EXPECT().ReadLastOffset(ctx).Return(wantTail, nil)
 			reader.EXPECT().SetOffset(lastOffset + 1).Return(nil)
 
 			aggregator, _ := mockDeps.ItemEventsAggregator.(*mockItemEventsAggregator)
 			aggregator.EXPECT().
 				beginAggregating(ctx, wantCounters, beginAggregatingOpts{
-					TillOffset: wantLag - 1,
+					TillOffset: wantTail,
 				}).
 				Return(nil)
 
@@ -136,8 +136,8 @@ func TestCommands(t *testing.T) {
 
 			wantCounters := newMockCounters(t)
 
-			lastOffset := rand.Int64()
-			wantCounters.EXPECT().getLastOffset().Return(lastOffset)
+			wantTail := rand.Int64()
+			wantCounters.EXPECT().getLastOffset().Return(wantTail)
 
 			countersFactory, _ := mockDeps.CountersFactory.(*mockCountersFactory)
 			countersFactory.EXPECT().newCounters().Return(wantCounters)
@@ -146,8 +146,8 @@ func TestCommands(t *testing.T) {
 			checkPointer.EXPECT().restoreState(ctx, wantCounters).Return(nil)
 
 			reader, _ := mockDeps.ItemEventsReader.(*services.MockKafkaReader)
-			reader.EXPECT().ReadLag(ctx).Return(lastOffset+1, nil)
-			reader.EXPECT().SetOffset(lastOffset + 1).Return(nil)
+			reader.EXPECT().ReadLastOffset(ctx).Return(wantTail+1, nil)
+			reader.EXPECT().SetOffset(wantTail + 1).Return(nil)
 
 			require.NoError(t, commands.CreateCheckPoint(ctx))
 		})
@@ -184,7 +184,7 @@ func TestCommands(t *testing.T) {
 
 			reader, _ := mockDeps.ItemEventsReader.(*services.MockKafkaReader)
 			wantErr := errors.New(faker.Sentence())
-			reader.EXPECT().ReadLag(ctx).Return(0, wantErr)
+			reader.EXPECT().ReadLastOffset(ctx).Return(0, wantErr)
 
 			require.ErrorIs(t, commands.CreateCheckPoint(ctx), wantErr)
 		})

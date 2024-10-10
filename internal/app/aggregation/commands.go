@@ -12,7 +12,7 @@ import (
 type itemEventsKafkaReader interface {
 	FetchMessage(ctx context.Context) (kafka.Message, error)
 	SetOffset(offset int64) error
-	ReadLag(ctx context.Context) (lag int64, err error)
+	ReadLastOffset(ctx context.Context) (int64, error)
 }
 
 type CommandsDeps struct {
@@ -59,7 +59,7 @@ func (c *Commands) CreateCheckPoint(ctx context.Context) error {
 		return fmt.Errorf("failed to restore state while creating check point: %w", err)
 	}
 
-	lag, err := c.deps.ItemEventsReader.ReadLag(ctx)
+	streamTail, err := c.deps.ItemEventsReader.ReadLastOffset(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to read the lag: %w", err)
 	}
@@ -73,26 +73,22 @@ func (c *Commands) CreateCheckPoint(ctx context.Context) error {
 	}
 
 	// lag count starts from zero
-	if lag-lastOffset-1 <= 0 {
+	if streamTail-lastOffset-1 <= 0 {
 		c.logger.InfoContext(ctx,
 			"No new messages produced. Checkpoint skipped.",
 			slog.Int64("lastOffset", lastOffset),
-			slog.Int64("lag", lag),
+			slog.Int64("streamTail", streamTail),
 		)
 		return nil
 	}
 
-	// We assume we didn't consume anything yet and the lag is exactly the
-	// tail of the stream
-	tillOffset := lag - 1
-
 	c.logger.InfoContext(ctx,
 		"Aggregating remaining messages",
-		slog.Int64("sinceOffset", ctn.getLastOffset()),
-		slog.Int64("tillOffset", tillOffset),
+		slog.Int64("sinceOffset", lastOffset),
+		slog.Int64("streamTail", streamTail),
 	)
 	if err = c.deps.ItemEventsAggregator.beginAggregating(ctx, ctn, beginAggregatingOpts{
-		TillOffset: tillOffset,
+		TillOffset: streamTail,
 	}); err != nil {
 		return fmt.Errorf("failed to aggregate till offset: %w", err)
 	}

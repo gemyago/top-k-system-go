@@ -8,7 +8,7 @@ import (
 
 func Register(container *dig.Container) error {
 	return di.ProvideAll(container,
-		di.ProvideAs[services.ItemEventsKafkaReader, itemEventsKafkaReader],
+		di.ProvideAs[*services.ItemEventsKafkaReader, itemEventsKafkaReader],
 
 		NewCommands,
 
