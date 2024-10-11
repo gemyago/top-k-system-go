@@ -6,7 +6,7 @@ type counters interface {
 	getLastOffset() int64
 
 	// updateItemsCount will update the counts and return the result with
-	// total values for input counts.
+	// total values for input counts (TODO)
 	updateItemsCount(lastOffset int64, increments map[string]int64)
 }
 
