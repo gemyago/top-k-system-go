@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-faker/faker/v4"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestTopKItems(t *testing.T) {
@@ -26,7 +27,7 @@ func TestTopKItems(t *testing.T) {
 				items.load(originalItems)
 
 				actualItems := items.getItems(100)
-				assert.Len(t, actualItems, len(originalItems))
+				require.Len(t, actualItems, len(originalItems))
 
 				for i, item := range originalItems {
 					wantItem := actualItems[len(originalItems)-i-1]
@@ -50,7 +51,7 @@ func TestTopKItems(t *testing.T) {
 				items.load(originalItems)
 
 				actualItems := items.getItems(len(originalItems))
-				assert.Len(t, actualItems, wantItemsCount)
+				require.Len(t, actualItems, wantItemsCount)
 
 				for i, item := range originalItems[len(originalItems)-wantItemsCount:] {
 					wantItem := actualItems[len(actualItems)-i-1]
@@ -224,6 +225,12 @@ func TestTopKItems(t *testing.T) {
 	t.Run("topKBTreeItems", func(t *testing.T) {
 		topKItemsTestSuite(t, func(maxSize int) topKItems {
 			return newTopKBTreeItems(maxSize)
+		})
+	})
+
+	t.Run("topKHeapItems", func(t *testing.T) {
+		topKItemsTestSuite(t, func(maxSize int) topKItems {
+			return newTopKHeapItems(maxSize)
 		})
 	})
 }
