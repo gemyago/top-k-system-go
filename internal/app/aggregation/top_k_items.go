@@ -16,6 +16,12 @@ func (i *topKItem) String() string {
 	return i.itemID + ":" + strconv.FormatInt(i.count, 10)
 }
 
+type topKItems interface {
+	load(vals []*topKItem)
+	getItems(limit int) []*topKItem
+	updateIfGreater(item topKItem)
+}
+
 type topKBTreeItems struct {
 	maxSize   int
 	tree      *btree.BTreeG[*topKItem]
@@ -75,6 +81,8 @@ func (items *topKBTreeItems) updateIfGreater(item topKItem) {
 		items.itemsByID[item.itemID] = &item
 	}
 }
+
+var _ topKItems = (*topKBTreeItems)(nil)
 
 const topKItemsTreeDegree = 10
 
