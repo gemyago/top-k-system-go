@@ -5,6 +5,7 @@ go 1.23
 require (
 	github.com/go-faker/faker/v4 v4.5.0
 	github.com/gofrs/uuid/v5 v5.3.0
+	github.com/google/btree v1.1.3
 	github.com/samber/lo v1.47.0
 	github.com/samber/slog-http v1.4.3
 	github.com/segmentio/kafka-go v0.4.47
