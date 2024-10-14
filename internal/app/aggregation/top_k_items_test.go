@@ -21,7 +21,7 @@ func TestTopKItems(t *testing.T) {
 				{itemID: "item5-" + faker.Word(), count: baseCount + 400 + rand.Int64N(10)},
 			}
 
-			items := newTopKItems(100)
+			items := newTopKBTreeItems(100)
 			items.load(originalItems)
 
 			actualItems := items.getItems(100)
@@ -45,7 +45,7 @@ func TestTopKItems(t *testing.T) {
 			}
 			wantItemsCount := len(originalItems) / 2
 
-			items := newTopKItems(wantItemsCount)
+			items := newTopKBTreeItems(wantItemsCount)
 			items.load(originalItems)
 
 			actualItems := items.getItems(len(originalItems))
@@ -70,7 +70,7 @@ func TestTopKItems(t *testing.T) {
 				{itemID: "item5-" + faker.Word(), count: baseCount + 400 + rand.Int64N(10)},
 			}
 
-			items := newTopKItems(100)
+			items := newTopKBTreeItems(100)
 			items.load(originalItems)
 
 			actualItems := items.getItems(100)
@@ -92,7 +92,7 @@ func TestTopKItems(t *testing.T) {
 			}
 			wantItemsCount := len(originalItems) / 2
 
-			items := newTopKItems(100)
+			items := newTopKBTreeItems(100)
 			items.load(originalItems)
 
 			actualItems := items.getItems(wantItemsCount)
@@ -117,7 +117,7 @@ func TestTopKItems(t *testing.T) {
 			}
 			wantItemsCount := len(originalItems) + 1
 
-			items := newTopKItems(wantItemsCount)
+			items := newTopKBTreeItems(wantItemsCount)
 			items.load(originalItems)
 
 			newItem := topKItem{itemID: "item6-" + faker.Word(), count: baseCount + 500 + rand.Int64N(10)}
@@ -145,7 +145,7 @@ func TestTopKItems(t *testing.T) {
 			}
 			wantItemsCount := len(originalItems)
 
-			items := newTopKItems(wantItemsCount)
+			items := newTopKBTreeItems(wantItemsCount)
 			items.load(originalItems)
 
 			item3 := *originalItems[2]
@@ -174,7 +174,7 @@ func TestTopKItems(t *testing.T) {
 			}
 			wantItemsCount := len(originalItems)
 
-			items := newTopKItems(wantItemsCount)
+			items := newTopKBTreeItems(wantItemsCount)
 			items.load(originalItems)
 
 			newItem := topKItem{itemID: "item6-" + faker.Word(), count: baseCount - rand.Int64N(10)}
@@ -201,7 +201,7 @@ func TestTopKItems(t *testing.T) {
 			}
 			wantItemsCount := len(originalItems)
 
-			items := newTopKItems(wantItemsCount)
+			items := newTopKBTreeItems(wantItemsCount)
 			items.load(originalItems)
 
 			newItem := topKItem{itemID: "item6-" + faker.Word(), count: baseCount + 50 + rand.Int64N(10)}

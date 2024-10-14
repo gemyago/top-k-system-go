@@ -16,14 +16,14 @@ func (i *topKItem) String() string {
 	return i.itemID + ":" + strconv.FormatInt(i.count, 10)
 }
 
-type topKItems struct {
+type topKBTreeItems struct {
 	maxSize   int
 	tree      *btree.BTreeG[*topKItem]
 	itemsByID map[string]*topKItem
 }
 
 // getItems returns all items in the tree in descending order.
-func (items *topKItems) getItems(limit int) []*topKItem {
+func (items *topKBTreeItems) getItems(limit int) []*topKItem {
 	result := make([]*topKItem, 0, limit)
 	items.tree.Descend(func(i *topKItem) bool {
 		result = append(result, i)
@@ -32,7 +32,7 @@ func (items *topKItems) getItems(limit int) []*topKItem {
 	return result
 }
 
-func (items *topKItems) load(vals []*topKItem) {
+func (items *topKBTreeItems) load(vals []*topKItem) {
 	for _, val := range vals {
 		items.tree.ReplaceOrInsert(val)
 		items.itemsByID[val.itemID] = val
@@ -45,7 +45,7 @@ func (items *topKItems) load(vals []*topKItem) {
 	}
 }
 
-func (items *topKItems) updateIfGreater(item topKItem) {
+func (items *topKBTreeItems) updateIfGreater(item topKItem) {
 	existingItem := items.itemsByID[item.itemID]
 
 	// if existing item then we do update only
@@ -76,10 +76,10 @@ func (items *topKItems) updateIfGreater(item topKItem) {
 	}
 }
 
-const topKItemsTreeDegree = 10 // TODO: needs benchmark
+const topKItemsTreeDegree = 10
 
-func newTopKItems(maxSize int) *topKItems {
-	return &topKItems{
+func newTopKBTreeItems(maxSize int) *topKBTreeItems {
+	return &topKBTreeItems{
 		maxSize:   maxSize,
 		itemsByID: make(map[string]*topKItem),
 		tree: btree.NewG(topKItemsTreeDegree, func(a, b *topKItem) bool {
