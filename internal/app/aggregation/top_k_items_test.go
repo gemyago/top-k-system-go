@@ -24,7 +24,7 @@ func TestTopKItems(t *testing.T) {
 			items := newTopKItems(100)
 			items.load(originalItems)
 
-			actualItems := items.allItems(100)
+			actualItems := items.getItems(100)
 			assert.Len(t, actualItems, len(originalItems))
 
 			for i, item := range originalItems {
@@ -48,7 +48,7 @@ func TestTopKItems(t *testing.T) {
 			items := newTopKItems(wantItemsCount)
 			items.load(originalItems)
 
-			actualItems := items.allItems(len(originalItems))
+			actualItems := items.getItems(len(originalItems))
 			assert.Len(t, actualItems, wantItemsCount)
 
 			for i, item := range originalItems[len(originalItems)-wantItemsCount:] {
@@ -83,7 +83,7 @@ func TestTopKItems(t *testing.T) {
 				return int(j.count - i.count)
 			})
 
-			actualItems := items.allItems(len(originalItems) + 1)
+			actualItems := items.getItems(len(originalItems) + 1)
 
 			assert.Equal(t, wantItems, actualItems)
 		})
@@ -112,7 +112,7 @@ func TestTopKItems(t *testing.T) {
 				return int(j.count - i.count)
 			})
 
-			actualItems := items.allItems(len(originalItems))
+			actualItems := items.getItems(len(originalItems))
 
 			assert.Equal(t, wantItems, actualItems)
 		})
@@ -139,7 +139,35 @@ func TestTopKItems(t *testing.T) {
 				return int(j.count - i.count)
 			})
 
-			actualItems := items.allItems(len(originalItems))
+			actualItems := items.getItems(len(originalItems))
+
+			assert.Equal(t, wantItems, actualItems)
+		})
+
+		t.Run("should replace existing item if new item is in top k", func(t *testing.T) {
+			var baseCount int64 = 10000
+			originalItems := []*topKItem{
+				{itemID: "item1-" + faker.Word(), count: baseCount + rand.Int64N(10)},
+				{itemID: "item2-" + faker.Word(), count: baseCount + 100 + rand.Int64N(10)},
+				{itemID: "item3-" + faker.Word(), count: baseCount + 200 + rand.Int64N(10)},
+				{itemID: "item4-" + faker.Word(), count: baseCount + 300 + rand.Int64N(10)},
+				{itemID: "item5-" + faker.Word(), count: baseCount + 400 + rand.Int64N(10)},
+			}
+			wantItemsCount := len(originalItems)
+
+			items := newTopKItems(wantItemsCount)
+			items.load(originalItems)
+
+			newItem := topKItem{itemID: "item6-" + faker.Word(), count: baseCount + 50 + rand.Int64N(10)}
+			items.updateIfGreater(newItem)
+
+			wantItems := slices.Clone(originalItems)
+			wantItems[0] = &newItem
+			slices.SortFunc(wantItems, func(i, j *topKItem) int {
+				return int(j.count - i.count)
+			})
+
+			actualItems := items.getItems(len(originalItems))
 
 			assert.Equal(t, wantItems, actualItems)
 		})

@@ -22,9 +22,9 @@ type topKItems struct {
 	itemsByID map[string]*topKItem
 }
 
-// allItems returns all items in the tree in descending order.
+// getItems returns all items in the tree in descending order.
 // TODO: the limit parameter is not used.
-func (items *topKItems) allItems(limit int) []*topKItem {
+func (items *topKItems) getItems(limit int) []*topKItem {
 	result := make([]*topKItem, 0, items.tree.Len())
 	items.tree.Descend(func(i *topKItem) bool {
 		result = append(result, i)
