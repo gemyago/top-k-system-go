@@ -23,12 +23,11 @@ type topKItems struct {
 }
 
 // getItems returns all items in the tree in descending order.
-// TODO: the limit parameter is not used.
 func (items *topKItems) getItems(limit int) []*topKItem {
-	result := make([]*topKItem, 0, items.tree.Len())
+	result := make([]*topKItem, 0, limit)
 	items.tree.Descend(func(i *topKItem) bool {
 		result = append(result, i)
-		return true
+		return len(result) < limit
 	})
 	return result
 }
