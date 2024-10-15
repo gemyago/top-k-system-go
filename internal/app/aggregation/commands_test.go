@@ -40,15 +40,16 @@ func TestCommands(t *testing.T) {
 			mockAllTimesItems := newMockTopKItems(t)
 			topKItemsFactory.EXPECT().newTopKItems(topKMaxItemsSize).Return(mockAllTimesItems)
 
-			checkPointer, _ := mockDeps.CheckPointer.(*mockCheckPointer)
-			checkPointer.EXPECT().restoreState(ctx, aggregationState{
+			state := aggregationState{
 				counters:     wantCounters,
 				allTimeItems: mockAllTimesItems,
-			}).Return(nil)
+			}
+			checkPointer, _ := mockDeps.CheckPointer.(*mockCheckPointer)
+			checkPointer.EXPECT().restoreState(ctx, state).Return(nil)
 
 			aggregator, _ := mockDeps.ItemEventsAggregator.(*mockItemEventsAggregator)
 			aggregator.EXPECT().
-				beginAggregating(ctx, wantCounters, beginAggregatingOpts{}).
+				beginAggregating(ctx, state, beginAggregatingOpts{}).
 				Return(nil)
 
 			require.NoError(t, commands.StartAggregator(ctx))
@@ -98,21 +99,23 @@ func TestCommands(t *testing.T) {
 				allTimeItems: mockAllTimesItems,
 			}).Return(nil)
 
+			state := aggregationState{
+				counters:     wantCounters,
+				allTimeItems: mockAllTimesItems,
+			}
+
 			wantTail := rand.Int64()
 			reader, _ := mockDeps.ItemEventsReader.(*services.MockKafkaReader)
 			reader.EXPECT().ReadLastOffset(ctx).Return(wantTail, nil)
 
 			aggregator, _ := mockDeps.ItemEventsAggregator.(*mockItemEventsAggregator)
 			aggregator.EXPECT().
-				beginAggregating(ctx, wantCounters, beginAggregatingOpts{
+				beginAggregating(ctx, state, beginAggregatingOpts{
 					tillOffset: wantTail - 1,
 				}).
 				Return(nil)
 
-			checkPointer.EXPECT().dumpState(ctx, aggregationState{
-				counters:     wantCounters,
-				allTimeItems: mockAllTimesItems,
-			}).Return(nil)
+			checkPointer.EXPECT().dumpState(ctx, state).Return(nil)
 
 			require.NoError(t, commands.CreateCheckPoint(ctx))
 		})
@@ -134,6 +137,11 @@ func TestCommands(t *testing.T) {
 			topKItemsFactory, _ := mockDeps.TopKItemsFactory.(*mockTopKItemsFactory)
 			topKItemsFactory.EXPECT().newTopKItems(topKMaxItemsSize).Return(mockAllTimesItems)
 
+			state := aggregationState{
+				counters:     wantCounters,
+				allTimeItems: mockAllTimesItems,
+			}
+
 			checkPointer, _ := mockDeps.CheckPointer.(*mockCheckPointer)
 			checkPointer.EXPECT().restoreState(ctx, mock.Anything).Return(nil)
 
@@ -144,7 +152,7 @@ func TestCommands(t *testing.T) {
 
 			aggregator, _ := mockDeps.ItemEventsAggregator.(*mockItemEventsAggregator)
 			aggregator.EXPECT().
-				beginAggregating(ctx, wantCounters, beginAggregatingOpts{
+				beginAggregating(ctx, state, beginAggregatingOpts{
 					tillOffset: wantTail - 1,
 				}).
 				Return(nil)

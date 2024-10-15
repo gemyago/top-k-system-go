@@ -42,10 +42,11 @@ func (c *Commands) StartAggregator(ctx context.Context) error {
 	c.logger.InfoContext(ctx, "Restoring counters state")
 	cnt := c.deps.CountersFactory.newCounters()
 	allTimesItems := c.deps.TopKItemsFactory.newTopKItems(topKMaxItemsSize)
-	if err := c.deps.CheckPointer.restoreState(ctx, aggregationState{
+	state := aggregationState{
 		counters:     cnt,
 		allTimeItems: allTimesItems,
-	}); err != nil {
+	}
+	if err := c.deps.CheckPointer.restoreState(ctx, state); err != nil {
 		return fmt.Errorf("failed to restore state while starting aggregator: %w", err)
 	}
 
@@ -53,18 +54,19 @@ func (c *Commands) StartAggregator(ctx context.Context) error {
 	// so then API layer could query them
 
 	c.logger.InfoContext(ctx, "Starting aggregation")
-	return c.deps.ItemEventsAggregator.beginAggregating(ctx, cnt, beginAggregatingOpts{})
+	return c.deps.ItemEventsAggregator.beginAggregating(ctx, state, beginAggregatingOpts{})
 }
 
 func (c *Commands) CreateCheckPoint(ctx context.Context) error {
 	ctn := c.deps.CountersFactory.newCounters()
 	allTimesItems := c.deps.TopKItemsFactory.newTopKItems(topKMaxItemsSize)
-
-	c.logger.InfoContext(ctx, "Starting creating check point. Restoring last state.")
-	if err := c.deps.CheckPointer.restoreState(ctx, aggregationState{
+	state := aggregationState{
 		counters:     ctn,
 		allTimeItems: allTimesItems,
-	}); err != nil {
+	}
+
+	c.logger.InfoContext(ctx, "Starting creating check point. Restoring last state.")
+	if err := c.deps.CheckPointer.restoreState(ctx, state); err != nil {
 		return fmt.Errorf("failed to restore state while creating check point: %w", err)
 	}
 
@@ -96,17 +98,14 @@ func (c *Commands) CreateCheckPoint(ctx context.Context) error {
 		slog.Int64("sinceOffset", lastOffset),
 		slog.Int64("streamTail", streamTail),
 	)
-	if err = c.deps.ItemEventsAggregator.beginAggregating(ctx, ctn, beginAggregatingOpts{
+	if err = c.deps.ItemEventsAggregator.beginAggregating(ctx, state, beginAggregatingOpts{
 		tillOffset: streamTail - 1,
 	}); err != nil {
 		return fmt.Errorf("failed to aggregate till offset: %w", err)
 	}
 
 	c.logger.InfoContext(ctx, "Producing new state")
-	if err = c.deps.CheckPointer.dumpState(ctx, aggregationState{
-		counters:     ctn,
-		allTimeItems: allTimesItems,
-	}); err != nil {
+	if err = c.deps.CheckPointer.dumpState(ctx, state); err != nil {
 		return fmt.Errorf("failed to dump state: %w", err)
 	}
 

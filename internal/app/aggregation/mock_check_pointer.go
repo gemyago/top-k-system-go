@@ -48,7 +48,7 @@ type mockCheckPointer_dumpState_Call struct {
 
 // dumpState is a helper method to define mock.On call
 //   - ctx context.Context
-//   - state checkPointerState
+//   - state aggregationState
 func (_e *mockCheckPointer_Expecter) dumpState(ctx interface{}, state interface{}) *mockCheckPointer_dumpState_Call {
 	return &mockCheckPointer_dumpState_Call{Call: _e.mock.On("dumpState", ctx, state)}
 }
@@ -95,7 +95,7 @@ type mockCheckPointer_restoreState_Call struct {
 
 // restoreState is a helper method to define mock.On call
 //   - ctx context.Context
-//   - state checkPointerState
+//   - state aggregationState
 func (_e *mockCheckPointer_Expecter) restoreState(ctx interface{}, state interface{}) *mockCheckPointer_restoreState_Call {
 	return &mockCheckPointer_restoreState_Call{Call: _e.mock.On("restoreState", ctx, state)}
 }

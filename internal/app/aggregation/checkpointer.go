@@ -10,11 +10,6 @@ import (
 	"go.uber.org/dig"
 )
 
-type aggregationState struct {
-	counters     counters
-	allTimeItems topKItems
-}
-
 type checkPointer interface {
 	restoreState(ctx context.Context, state aggregationState) error
 	dumpState(ctx context.Context, state aggregationState) error

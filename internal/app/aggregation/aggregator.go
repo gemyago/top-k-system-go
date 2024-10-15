@@ -9,6 +9,11 @@ import (
 	"go.uber.org/dig"
 )
 
+type aggregationState struct {
+	counters     counters
+	allTimeItems topKItems
+}
+
 type beginAggregatingOpts struct {
 	sinceOffset int64
 
@@ -17,7 +22,7 @@ type beginAggregatingOpts struct {
 }
 
 type itemEventsAggregator interface {
-	beginAggregating(context context.Context, counters counters, opts beginAggregatingOpts) error
+	beginAggregating(context context.Context, state aggregationState, opts beginAggregatingOpts) error
 }
 
 type ItemEventsAggregatorDeps struct {
@@ -46,9 +51,11 @@ type itemEventsAggregatorImpl struct {
 
 func (a *itemEventsAggregatorImpl) beginAggregating(
 	ctx context.Context,
-	counters counters,
+	state aggregationState,
 	opts beginAggregatingOpts,
 ) error {
+	counters := state.counters
+
 	// TODO: Set the offset to start fetching from
 	// and keep fetching until the offset provided
 	messagesChan := a.AggregatorModel.fetchMessages(ctx, opts.sinceOffset)
