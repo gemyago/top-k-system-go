@@ -32,6 +32,10 @@ packages:
         config:
           mockname: "{{ .InterfaceName | camelcase }}"
           filename: "{{.InterfaceNameSnake}}.go"
+      mockQueries:
+        config:
+          mockname: "{{ .InterfaceName | camelcase }}"
+          filename: "{{.InterfaceNameSnake}}.go"
       countersFactory:
       counters:
       topKItemsFactory:

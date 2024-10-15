@@ -25,7 +25,7 @@ This is a work in progress
 
 ### APIs:
 * POST /items/events/{itemId} - ingest item event
-* GET /items/top-k?window=all-time&limit=100 - return top 100 items
+* GET /items/top?window=all-time&limit=100 - return top 100 items
 
 ### High level conceptual design of the solution
 <img src="./doc/high-level-design.svg">
