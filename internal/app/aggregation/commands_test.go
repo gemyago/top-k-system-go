@@ -40,6 +40,7 @@ func TestCommands(t *testing.T) {
 
 			lastOffset := rand.Int64N(100)
 			mockCounters, _ := mockDeps.AggregationState.counters.(*mockCounters)
+			mockCounters.EXPECT().getItemsCounters().Return(map[string]int64{})
 			mockCounters.EXPECT().getLastOffset().Return(lastOffset)
 
 			aggregator, _ := mockDeps.ItemEventsAggregator.(*mockItemEventsAggregator)
@@ -63,6 +64,7 @@ func TestCommands(t *testing.T) {
 
 			mockCounters, _ := mockDeps.AggregationState.counters.(*mockCounters)
 			mockCounters.EXPECT().getLastOffset().Return(0)
+			mockCounters.EXPECT().getItemsCounters().Return(map[string]int64{})
 
 			aggregator, _ := mockDeps.ItemEventsAggregator.(*mockItemEventsAggregator)
 			aggregator.EXPECT().
