@@ -41,7 +41,7 @@ func TestCommands(t *testing.T) {
 			topKItemsFactory.EXPECT().newTopKItems(topKMaxItemsSize).Return(mockAllTimesItems)
 
 			checkPointer, _ := mockDeps.CheckPointer.(*mockCheckPointer)
-			checkPointer.EXPECT().restoreState(ctx, checkPointerState{
+			checkPointer.EXPECT().restoreState(ctx, aggregationState{
 				counters:     wantCounters,
 				allTimeItems: mockAllTimesItems,
 			}).Return(nil)
@@ -93,7 +93,7 @@ func TestCommands(t *testing.T) {
 			topKItemsFactory.EXPECT().newTopKItems(topKMaxItemsSize).Return(mockAllTimesItems)
 
 			checkPointer, _ := mockDeps.CheckPointer.(*mockCheckPointer)
-			checkPointer.EXPECT().restoreState(ctx, checkPointerState{
+			checkPointer.EXPECT().restoreState(ctx, aggregationState{
 				counters:     wantCounters,
 				allTimeItems: mockAllTimesItems,
 			}).Return(nil)
@@ -109,7 +109,7 @@ func TestCommands(t *testing.T) {
 				}).
 				Return(nil)
 
-			checkPointer.EXPECT().dumpState(ctx, checkPointerState{
+			checkPointer.EXPECT().dumpState(ctx, aggregationState{
 				counters:     wantCounters,
 				allTimeItems: mockAllTimesItems,
 			}).Return(nil)

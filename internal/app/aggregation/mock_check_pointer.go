@@ -24,7 +24,7 @@ func (_m *mockCheckPointer) EXPECT() *mockCheckPointer_Expecter {
 }
 
 // dumpState provides a mock function with given fields: ctx, state
-func (_m *mockCheckPointer) dumpState(ctx context.Context, state checkPointerState) error {
+func (_m *mockCheckPointer) dumpState(ctx context.Context, state aggregationState) error {
 	ret := _m.Called(ctx, state)
 
 	if len(ret) == 0 {
@@ -32,7 +32,7 @@ func (_m *mockCheckPointer) dumpState(ctx context.Context, state checkPointerSta
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, checkPointerState) error); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, aggregationState) error); ok {
 		r0 = rf(ctx, state)
 	} else {
 		r0 = ret.Error(0)
@@ -53,9 +53,9 @@ func (_e *mockCheckPointer_Expecter) dumpState(ctx interface{}, state interface{
 	return &mockCheckPointer_dumpState_Call{Call: _e.mock.On("dumpState", ctx, state)}
 }
 
-func (_c *mockCheckPointer_dumpState_Call) Run(run func(ctx context.Context, state checkPointerState)) *mockCheckPointer_dumpState_Call {
+func (_c *mockCheckPointer_dumpState_Call) Run(run func(ctx context.Context, state aggregationState)) *mockCheckPointer_dumpState_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(checkPointerState))
+		run(args[0].(context.Context), args[1].(aggregationState))
 	})
 	return _c
 }
@@ -65,13 +65,13 @@ func (_c *mockCheckPointer_dumpState_Call) Return(_a0 error) *mockCheckPointer_d
 	return _c
 }
 
-func (_c *mockCheckPointer_dumpState_Call) RunAndReturn(run func(context.Context, checkPointerState) error) *mockCheckPointer_dumpState_Call {
+func (_c *mockCheckPointer_dumpState_Call) RunAndReturn(run func(context.Context, aggregationState) error) *mockCheckPointer_dumpState_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // restoreState provides a mock function with given fields: ctx, state
-func (_m *mockCheckPointer) restoreState(ctx context.Context, state checkPointerState) error {
+func (_m *mockCheckPointer) restoreState(ctx context.Context, state aggregationState) error {
 	ret := _m.Called(ctx, state)
 
 	if len(ret) == 0 {
@@ -79,7 +79,7 @@ func (_m *mockCheckPointer) restoreState(ctx context.Context, state checkPointer
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, checkPointerState) error); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, aggregationState) error); ok {
 		r0 = rf(ctx, state)
 	} else {
 		r0 = ret.Error(0)
@@ -100,9 +100,9 @@ func (_e *mockCheckPointer_Expecter) restoreState(ctx interface{}, state interfa
 	return &mockCheckPointer_restoreState_Call{Call: _e.mock.On("restoreState", ctx, state)}
 }
 
-func (_c *mockCheckPointer_restoreState_Call) Run(run func(ctx context.Context, state checkPointerState)) *mockCheckPointer_restoreState_Call {
+func (_c *mockCheckPointer_restoreState_Call) Run(run func(ctx context.Context, state aggregationState)) *mockCheckPointer_restoreState_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(checkPointerState))
+		run(args[0].(context.Context), args[1].(aggregationState))
 	})
 	return _c
 }
@@ -112,7 +112,7 @@ func (_c *mockCheckPointer_restoreState_Call) Return(_a0 error) *mockCheckPointe
 	return _c
 }
 
-func (_c *mockCheckPointer_restoreState_Call) RunAndReturn(run func(context.Context, checkPointerState) error) *mockCheckPointer_restoreState_Call {
+func (_c *mockCheckPointer_restoreState_Call) RunAndReturn(run func(context.Context, aggregationState) error) *mockCheckPointer_restoreState_Call {
 	_c.Call.Return(run)
 	return _c
 }

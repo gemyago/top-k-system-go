@@ -42,7 +42,7 @@ func (c *Commands) StartAggregator(ctx context.Context) error {
 	c.logger.InfoContext(ctx, "Restoring counters state")
 	cnt := c.deps.CountersFactory.newCounters()
 	allTimesItems := c.deps.TopKItemsFactory.newTopKItems(topKMaxItemsSize)
-	if err := c.deps.CheckPointer.restoreState(ctx, checkPointerState{
+	if err := c.deps.CheckPointer.restoreState(ctx, aggregationState{
 		counters:     cnt,
 		allTimeItems: allTimesItems,
 	}); err != nil {
@@ -61,7 +61,7 @@ func (c *Commands) CreateCheckPoint(ctx context.Context) error {
 	allTimesItems := c.deps.TopKItemsFactory.newTopKItems(topKMaxItemsSize)
 
 	c.logger.InfoContext(ctx, "Starting creating check point. Restoring last state.")
-	if err := c.deps.CheckPointer.restoreState(ctx, checkPointerState{
+	if err := c.deps.CheckPointer.restoreState(ctx, aggregationState{
 		counters:     ctn,
 		allTimeItems: allTimesItems,
 	}); err != nil {
@@ -103,7 +103,7 @@ func (c *Commands) CreateCheckPoint(ctx context.Context) error {
 	}
 
 	c.logger.InfoContext(ctx, "Producing new state")
-	if err = c.deps.CheckPointer.dumpState(ctx, checkPointerState{
+	if err = c.deps.CheckPointer.dumpState(ctx, aggregationState{
 		counters:     ctn,
 		allTimeItems: allTimesItems,
 	}); err != nil {

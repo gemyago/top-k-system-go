@@ -10,14 +10,14 @@ import (
 	"go.uber.org/dig"
 )
 
-type checkPointerState struct {
+type aggregationState struct {
 	counters     counters
 	allTimeItems topKItems
 }
 
 type checkPointer interface {
-	restoreState(ctx context.Context, state checkPointerState) error
-	dumpState(ctx context.Context, state checkPointerState) error
+	restoreState(ctx context.Context, state aggregationState) error
+	dumpState(ctx context.Context, state aggregationState) error
 }
 
 type CheckPointerDeps struct {
@@ -37,7 +37,7 @@ type checkPointerImpl struct {
 	deps   CheckPointerDeps
 }
 
-func (cp *checkPointerImpl) restoreState(ctx context.Context, state checkPointerState) error {
+func (cp *checkPointerImpl) restoreState(ctx context.Context, state aggregationState) error {
 	manifest, err := cp.deps.CheckPointerModel.readManifest(ctx)
 	if err != nil {
 		if errors.Is(err, fs.ErrNotExist) {
@@ -64,7 +64,7 @@ func (cp *checkPointerImpl) restoreState(ctx context.Context, state checkPointer
 	return nil
 }
 
-func (cp *checkPointerImpl) dumpState(ctx context.Context, state checkPointerState) error {
+func (cp *checkPointerImpl) dumpState(ctx context.Context, state aggregationState) error {
 	countersFileName := fmt.Sprintf("counters-%d", state.counters.getLastOffset())
 	allTimeItemsFileName := fmt.Sprintf("all-time-items-%d", state.counters.getLastOffset())
 	newManifest := checkPointManifest{

@@ -39,7 +39,7 @@ func TestCheckPointer(t *testing.T) {
 
 			counters, _ := newCounters().(*countersImpl)
 			allTimeItems := newTopKItems(topKMaxItemsSize)
-			require.NoError(t, cp.restoreState(ctx, checkPointerState{
+			require.NoError(t, cp.restoreState(ctx, aggregationState{
 				counters:     counters,
 				allTimeItems: allTimeItems,
 			}))
@@ -64,7 +64,7 @@ func TestCheckPointer(t *testing.T) {
 			mockModel.EXPECT().readManifest(ctx).Return(checkPointManifest{}, fmt.Errorf("empty state: %w", fs.ErrNotExist))
 
 			counters, _ := newCounters().(*countersImpl)
-			require.NoError(t, cp.restoreState(ctx, checkPointerState{
+			require.NoError(t, cp.restoreState(ctx, aggregationState{
 				counters: counters,
 			}))
 
@@ -85,7 +85,7 @@ func TestCheckPointer(t *testing.T) {
 			mockModel.EXPECT().readCounters(ctx, manifest.CountersBlobFileName).Return(nil, wantErr)
 
 			counters, _ := newCounters().(*countersImpl)
-			require.ErrorIs(t, cp.restoreState(ctx, checkPointerState{
+			require.ErrorIs(t, cp.restoreState(ctx, aggregationState{
 				counters: counters,
 			}), wantErr)
 		})
@@ -100,7 +100,7 @@ func TestCheckPointer(t *testing.T) {
 			mockModel.EXPECT().readManifest(ctx).Return(checkPointManifest{}, wantErr)
 
 			counters, _ := newCounters().(*countersImpl)
-			require.ErrorIs(t, cp.restoreState(ctx, checkPointerState{
+			require.ErrorIs(t, cp.restoreState(ctx, aggregationState{
 				counters: counters,
 			}), wantErr)
 		})
@@ -121,7 +121,7 @@ func TestCheckPointer(t *testing.T) {
 
 			counters, _ := newCounters().(*countersImpl)
 			allTimeItems := newTopKItems(topKMaxItemsSize)
-			require.ErrorIs(t, cp.restoreState(ctx, checkPointerState{
+			require.ErrorIs(t, cp.restoreState(ctx, aggregationState{
 				counters:     counters,
 				allTimeItems: allTimeItems,
 			}), wantErr)
@@ -160,7 +160,7 @@ func TestCheckPointer(t *testing.T) {
 				},
 			).Return(nil)
 
-			require.NoError(t, cp.dumpState(ctx, checkPointerState{
+			require.NoError(t, cp.dumpState(ctx, aggregationState{
 				counters:     cnt,
 				allTimeItems: wantAllTimeItems,
 			}))
@@ -182,7 +182,7 @@ func TestCheckPointer(t *testing.T) {
 				values,
 			).Return(wantErr)
 
-			require.ErrorIs(t, cp.dumpState(ctx, checkPointerState{
+			require.ErrorIs(t, cp.dumpState(ctx, aggregationState{
 				counters: cnt,
 			}), wantErr)
 		})
@@ -210,7 +210,7 @@ func TestCheckPointer(t *testing.T) {
 				allTimeItems.getItems(topKMaxItemsSize),
 			).Return(wantErr)
 
-			require.ErrorIs(t, cp.dumpState(ctx, checkPointerState{
+			require.ErrorIs(t, cp.dumpState(ctx, aggregationState{
 				counters:     cnt,
 				allTimeItems: allTimeItems,
 			}), wantErr)
@@ -247,7 +247,7 @@ func TestCheckPointer(t *testing.T) {
 				},
 			).Return(wantErr)
 
-			require.ErrorIs(t, cp.dumpState(ctx, checkPointerState{
+			require.ErrorIs(t, cp.dumpState(ctx, aggregationState{
 				counters:     cnt,
 				allTimeItems: allTimeItems,
 			}), wantErr)
