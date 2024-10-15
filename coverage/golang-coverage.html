@@ -475,12 +475,12 @@ type defaultEventsSender struct {
         RandIntN randIntN
 }
 
-func (impl *defaultEventsSender) sendTestEvent(ctx context.Context, itemID string, eventsNumber int) error <span class="cov5" title="5">{
+func (impl *defaultEventsSender) sendTestEvent(ctx context.Context, itemID string, eventsNumber int) error <span class="cov4" title="5">{
         evt := &amp;models.ItemEvent{
                 ItemID:     itemID,
                 IngestedAt: impl.Time.Now(),
         }
-        for range eventsNumber </span><span class="cov10" title="29">{
+        for range eventsNumber </span><span class="cov10" title="40">{
                 if err := impl.IngestionCommands.IngestItemEvent(ctx, evt); err != nil </span><span class="cov1" title="1">{
                         return fmt.Errorf("failed to ingest item event: %w", err)
                 }</span>
@@ -3958,11 +3958,11 @@ func newTopKBTreeItems(maxSize int) *topKBTreeItems <span class="cov5" title="22
         return &amp;topKBTreeItems{
                 maxSize:   maxSize,
                 itemsByID: make(map[string]*topKItem),
-                tree: btree.NewG(topKItemsTreeDegree, func(a, b *topKItem) bool </span><span class="cov10" title="287">{
+                tree: btree.NewG(topKItemsTreeDegree, func(a, b *topKItem) bool </span><span class="cov10" title="288">{
                         if a.Count == b.Count </span><span class="cov5" title="16">{
                                 return a.ItemID &lt; b.ItemID
                         }</span>
-                        <span class="cov9" title="271">return a.Count &lt; b.Count</span>
+                        <span class="cov9" title="272">return a.Count &lt; b.Count</span>
                 }),
         }
 }
@@ -4156,26 +4156,26 @@ type MockCommands_Expecter struct {
         mock *mock.Mock
 }
 
-func (_m *MockCommands) EXPECT() *MockCommands_Expecter <span class="cov10" title="33">{
+func (_m *MockCommands) EXPECT() *MockCommands_Expecter <span class="cov9" title="37">{
         return &amp;MockCommands_Expecter{mock: &amp;_m.Mock}
 }</span>
 
 // IngestItemEvent provides a mock function with given fields: ctx, evt
-func (_m *MockCommands) IngestItemEvent(ctx context.Context, evt *models.ItemEvent) error <span class="cov9" title="31">{
+func (_m *MockCommands) IngestItemEvent(ctx context.Context, evt *models.ItemEvent) error <span class="cov10" title="42">{
         ret := _m.Called(ctx, evt)
 
         if len(ret) == 0 </span><span class="cov0" title="0">{
                 panic("no return value specified for IngestItemEvent")</span>
         }
 
-        <span class="cov9" title="31">var r0 error
+        <span class="cov10" title="42">var r0 error
         if rf, ok := ret.Get(0).(func(context.Context, *models.ItemEvent) error); ok </span><span class="cov0" title="0">{
                 r0 = rf(ctx, evt)
-        }</span> else<span class="cov9" title="31"> {
+        }</span> else<span class="cov10" title="42"> {
                 r0 = ret.Error(0)
         }</span>
 
-        <span class="cov9" title="31">return r0</span>
+        <span class="cov10" title="42">return r0</span>
 }
 
 // MockCommands_IngestItemEvent_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'IngestItemEvent'
@@ -4186,7 +4186,7 @@ type MockCommands_IngestItemEvent_Call struct {
 // IngestItemEvent is a helper method to define mock.On call
 //   - ctx context.Context
 //   - evt *models.ItemEvent
-func (_e *MockCommands_Expecter) IngestItemEvent(ctx interface{}, evt interface{}) *MockCommands_IngestItemEvent_Call <span class="cov10" title="33">{
+func (_e *MockCommands_Expecter) IngestItemEvent(ctx interface{}, evt interface{}) *MockCommands_IngestItemEvent_Call <span class="cov9" title="37">{
         return &amp;MockCommands_IngestItemEvent_Call{Call: _e.mock.On("IngestItemEvent", ctx, evt)}
 }</span>
 
@@ -4197,7 +4197,7 @@ func (_c *MockCommands_IngestItemEvent_Call) Run(run func(ctx context.Context, e
         <span class="cov0" title="0">return _c</span>
 }
 
-func (_c *MockCommands_IngestItemEvent_Call) Return(_a0 error) *MockCommands_IngestItemEvent_Call <span class="cov10" title="33">{
+func (_c *MockCommands_IngestItemEvent_Call) Return(_a0 error) *MockCommands_IngestItemEvent_Call <span class="cov9" title="37">{
         _c.Call.Return(_a0)
         return _c
 }</span>
