@@ -129,3 +129,8 @@ In order to produce test events a command below can be used:
 go run ./cmd/mockdata/ send-test-events -n 10
 ```
 This will write 10 test events for a randomly generated item. You can optionally use --item-id parameter and specify the itemId to send test events for.
+
+Create checkpoint:
+```sh
+go run ./cmd/checkpointer/ create-check-point
+```
