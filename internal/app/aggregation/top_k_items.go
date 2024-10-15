@@ -101,6 +101,9 @@ func newTopKBTreeItems(maxSize int) *topKBTreeItems {
 		maxSize:   maxSize,
 		itemsByID: make(map[string]*topKItem),
 		tree: btree.NewG(topKItemsTreeDegree, func(a, b *topKItem) bool {
+			if a.Count == b.Count {
+				return a.ItemID < b.ItemID
+			}
 			return a.Count < b.Count
 		}),
 	}
@@ -113,7 +116,9 @@ func (items topKHeapItemsList) Len() int {
 }
 
 func (items topKHeapItemsList) Less(i, j int) bool {
-	return items[i].Count < items[j].Count
+	left := items[i]
+	right := items[j]
+	return left.Count < right.Count
 }
 
 func (items topKHeapItemsList) Swap(i, j int) {

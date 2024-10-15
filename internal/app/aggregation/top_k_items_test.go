@@ -3,6 +3,7 @@ package aggregation
 import (
 	"math/rand/v2"
 	"slices"
+	"strings"
 	"testing"
 
 	"github.com/go-faker/faker/v4"
@@ -183,6 +184,37 @@ func TestTopKItems(t *testing.T) {
 
 				actualItems := items.getItems(len(originalItems))
 
+				assert.Equal(t, wantItems, actualItems)
+			})
+
+			t.Run("should update existing item with same count", func(t *testing.T) {
+				var baseCount int64 = 10000
+				originalItems := []*topKItem{
+					{ItemID: "item1-" + faker.Word(), Count: baseCount + rand.Int64N(10)},
+					{ItemID: "item2-" + faker.Word(), Count: baseCount + 100 + rand.Int64N(10)},
+					{ItemID: "item3-" + faker.Word(), Count: baseCount + 200 + rand.Int64N(10)},
+					{ItemID: "item4-" + faker.Word(), Count: baseCount + 300 + rand.Int64N(10)},
+					{ItemID: "item5-" + faker.Word(), Count: baseCount + 400 + rand.Int64N(10)},
+				}
+				wantItemsCount := len(originalItems)
+
+				items := newTopKBTreeItems(wantItemsCount)
+				items.load(originalItems)
+
+				item3 := *originalItems[2]
+				item3.Count = originalItems[1].Count
+				items.updateIfGreater(item3)
+
+				wantItems := slices.Clone(originalItems)
+				wantItems[2] = &item3
+				slices.SortFunc(wantItems, func(i, j *topKItem) int {
+					if i.Count == j.Count {
+						return strings.Compare(j.ItemID, i.ItemID)
+					}
+					return int(j.Count - i.Count)
+				})
+
+				actualItems := items.getItems(len(originalItems))
 				assert.Equal(t, wantItems, actualItems)
 			})
 
