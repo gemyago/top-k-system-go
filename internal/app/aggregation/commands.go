@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"time"
 
 	"github.com/samber/lo"
 	"github.com/segmentio/kafka-go"
@@ -41,13 +42,18 @@ type Commands struct {
 }
 
 func (c *Commands) StartAggregator(ctx context.Context) error {
-	c.logger.InfoContext(ctx, "Restoring counters state")
-
+	c.logger.DebugContext(ctx, "Restoring counters state")
+	startedAt := time.Now()
 	if err := c.deps.CheckPointer.restoreState(ctx, c.deps.AggregationState); err != nil {
 		return fmt.Errorf("failed to restore state while starting aggregator: %w", err)
 	}
 
 	counters := c.deps.AggregationState.counters
+	c.logger.InfoContext(ctx, "Counters state restored",
+		slog.Int("totalItemsCount", len(counters.getItemsCounters())),
+		slog.Int64("lastOffset", counters.getLastOffset()),
+		slog.Duration("restorationDuration", time.Since(startedAt)),
+	)
 	lastOffset := counters.getLastOffset()
 	sinceOffset := lo.If(lastOffset == 0, int64(0)).Else(lastOffset + 1)
 	c.logger.InfoContext(ctx,
