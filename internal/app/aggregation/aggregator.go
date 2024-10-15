@@ -54,8 +54,6 @@ func (a *itemEventsAggregatorImpl) beginAggregating(
 	state aggregationState,
 	opts beginAggregatingOpts,
 ) error {
-	// TODO: Set the offset to start fetching from
-	// and keep fetching until the offset provided
 	messagesChan := a.AggregatorModel.fetchMessages(ctx, opts.sinceOffset)
 	flushTimer := a.ItemEventsAggregatorDeps.TickerFactory(a.FlushInterval)
 	for {
