@@ -23,50 +23,64 @@ func BenchmarkTopKItems(b *testing.B) {
 		return items
 	}
 
-	b.Run("getItems", func(b *testing.B) {
-		items := newTopKBTreeItems(1000)
-		items.load(randomItems(1000))
+	runTopKItemsTestSuite := func(b *testing.B, newTopKBTreeItems func(maxSize int) topKItems) {
+		b.Run("getItems", func(b *testing.B) {
+			items := newTopKBTreeItems(1000)
+			items.load(randomItems(1000))
 
-		b.Run("get top 100 items", func(b *testing.B) {
-			for i := 0; i < b.N; i++ {
-				items.getItems(100)
-			}
+			b.Run("get top 100 items", func(b *testing.B) {
+				for i := 0; i < b.N; i++ {
+					items.getItems(100)
+				}
+			})
+
+			b.Run("get top 500 items", func(b *testing.B) {
+				for i := 0; i < b.N; i++ {
+					items.getItems(500)
+				}
+			})
+
+			b.Run("get top 1000 items", func(b *testing.B) {
+				for i := 0; i < b.N; i++ {
+					items.getItems(1000)
+				}
+			})
 		})
 
-		b.Run("get top 500 items", func(b *testing.B) {
-			for i := 0; i < b.N; i++ {
-				items.getItems(500)
-			}
-		})
+		b.Run("updateIfGreater", func(b *testing.B) {
+			items := newTopKBTreeItems(1000)
+			items.load(randomItems(1000))
+			maxItem := items.getItems(1000)[0]
+			randomItem := items.getItems(1000)[rand.IntN(1000)]
 
-		b.Run("get top 1000 items", func(b *testing.B) {
-			for i := 0; i < b.N; i++ {
-				items.getItems(1000)
-			}
+			b.Run("replace existing item", func(b *testing.B) {
+				for i := 0; i < b.N; i++ {
+					item := *randomItem
+					item.count = maxItem.count + int64(i) + 1
+					items.updateIfGreater(item)
+				}
+			})
+
+			b.Run("replace existing if greater", func(b *testing.B) {
+				for i := 0; i < b.N; i++ {
+					item := *maxItem
+					item.itemID += strconv.Itoa(i)
+					item.count = maxItem.count + int64(i) + 1
+					items.updateIfGreater(item)
+				}
+			})
+		})
+	}
+
+	b.Run("topKBTreeItems", func(b *testing.B) {
+		runTopKItemsTestSuite(b, func(maxSize int) topKItems {
+			return newTopKBTreeItems(maxSize)
 		})
 	})
 
-	b.Run("updateIfGreater", func(b *testing.B) {
-		items := newTopKBTreeItems(1000)
-		items.load(randomItems(1000))
-		maxItem := items.getItems(1000)[0]
-		randomItem := items.getItems(1000)[rand.IntN(1000)]
-
-		b.Run("replace existing item", func(b *testing.B) {
-			for i := 0; i < b.N; i++ {
-				item := *randomItem
-				item.count = maxItem.count + int64(i) + 1
-				items.updateIfGreater(item)
-			}
-		})
-
-		b.Run("replace existing if greater", func(b *testing.B) {
-			for i := 0; i < b.N; i++ {
-				item := *maxItem
-				item.itemID += strconv.Itoa(i)
-				item.count = maxItem.count + int64(i) + 1
-				items.updateIfGreater(item)
-			}
+	b.Run("topKHeapItems", func(b *testing.B) {
+		runTopKItemsTestSuite(b, func(maxSize int) topKItems {
+			return newTopKHeapItems(maxSize)
 		})
 	})
 }
