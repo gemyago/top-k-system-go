@@ -69,8 +69,6 @@ func (items *topKBTreeItems) updateIfGreater(item topKItem) {
 	// if existing item then we do update only
 	if existingItem != nil {
 		items.tree.Delete(existingItem)
-		delete(items.itemsByID, existingItem.ItemID)
-
 		items.tree.ReplaceOrInsert(&item)
 		items.itemsByID[item.ItemID] = &item
 		return
