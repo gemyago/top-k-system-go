@@ -9,6 +9,7 @@ import (
 
 	"github.com/gemyago/top-k-system-go/internal/api/http/routes"
 	"github.com/gemyago/top-k-system-go/internal/api/http/server"
+	"github.com/gemyago/top-k-system-go/internal/app/aggregation"
 	"github.com/gemyago/top-k-system-go/internal/di"
 	"github.com/gemyago/top-k-system-go/internal/diag"
 	"github.com/gemyago/top-k-system-go/internal/services"
@@ -22,7 +23,8 @@ type runHTTPServerParams struct {
 
 	RootLogger *slog.Logger
 
-	HTTPServer *server.HTTPServer
+	HTTPServer          *server.HTTPServer
+	AggregationCommands *aggregation.Commands
 
 	*services.ShutdownHooks
 
@@ -52,7 +54,7 @@ func runHTTPServer(params runHTTPServerParams) error {
 	signalCtx, cancel := signal.NotifyContext(rootCtx, unix.SIGINT, unix.SIGTERM)
 	defer cancel()
 
-	startupErrors := make(chan error, 1)
+	startupErrors := make(chan error, 2)
 	go func() {
 		if params.noop {
 			rootLogger.InfoContext(signalCtx, "NOOP: Starting http server")
@@ -60,6 +62,14 @@ func runHTTPServer(params runHTTPServerParams) error {
 			return
 		}
 		startupErrors <- httpServer.Start(signalCtx)
+	}()
+	go func() {
+		if params.noop {
+			rootLogger.InfoContext(signalCtx, "NOOP: Starting aggregator")
+			startupErrors <- nil
+			return
+		}
+		startupErrors <- params.AggregationCommands.StartAggregator(signalCtx)
 	}()
 
 	var startupErr error
