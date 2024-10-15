@@ -107,9 +107,9 @@ func (_c *mockItemEventsAggregatorModel_fetchMessages_Call) RunAndReturn(run fun
 	return _c
 }
 
-// flushMessages provides a mock function with given fields: ctx, counters1
-func (_m *mockItemEventsAggregatorModel) flushMessages(ctx context.Context, counters1 counters) {
-	_m.Called(ctx, counters1)
+// flushMessages provides a mock function with given fields: ctx, state
+func (_m *mockItemEventsAggregatorModel) flushMessages(ctx context.Context, state aggregationState) {
+	_m.Called(ctx, state)
 }
 
 // mockItemEventsAggregatorModel_flushMessages_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'flushMessages'
@@ -119,14 +119,14 @@ type mockItemEventsAggregatorModel_flushMessages_Call struct {
 
 // flushMessages is a helper method to define mock.On call
 //   - ctx context.Context
-//   - counters1 counters
-func (_e *mockItemEventsAggregatorModel_Expecter) flushMessages(ctx interface{}, counters1 interface{}) *mockItemEventsAggregatorModel_flushMessages_Call {
-	return &mockItemEventsAggregatorModel_flushMessages_Call{Call: _e.mock.On("flushMessages", ctx, counters1)}
+//   - state aggregationState
+func (_e *mockItemEventsAggregatorModel_Expecter) flushMessages(ctx interface{}, state interface{}) *mockItemEventsAggregatorModel_flushMessages_Call {
+	return &mockItemEventsAggregatorModel_flushMessages_Call{Call: _e.mock.On("flushMessages", ctx, state)}
 }
 
-func (_c *mockItemEventsAggregatorModel_flushMessages_Call) Run(run func(ctx context.Context, counters1 counters)) *mockItemEventsAggregatorModel_flushMessages_Call {
+func (_c *mockItemEventsAggregatorModel_flushMessages_Call) Run(run func(ctx context.Context, state aggregationState)) *mockItemEventsAggregatorModel_flushMessages_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(counters))
+		run(args[0].(context.Context), args[1].(aggregationState))
 	})
 	return _c
 }
@@ -136,7 +136,7 @@ func (_c *mockItemEventsAggregatorModel_flushMessages_Call) Return() *mockItemEv
 	return _c
 }
 
-func (_c *mockItemEventsAggregatorModel_flushMessages_Call) RunAndReturn(run func(context.Context, counters)) *mockItemEventsAggregatorModel_flushMessages_Call {
+func (_c *mockItemEventsAggregatorModel_flushMessages_Call) RunAndReturn(run func(context.Context, aggregationState)) *mockItemEventsAggregatorModel_flushMessages_Call {
 	_c.Call.Return(run)
 	return _c
 }

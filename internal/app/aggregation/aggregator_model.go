@@ -33,7 +33,7 @@ type ItemEventsAggregatorModelDeps struct {
 
 type itemEventsAggregatorModel interface {
 	aggregateItemEvent(offset int64, evt *models.ItemEvent)
-	flushMessages(ctx context.Context, counters counters)
+	flushMessages(ctx context.Context, state aggregationState)
 	fetchMessages(ctx context.Context, fromOffset int64) <-chan fetchMessageResult
 }
 
@@ -55,9 +55,9 @@ func (m *itemEventsAggregatorModelImpl) aggregateItemEvent(offset int64, evt *mo
 
 // flushMessages method is not thread safe, should be only called from a same
 // goroutine as aggregateItemEvent.
-func (m *itemEventsAggregatorModelImpl) flushMessages(ctx context.Context, counters counters) {
+func (m *itemEventsAggregatorModelImpl) flushMessages(ctx context.Context, state aggregationState) {
 	m.logger.DebugContext(ctx, "Flushing aggregated messages")
-	counters.updateItemsCount(m.lastAggregatedOffset, m.aggregatedItems)
+	state.counters.updateItemsCount(m.lastAggregatedOffset, m.aggregatedItems)
 	clear(m.aggregatedItems)
 }
 

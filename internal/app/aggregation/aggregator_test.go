@@ -98,7 +98,7 @@ func TestItemEventsAggregator(t *testing.T) {
 
 			fetchResultChan := make(chan fetchMessageResult)
 			mockModel.EXPECT().fetchMessages(ctx, offsetBase).Return(fetchResultChan)
-			mockModel.EXPECT().flushMessages(ctx, cnt)
+			mockModel.EXPECT().flushMessages(ctx, state)
 
 			exit := make(chan error)
 			go func() {
@@ -173,7 +173,7 @@ func TestItemEventsAggregator(t *testing.T) {
 
 			fetchResultChan := make(chan fetchMessageResult)
 			mockModel.EXPECT().fetchMessages(ctx, int64(0)).Return(fetchResultChan)
-			mockModel.EXPECT().flushMessages(ctx, cnt)
+			mockModel.EXPECT().flushMessages(ctx, state)
 
 			exit := make(chan error)
 			go func() {

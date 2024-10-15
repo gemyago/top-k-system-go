@@ -164,7 +164,9 @@ func TestAggregatorModel(t *testing.T) {
 			mockCounters := newMockCounters(t)
 			mockCounters.EXPECT().updateItemsCount(modelImpl.lastAggregatedOffset, modelImpl.aggregatedItems)
 
-			model.flushMessages(context.Background(), mockCounters)
+			model.flushMessages(context.Background(), aggregationState{
+				counters: mockCounters,
+			})
 			assert.Equal(t, baseOffset+int64(len(itemEvents)-1), modelImpl.lastAggregatedOffset)
 			assert.Empty(t, modelImpl.aggregatedItems)
 		})

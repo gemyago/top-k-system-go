@@ -54,8 +54,6 @@ func (a *itemEventsAggregatorImpl) beginAggregating(
 	state aggregationState,
 	opts beginAggregatingOpts,
 ) error {
-	counters := state.counters
-
 	// TODO: Set the offset to start fetching from
 	// and keep fetching until the offset provided
 	messagesChan := a.AggregatorModel.fetchMessages(ctx, opts.sinceOffset)
@@ -63,7 +61,7 @@ func (a *itemEventsAggregatorImpl) beginAggregating(
 	for {
 		select {
 		case <-flushTimer.C:
-			a.AggregatorModel.flushMessages(ctx, counters)
+			a.AggregatorModel.flushMessages(ctx, state)
 		case res := <-messagesChan:
 			// TODO: Potentially Better error handling here
 			if res.err != nil {
@@ -81,7 +79,7 @@ func (a *itemEventsAggregatorImpl) beginAggregating(
 						slog.Int64("offset", res.offset),
 						slog.Int64("tillOffset", opts.tillOffset),
 					)
-					a.AggregatorModel.flushMessages(ctx, counters)
+					a.AggregatorModel.flushMessages(ctx, state)
 					return nil
 				}
 			}
