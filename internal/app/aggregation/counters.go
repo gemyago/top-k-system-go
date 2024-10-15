@@ -6,8 +6,8 @@ type counters interface {
 	getLastOffset() int64
 
 	// updateItemsCount will update the counts and return the result with
-	// total values for input counts (TODO)
-	updateItemsCount(lastOffset int64, increments map[string]int64)
+	// total values for input counts
+	updateItemsCount(lastOffset int64, increments map[string]int64) map[string]int64
 }
 
 type countersImpl struct {
@@ -23,13 +23,17 @@ func (c *countersImpl) getLastOffset() int64 {
 	return c.lastOffset
 }
 
-func (c *countersImpl) updateItemsCount(lastOffset int64, increments map[string]int64) {
+func (c *countersImpl) updateItemsCount(lastOffset int64, increments map[string]int64) map[string]int64 {
 	// TODO: We may have to potentially synchronize
 	c.lastOffset = lastOffset
+	result := make(map[string]int64, len(increments))
 	for itemID, increment := range increments {
 		existingVal := c.itemCounters[itemID]
-		c.itemCounters[itemID] = existingVal + increment
+		nextVal := existingVal + increment
+		c.itemCounters[itemID] = nextVal
+		result[itemID] = nextVal
 	}
+	return result
 }
 
 type countersFactory interface {
