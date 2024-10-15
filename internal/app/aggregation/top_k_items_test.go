@@ -83,6 +83,27 @@ func TestTopKItems(t *testing.T) {
 				assert.Equal(t, wantItems, actualItems)
 			})
 
+			t.Run("should return all items items using constant", func(t *testing.T) {
+				var baseCount int64 = 10000
+				originalItems := []*topKItem{
+					{itemID: "item1-" + faker.Word(), count: baseCount + rand.Int64N(10)},
+					{itemID: "item2-" + faker.Word(), count: baseCount + 100 + rand.Int64N(10)},
+					{itemID: "item3-" + faker.Word(), count: baseCount + 200 + rand.Int64N(10)},
+					{itemID: "item4-" + faker.Word(), count: baseCount + 300 + rand.Int64N(10)},
+					{itemID: "item5-" + faker.Word(), count: baseCount + 400 + rand.Int64N(10)},
+				}
+
+				items := newTopKBTreeItems(100)
+				items.load(originalItems)
+
+				actualItems := items.getItems(topKGetAllItemsLimit)
+				wantItems := slices.Clone(originalItems)
+				slices.SortFunc(wantItems, func(i, j *topKItem) int {
+					return int(j.count - i.count)
+				})
+				assert.Equal(t, wantItems, actualItems)
+			})
+
 			t.Run("should return limited items list", func(t *testing.T) {
 				var baseCount int64 = 10000
 				originalItems := []*topKItem{

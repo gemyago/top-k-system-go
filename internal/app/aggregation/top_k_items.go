@@ -8,6 +8,9 @@ import (
 	"github.com/google/btree"
 )
 
+// topKGetAllItemsLimit is used to get all items in the topKItems.
+const topKGetAllItemsLimit = -1
+
 type topKItem struct {
 	itemID string
 	count  int64
@@ -32,6 +35,9 @@ type topKBTreeItems struct {
 
 // getItems returns all items in the tree in descending order.
 func (items *topKBTreeItems) getItems(limit int) []*topKItem {
+	if limit == topKGetAllItemsLimit {
+		limit = items.tree.Len()
+	}
 	result := make([]*topKItem, 0, limit)
 	items.tree.Descend(func(i *topKItem) bool {
 		result = append(result, i)
@@ -149,6 +155,9 @@ func (items *topKHeapItems) load(values []*topKItem) {
 }
 
 func (items *topKHeapItems) getItems(limit int) []*topKItem {
+	if limit == topKGetAllItemsLimit {
+		limit = len(items.items)
+	}
 	result := make([]*topKItem, len(items.items))
 	copy(result, items.items)
 	slices.SortFunc(result, func(i, j *topKItem) int {
