@@ -54,7 +54,7 @@ func runHTTPServer(params runHTTPServerParams) error {
 	signalCtx, cancel := signal.NotifyContext(rootCtx, unix.SIGINT, unix.SIGTERM)
 	defer cancel()
 
-	startupErrors := make(chan error, 2)
+	startupErrors := make(chan error)
 	go func() {
 		if params.noop {
 			rootLogger.InfoContext(signalCtx, "NOOP: Starting http server")
