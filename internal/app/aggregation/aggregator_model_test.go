@@ -161,11 +161,22 @@ func TestAggregatorModel(t *testing.T) {
 
 			modelImpl, _ := model.(*itemEventsAggregatorModelImpl)
 
+			updatedValues := randomCountersValues()
+
 			mockCounters := newMockCounters(t)
-			mockCounters.EXPECT().updateItemsCount(modelImpl.lastAggregatedOffset, modelImpl.aggregatedItems)
+			mockCounters.EXPECT().
+				updateItemsCount(modelImpl.lastAggregatedOffset, modelImpl.aggregatedItems).
+				Return(updatedValues)
+
+			mockAllTimeItems := newMockTopKItems(t)
+
+			for k, v := range updatedValues {
+				mockAllTimeItems.EXPECT().updateIfGreater(topKItem{ItemID: k, Count: v})
+			}
 
 			model.flushMessages(context.Background(), aggregationState{
-				counters: mockCounters,
+				counters:     mockCounters,
+				allTimeItems: mockAllTimeItems,
 			})
 			assert.Equal(t, baseOffset+int64(len(itemEvents)-1), modelImpl.lastAggregatedOffset)
 			assert.Empty(t, modelImpl.aggregatedItems)

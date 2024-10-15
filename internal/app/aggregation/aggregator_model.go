@@ -57,7 +57,10 @@ func (m *itemEventsAggregatorModelImpl) aggregateItemEvent(offset int64, evt *mo
 // goroutine as aggregateItemEvent.
 func (m *itemEventsAggregatorModelImpl) flushMessages(ctx context.Context, state aggregationState) {
 	m.logger.DebugContext(ctx, "Flushing aggregated messages")
-	state.counters.updateItemsCount(m.lastAggregatedOffset, m.aggregatedItems)
+	updatedItems := state.counters.updateItemsCount(m.lastAggregatedOffset, m.aggregatedItems)
+	for itemID, count := range updatedItems {
+		state.allTimeItems.updateIfGreater(topKItem{ItemID: itemID, Count: count})
+	}
 	clear(m.aggregatedItems)
 }
 
