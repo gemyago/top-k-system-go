@@ -83,6 +83,30 @@ func TestTopKItems(t *testing.T) {
 				})
 				assert.Equal(t, wantItems, actualItems)
 			})
+			t.Run("should include items with duplicate keys", func(t *testing.T) {
+				var baseCount int64 = 10000
+				item23Count := baseCount + 100 + rand.Int64N(10)
+				originalItems := []*topKItem{
+					{ItemID: "item1-" + faker.Word(), Count: baseCount + rand.Int64N(10)},
+					{ItemID: "item2-" + faker.Word(), Count: item23Count},
+					{ItemID: "item3-" + faker.Word(), Count: item23Count},
+					{ItemID: "item4-" + faker.Word(), Count: baseCount + 300 + rand.Int64N(10)},
+					{ItemID: "item5-" + faker.Word(), Count: baseCount + 400 + rand.Int64N(10)},
+				}
+
+				items := newTopKBTreeItems(100)
+				items.load(originalItems)
+
+				actualItems := items.getItems(100)
+				wantItems := slices.Clone(originalItems)
+				slices.SortFunc(wantItems, func(i, j *topKItem) int {
+					if i.Count == j.Count {
+						return strings.Compare(j.ItemID, i.ItemID)
+					}
+					return int(j.Count - i.Count)
+				})
+				assert.Equal(t, wantItems, actualItems)
+			})
 
 			t.Run("should return all items items using constant", func(t *testing.T) {
 				var baseCount int64 = 10000
