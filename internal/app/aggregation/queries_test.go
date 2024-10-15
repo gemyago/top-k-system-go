@@ -13,7 +13,7 @@ import (
 func TestQueries(t *testing.T) {
 	makeMockDeps := func(t *testing.T) QueriesDeps {
 		return QueriesDeps{
-			topKItemsFactory: newMockTopKItemsFactory(t),
+			TopKItemsFactory: newMockTopKItemsFactory(t),
 		}
 	}
 
@@ -22,7 +22,7 @@ func TestQueries(t *testing.T) {
 			deps := makeMockDeps(t)
 
 			mockItems := newMockTopKItems(t)
-			mockFactory, _ := deps.topKItemsFactory.(*mockTopKItemsFactory)
+			mockFactory, _ := deps.TopKItemsFactory.(*mockTopKItemsFactory)
 			mockFactory.EXPECT().newTopKItems(topKMaxItemsSize).Return(mockItems)
 
 			wantSize := 10 + rand.IntN(10)

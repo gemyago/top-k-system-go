@@ -39,13 +39,16 @@ func (q *Queries) GetTopKItems(
 }
 
 type QueriesDeps struct {
+	// all injectable fields must be exported
+	// to let dig inject them
+
 	dig.In
 
-	topKItemsFactory topKItemsFactory
+	TopKItemsFactory topKItemsFactory
 }
 
 func NewQueries(deps QueriesDeps) *Queries {
 	return &Queries{
-		allTimeItems: deps.topKItemsFactory.newTopKItems(topKMaxItemsSize),
+		allTimeItems: deps.TopKItemsFactory.newTopKItems(topKMaxItemsSize),
 	}
 }
