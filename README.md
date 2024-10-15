@@ -110,25 +110,51 @@ gow test -v ./service/pkg/api/http/v1controllers/ --run TestHealthCheckControlle
 
 ```bash
 # Regular mode
-go run ./cmd/service/
+go run ./cmd/server/ http
 
 # Watch mode (double ^C to stop)
-gow run ./cmd/service/
+gow run ./cmd/server/ http
+```
+You may want to prepare some test data before running the service. Please see the `Testing` section below.
+
+API requests examples:
+```sh
+# Get top 100 items (all time)
+curl --location 'localhost:8080/items/top?limit=100'
+
+# Send event for item with ID 320d87f0-2a9c-4e66-a28d-34ef4cbaa937
+curl --location --request POST 'localhost:8080/items/events/320d87f0-2a9c-4e66-a28d-34ef4cbaa937'
 ```
 
 ## Testing
 
 When generating random data for testing, it is useful to have a fixed set of random itemIDs. Please use a command below to generate the list of random itemIDs:
 ```bash
+# Generate 10k random itemIDs
 go run ./cmd/mockdata/ generate-item-ids -n 10000 -o 10k-items.txt
+
+# Generate 100k random itemIDs
+go run ./cmd/mockdata/ generate-item-ids -n 100000 -o 100k-items.txt
+
+# Generate 1M random itemIDs
+go run ./cmd/mockdata/ generate-item-ids -n 1000000 -o 1m-items.txt
+
+# Generate 133M random itemIDs (may be slow)
+go run ./cmd/mockdata/ generate-item-ids -n 133000000 -o 133m-items.txt
 ```
-This will generate 10k random itemIDs and save them to a file `tmp/blobs/10k-items.txt` (when running locally).
+This will generate desired number of random itemIDs and save them to a file `tmp/blobs/XXXk-items.txt` (when running locally).
 
 In order to produce test events a command below can be used:
 ```sh
+# Send from 5 to 15 test events for each item in 100k-items.txt
+go run ./cmd/mockdata/ send-test-events --item-ids-file 100k-items.txt -n 5
+
+# Send 10 test events for random item
 go run ./cmd/mockdata/ send-test-events -n 10
+
+# Send 10 test events for item with specific ID
+go run ./cmd/mockdata/ send-test-events -n 10 --item-id 320d87f0-2a9c-4e66-a28d-34ef4cbaa937
 ```
-This will write 10 test events for a randomly generated item. You can optionally use --item-id parameter and specify the itemId to send test events for.
 
 Create checkpoint:
 ```sh
