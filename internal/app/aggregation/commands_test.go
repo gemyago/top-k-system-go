@@ -9,6 +9,7 @@ import (
 	"github.com/gemyago/top-k-system-go/internal/diag"
 	"github.com/gemyago/top-k-system-go/internal/services"
 	"github.com/go-faker/faker/v4"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
 
@@ -20,6 +21,7 @@ func TestCommands(t *testing.T) {
 			ItemEventsAggregator: newMockItemEventsAggregator(t),
 			ItemEventsReader:     services.NewMockKafkaReader(t),
 			CountersFactory:      newMockCountersFactory(t),
+			TopKItemsFactory:     newMockTopKItemsFactory(t),
 		}
 	}
 
@@ -34,8 +36,15 @@ func TestCommands(t *testing.T) {
 			countersFactory, _ := mockDeps.CountersFactory.(*mockCountersFactory)
 			countersFactory.EXPECT().newCounters().Return(wantCounters)
 
+			topKItemsFactory, _ := mockDeps.TopKItemsFactory.(*mockTopKItemsFactory)
+			mockAllTimesItems := newMockTopKItems(t)
+			topKItemsFactory.EXPECT().newTopKItems(topKMaxItemsSize).Return(mockAllTimesItems)
+
 			checkPointer, _ := mockDeps.CheckPointer.(*mockCheckPointer)
-			checkPointer.EXPECT().restoreState(ctx, wantCounters).Return(nil)
+			checkPointer.EXPECT().restoreState(ctx, checkPointerState{
+				counters:     wantCounters,
+				allTimeItems: mockAllTimesItems,
+			}).Return(nil)
 
 			aggregator, _ := mockDeps.ItemEventsAggregator.(*mockItemEventsAggregator)
 			aggregator.EXPECT().
@@ -54,10 +63,13 @@ func TestCommands(t *testing.T) {
 			wantCounters := newMockCounters(t)
 			countersFactory, _ := mockDeps.CountersFactory.(*mockCountersFactory)
 			countersFactory.EXPECT().newCounters().Return(wantCounters)
+			topKItemsFactory, _ := mockDeps.TopKItemsFactory.(*mockTopKItemsFactory)
+			mockAllTimesItems := newMockTopKItems(t)
+			topKItemsFactory.EXPECT().newTopKItems(topKMaxItemsSize).Return(mockAllTimesItems)
 
 			checkPointer, _ := mockDeps.CheckPointer.(*mockCheckPointer)
 			wantErr := errors.New(faker.Sentence())
-			checkPointer.EXPECT().restoreState(ctx, wantCounters).Return(wantErr)
+			checkPointer.EXPECT().restoreState(ctx, mock.Anything).Return(wantErr)
 
 			require.ErrorIs(t, commands.StartAggregator(ctx), wantErr)
 		})
@@ -71,14 +83,20 @@ func TestCommands(t *testing.T) {
 			ctx := context.Background()
 
 			wantCounters := newMockCounters(t)
-
 			wantCounters.EXPECT().getLastOffset().Return(0)
 
 			countersFactory, _ := mockDeps.CountersFactory.(*mockCountersFactory)
 			countersFactory.EXPECT().newCounters().Return(wantCounters)
 
+			mockAllTimesItems := newMockTopKItems(t)
+			topKItemsFactory, _ := mockDeps.TopKItemsFactory.(*mockTopKItemsFactory)
+			topKItemsFactory.EXPECT().newTopKItems(topKMaxItemsSize).Return(mockAllTimesItems)
+
 			checkPointer, _ := mockDeps.CheckPointer.(*mockCheckPointer)
-			checkPointer.EXPECT().restoreState(ctx, wantCounters).Return(nil)
+			checkPointer.EXPECT().restoreState(ctx, checkPointerState{
+				counters:     wantCounters,
+				allTimeItems: mockAllTimesItems,
+			}).Return(nil)
 
 			wantTail := rand.Int64()
 			reader, _ := mockDeps.ItemEventsReader.(*services.MockKafkaReader)
@@ -91,7 +109,10 @@ func TestCommands(t *testing.T) {
 				}).
 				Return(nil)
 
-			checkPointer.EXPECT().dumpState(ctx, wantCounters).Return(nil)
+			checkPointer.EXPECT().dumpState(ctx, checkPointerState{
+				counters:     wantCounters,
+				allTimeItems: mockAllTimesItems,
+			}).Return(nil)
 
 			require.NoError(t, commands.CreateCheckPoint(ctx))
 		})
@@ -109,8 +130,12 @@ func TestCommands(t *testing.T) {
 			countersFactory, _ := mockDeps.CountersFactory.(*mockCountersFactory)
 			countersFactory.EXPECT().newCounters().Return(wantCounters)
 
+			mockAllTimesItems := newMockTopKItems(t)
+			topKItemsFactory, _ := mockDeps.TopKItemsFactory.(*mockTopKItemsFactory)
+			topKItemsFactory.EXPECT().newTopKItems(topKMaxItemsSize).Return(mockAllTimesItems)
+
 			checkPointer, _ := mockDeps.CheckPointer.(*mockCheckPointer)
-			checkPointer.EXPECT().restoreState(ctx, wantCounters).Return(nil)
+			checkPointer.EXPECT().restoreState(ctx, mock.Anything).Return(nil)
 
 			wantTail := lastOffset + 100
 			reader, _ := mockDeps.ItemEventsReader.(*services.MockKafkaReader)
@@ -124,7 +149,7 @@ func TestCommands(t *testing.T) {
 				}).
 				Return(nil)
 
-			checkPointer.EXPECT().dumpState(ctx, wantCounters).Return(nil)
+			checkPointer.EXPECT().dumpState(ctx, mock.Anything).Return(nil)
 
 			require.NoError(t, commands.CreateCheckPoint(ctx))
 		})
@@ -142,8 +167,12 @@ func TestCommands(t *testing.T) {
 			countersFactory, _ := mockDeps.CountersFactory.(*mockCountersFactory)
 			countersFactory.EXPECT().newCounters().Return(wantCounters)
 
+			mockAllTimesItems := newMockTopKItems(t)
+			topKItemsFactory, _ := mockDeps.TopKItemsFactory.(*mockTopKItemsFactory)
+			topKItemsFactory.EXPECT().newTopKItems(topKMaxItemsSize).Return(mockAllTimesItems)
+
 			checkPointer, _ := mockDeps.CheckPointer.(*mockCheckPointer)
-			checkPointer.EXPECT().restoreState(ctx, wantCounters).Return(nil)
+			checkPointer.EXPECT().restoreState(ctx, mock.Anything).Return(nil)
 
 			wantTail := lastOffset + 100
 			reader, _ := mockDeps.ItemEventsReader.(*services.MockKafkaReader)
@@ -168,8 +197,12 @@ func TestCommands(t *testing.T) {
 			countersFactory, _ := mockDeps.CountersFactory.(*mockCountersFactory)
 			countersFactory.EXPECT().newCounters().Return(wantCounters)
 
+			mockAllTimesItems := newMockTopKItems(t)
+			topKItemsFactory, _ := mockDeps.TopKItemsFactory.(*mockTopKItemsFactory)
+			topKItemsFactory.EXPECT().newTopKItems(topKMaxItemsSize).Return(mockAllTimesItems)
+
 			checkPointer, _ := mockDeps.CheckPointer.(*mockCheckPointer)
-			checkPointer.EXPECT().restoreState(ctx, wantCounters).Return(nil)
+			checkPointer.EXPECT().restoreState(ctx, mock.Anything).Return(nil)
 
 			reader, _ := mockDeps.ItemEventsReader.(*services.MockKafkaReader)
 			reader.EXPECT().ReadLastOffset(ctx).Return(wantTail+1, nil)
@@ -188,9 +221,13 @@ func TestCommands(t *testing.T) {
 			countersFactory, _ := mockDeps.CountersFactory.(*mockCountersFactory)
 			countersFactory.EXPECT().newCounters().Return(wantCounters)
 
+			mockAllTimesItems := newMockTopKItems(t)
+			topKItemsFactory, _ := mockDeps.TopKItemsFactory.(*mockTopKItemsFactory)
+			topKItemsFactory.EXPECT().newTopKItems(topKMaxItemsSize).Return(mockAllTimesItems)
+
 			checkPointer, _ := mockDeps.CheckPointer.(*mockCheckPointer)
 			wantErr := errors.New(faker.Sentence())
-			checkPointer.EXPECT().restoreState(ctx, wantCounters).Return(wantErr)
+			checkPointer.EXPECT().restoreState(ctx, mock.Anything).Return(wantErr)
 
 			require.ErrorIs(t, commands.CreateCheckPoint(ctx), wantErr)
 		})
@@ -205,8 +242,12 @@ func TestCommands(t *testing.T) {
 			countersFactory, _ := mockDeps.CountersFactory.(*mockCountersFactory)
 			countersFactory.EXPECT().newCounters().Return(wantCounters)
 
+			mockAllTimesItems := newMockTopKItems(t)
+			topKItemsFactory, _ := mockDeps.TopKItemsFactory.(*mockTopKItemsFactory)
+			topKItemsFactory.EXPECT().newTopKItems(topKMaxItemsSize).Return(mockAllTimesItems)
+
 			checkPointer, _ := mockDeps.CheckPointer.(*mockCheckPointer)
-			checkPointer.EXPECT().restoreState(ctx, wantCounters).Return(nil)
+			checkPointer.EXPECT().restoreState(ctx, mock.Anything).Return(nil)
 
 			reader, _ := mockDeps.ItemEventsReader.(*services.MockKafkaReader)
 			wantErr := errors.New(faker.Sentence())
