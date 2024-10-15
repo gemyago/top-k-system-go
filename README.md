@@ -34,6 +34,9 @@ The input of the system are `Item Events` that are increasing popularity. In rea
 
 In order to support restarts and recovery, a periodical snapshots of the TopK Heap and TopK Counters will be saved to a BlobStorage. When new process of the `Top K Query Service` is starting up, it will get the last blob from the storage and catch-up remaining items from the stream.
 
+Notes:
+* Based on benchmarks it was discovered that btree is more performant than hash map to maintain the TopK items in memory.
+
 ### Capacity estimation
 
 YouTube metrics will be used as a baseline:
