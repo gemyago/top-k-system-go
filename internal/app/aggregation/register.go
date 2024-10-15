@@ -20,5 +20,9 @@ func Register(container *dig.Container) error {
 		di.ProvideValue(countersFactory(countersFactoryFunc(newCounters))),
 		di.ProvideValue(topKItemsFactory(topKItemsFactoryFunc(newTopKItems))),
 		newCheckPointer,
+		di.ProvideValue(aggregationState{
+			counters:     newCounters(),
+			allTimeItems: newTopKItems(topKMaxItemsSize),
+		}),
 	)
 }

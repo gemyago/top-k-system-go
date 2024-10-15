@@ -44,11 +44,12 @@ type QueriesDeps struct {
 
 	dig.In
 
-	TopKItemsFactory topKItemsFactory
+	// package private components
+	AggregationState aggregationState
 }
 
 func NewQueries(deps QueriesDeps) *Queries {
 	return &Queries{
-		allTimeItems: deps.TopKItemsFactory.newTopKItems(topKMaxItemsSize),
+		allTimeItems: deps.AggregationState.allTimeItems,
 	}
 }

@@ -31,6 +31,7 @@ type CommandsDeps struct {
 	CheckPointer         checkPointer
 	CountersFactory      countersFactory
 	TopKItemsFactory     topKItemsFactory
+	AggregationState     aggregationState
 }
 
 type Commands struct {
@@ -40,21 +41,13 @@ type Commands struct {
 
 func (c *Commands) StartAggregator(ctx context.Context) error {
 	c.logger.InfoContext(ctx, "Restoring counters state")
-	cnt := c.deps.CountersFactory.newCounters()
-	allTimesItems := c.deps.TopKItemsFactory.newTopKItems(topKMaxItemsSize)
-	state := aggregationState{
-		counters:     cnt,
-		allTimeItems: allTimesItems,
-	}
-	if err := c.deps.CheckPointer.restoreState(ctx, state); err != nil {
+
+	if err := c.deps.CheckPointer.restoreState(ctx, c.deps.AggregationState); err != nil {
 		return fmt.Errorf("failed to restore state while starting aggregator: %w", err)
 	}
 
-	// TODO: Here we need some way to activate counters
-	// so then API layer could query them
-
 	c.logger.InfoContext(ctx, "Starting aggregation")
-	return c.deps.ItemEventsAggregator.beginAggregating(ctx, state, beginAggregatingOpts{})
+	return c.deps.ItemEventsAggregator.beginAggregating(ctx, c.deps.AggregationState, beginAggregatingOpts{})
 }
 
 func (c *Commands) CreateCheckPoint(ctx context.Context) error {

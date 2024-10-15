@@ -22,6 +22,10 @@ func TestCommands(t *testing.T) {
 			ItemEventsReader:     services.NewMockKafkaReader(t),
 			CountersFactory:      newMockCountersFactory(t),
 			TopKItemsFactory:     newMockTopKItemsFactory(t),
+			AggregationState: aggregationState{
+				counters:     newMockCounters(t),
+				allTimeItems: newMockTopKItems(t),
+			},
 		}
 	}
 
@@ -31,25 +35,12 @@ func TestCommands(t *testing.T) {
 			commands := NewCommands(mockDeps)
 
 			ctx := context.Background()
-
-			wantCounters := newMockCounters(t)
-			countersFactory, _ := mockDeps.CountersFactory.(*mockCountersFactory)
-			countersFactory.EXPECT().newCounters().Return(wantCounters)
-
-			topKItemsFactory, _ := mockDeps.TopKItemsFactory.(*mockTopKItemsFactory)
-			mockAllTimesItems := newMockTopKItems(t)
-			topKItemsFactory.EXPECT().newTopKItems(topKMaxItemsSize).Return(mockAllTimesItems)
-
-			state := aggregationState{
-				counters:     wantCounters,
-				allTimeItems: mockAllTimesItems,
-			}
 			checkPointer, _ := mockDeps.CheckPointer.(*mockCheckPointer)
-			checkPointer.EXPECT().restoreState(ctx, state).Return(nil)
+			checkPointer.EXPECT().restoreState(ctx, mockDeps.AggregationState).Return(nil)
 
 			aggregator, _ := mockDeps.ItemEventsAggregator.(*mockItemEventsAggregator)
 			aggregator.EXPECT().
-				beginAggregating(ctx, state, beginAggregatingOpts{}).
+				beginAggregating(ctx, mockDeps.AggregationState, beginAggregatingOpts{}).
 				Return(nil)
 
 			require.NoError(t, commands.StartAggregator(ctx))
@@ -60,13 +51,6 @@ func TestCommands(t *testing.T) {
 			commands := NewCommands(mockDeps)
 
 			ctx := context.Background()
-
-			wantCounters := newMockCounters(t)
-			countersFactory, _ := mockDeps.CountersFactory.(*mockCountersFactory)
-			countersFactory.EXPECT().newCounters().Return(wantCounters)
-			topKItemsFactory, _ := mockDeps.TopKItemsFactory.(*mockTopKItemsFactory)
-			mockAllTimesItems := newMockTopKItems(t)
-			topKItemsFactory.EXPECT().newTopKItems(topKMaxItemsSize).Return(mockAllTimesItems)
 
 			checkPointer, _ := mockDeps.CheckPointer.(*mockCheckPointer)
 			wantErr := errors.New(faker.Sentence())

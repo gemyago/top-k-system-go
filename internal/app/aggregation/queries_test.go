@@ -13,7 +13,9 @@ import (
 func TestQueries(t *testing.T) {
 	makeMockDeps := func(t *testing.T) QueriesDeps {
 		return QueriesDeps{
-			TopKItemsFactory: newMockTopKItemsFactory(t),
+			AggregationState: aggregationState{
+				allTimeItems: newMockTopKItems(t),
+			},
 		}
 	}
 
@@ -21,9 +23,7 @@ func TestQueries(t *testing.T) {
 		t.Run("should return all time top k items", func(t *testing.T) {
 			deps := makeMockDeps(t)
 
-			mockItems := newMockTopKItems(t)
-			mockFactory, _ := deps.TopKItemsFactory.(*mockTopKItemsFactory)
-			mockFactory.EXPECT().newTopKItems(topKMaxItemsSize).Return(mockItems)
+			mockItems, _ := deps.AggregationState.allTimeItems.(*mockTopKItems)
 
 			wantSize := 10 + rand.IntN(10)
 			wantRawItems := randomTopKItems(10)
