@@ -55,13 +55,16 @@ func TestItemEventsAggregator(t *testing.T) {
 			}
 
 			fetchResultChan := make(chan fetchMessageResult)
-			mockModel.EXPECT().fetchMessages(ctx).Return(fetchResultChan)
+			mockModel.EXPECT().fetchMessages(ctx, int64(0)).Return(fetchResultChan)
 
 			cnt := newCounters()
+			state := aggregationState{
+				counters: cnt,
+			}
 
 			exit := make(chan error)
 			go func() {
-				exit <- aggregator.beginAggregating(ctx, cnt, beginAggregatingOpts{})
+				exit <- aggregator.beginAggregating(ctx, state, beginAggregatingOpts{})
 			}()
 			for i, v := range wantItems {
 				mockModel.EXPECT().aggregateItemEvent(int64(i)+offsetBase, &v)
@@ -89,14 +92,19 @@ func TestItemEventsAggregator(t *testing.T) {
 			}
 
 			cnt := newCounters()
+			state := aggregationState{
+				counters: cnt,
+			}
+
 			fetchResultChan := make(chan fetchMessageResult)
-			mockModel.EXPECT().fetchMessages(ctx).Return(fetchResultChan)
-			mockModel.EXPECT().flushMessages(ctx, cnt)
+			mockModel.EXPECT().fetchMessages(ctx, offsetBase).Return(fetchResultChan)
+			mockModel.EXPECT().flushMessages(ctx, state)
 
 			exit := make(chan error)
 			go func() {
-				exit <- aggregator.beginAggregating(ctx, cnt, beginAggregatingOpts{
-					TillOffset: offsetBase + int64(len(wantItems)-1),
+				exit <- aggregator.beginAggregating(ctx, state, beginAggregatingOpts{
+					sinceOffset: offsetBase,
+					tillOffset:  offsetBase + int64(len(wantItems)-1),
 				})
 			}()
 			for i, v := range wantItems {
@@ -114,12 +122,15 @@ func TestItemEventsAggregator(t *testing.T) {
 			mockModel, _ := deps.deps.AggregatorModel.(*mockItemEventsAggregatorModel)
 
 			fetchResultChan := make(chan fetchMessageResult)
-			mockModel.EXPECT().fetchMessages(ctx).Return(fetchResultChan)
+			mockModel.EXPECT().fetchMessages(ctx, int64(0)).Return(fetchResultChan)
 			cnt := newCounters()
+			state := aggregationState{
+				counters: cnt,
+			}
 
 			exit := make(chan error)
 			go func() {
-				exit <- aggregator.beginAggregating(ctx, cnt, beginAggregatingOpts{})
+				exit <- aggregator.beginAggregating(ctx, state, beginAggregatingOpts{})
 			}()
 			fetchResultChan <- fetchMessageResult{err: errors.New(faker.Word())}
 
@@ -135,12 +146,15 @@ func TestItemEventsAggregator(t *testing.T) {
 			fetchResultChan := make(chan fetchMessageResult)
 
 			mockModel, _ := deps.deps.AggregatorModel.(*mockItemEventsAggregatorModel)
-			mockModel.EXPECT().fetchMessages(ctx).Return(fetchResultChan)
+			mockModel.EXPECT().fetchMessages(ctx, int64(0)).Return(fetchResultChan)
 			cnt := newCounters()
+			state := aggregationState{
+				counters: cnt,
+			}
 
 			exit := make(chan error)
 			go func() {
-				exit <- aggregator.beginAggregating(ctx, cnt, beginAggregatingOpts{})
+				exit <- aggregator.beginAggregating(ctx, state, beginAggregatingOpts{})
 			}()
 			cancel()
 			gotErr := <-exit
@@ -153,14 +167,17 @@ func TestItemEventsAggregator(t *testing.T) {
 
 			mockModel, _ := deps.deps.AggregatorModel.(*mockItemEventsAggregatorModel)
 			cnt := newCounters()
+			state := aggregationState{
+				counters: cnt,
+			}
 
 			fetchResultChan := make(chan fetchMessageResult)
-			mockModel.EXPECT().fetchMessages(ctx).Return(fetchResultChan)
-			mockModel.EXPECT().flushMessages(ctx, cnt)
+			mockModel.EXPECT().fetchMessages(ctx, int64(0)).Return(fetchResultChan)
+			mockModel.EXPECT().flushMessages(ctx, state)
 
 			exit := make(chan error)
 			go func() {
-				exit <- aggregator.beginAggregating(ctx, cnt, beginAggregatingOpts{})
+				exit <- aggregator.beginAggregating(ctx, state, beginAggregatingOpts{})
 			}()
 			deps.flushTickerChan <- time.Now()
 

@@ -3,6 +3,7 @@ package aggregation
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"io"
 	"math/rand"
 	"testing"
@@ -10,6 +11,7 @@ import (
 	"github.com/gemyago/top-k-system-go/internal/app/models"
 	"github.com/gemyago/top-k-system-go/internal/diag"
 	"github.com/gemyago/top-k-system-go/internal/services"
+	"github.com/go-faker/faker/v4"
 	"github.com/samber/lo"
 	"github.com/segmentio/kafka-go"
 	"github.com/stretchr/testify/assert"
@@ -84,6 +86,8 @@ func TestAggregatorModel(t *testing.T) {
 			mockReader, _ := mockDeps.ItemEventsReader.(*services.MockKafkaReader)
 
 			fetchMessageCounter := 0
+			fromOffset := rand.Int63n(1000)
+			mockReader.EXPECT().SetOffset(fromOffset).Return(nil)
 			mockReader.EXPECT().FetchMessage(ctx).RunAndReturn(
 				func(_ context.Context) (kafka.Message, error) {
 					defer func() {
@@ -105,7 +109,7 @@ func TestAggregatorModel(t *testing.T) {
 			gotResults := make([]fetchMessageResult, 0, len(itemEvents))
 			syncChan := make(chan struct{})
 			go func() {
-				for res := range model.fetchMessages(ctx) {
+				for res := range model.fetchMessages(ctx, fromOffset) {
 					gotResults = append(gotResults, res)
 					if len(gotResults) == len(itemEvents) {
 						syncChan <- struct{}{}
@@ -123,6 +127,20 @@ func TestAggregatorModel(t *testing.T) {
 					event:  &wantItem,
 				}, gotResult)
 			}
+		})
+
+		t.Run("should return error if failed to set offset", func(t *testing.T) {
+			mockDeps := newMockDeps(t)
+			model := newItemEventsAggregatorModel(mockDeps)
+
+			ctx := context.Background()
+			wantErr := errors.New(faker.Sentence())
+			mockReader, _ := mockDeps.ItemEventsReader.(*services.MockKafkaReader)
+			wantOffset := rand.Int63n(1000)
+			mockReader.EXPECT().SetOffset(wantOffset).Return(wantErr)
+
+			res := <-model.fetchMessages(ctx, wantOffset)
+			require.ErrorIs(t, res.err, wantErr)
 		})
 	})
 
@@ -143,10 +161,23 @@ func TestAggregatorModel(t *testing.T) {
 
 			modelImpl, _ := model.(*itemEventsAggregatorModelImpl)
 
-			mockCounters := newMockCounters(t)
-			mockCounters.EXPECT().updateItemsCount(modelImpl.lastAggregatedOffset, modelImpl.aggregatedItems)
+			updatedValues := randomCountersValues()
 
-			model.flushMessages(context.Background(), mockCounters)
+			mockCounters := newMockCounters(t)
+			mockCounters.EXPECT().
+				updateItemsCount(modelImpl.lastAggregatedOffset, modelImpl.aggregatedItems).
+				Return(updatedValues)
+
+			mockAllTimeItems := newMockTopKItems(t)
+
+			for k, v := range updatedValues {
+				mockAllTimeItems.EXPECT().updateIfGreater(topKItem{ItemID: k, Count: v})
+			}
+
+			model.flushMessages(context.Background(), aggregationState{
+				counters:     mockCounters,
+				allTimeItems: mockAllTimeItems,
+			})
 			assert.Equal(t, baseOffset+int64(len(itemEvents)-1), modelImpl.lastAggregatedOffset)
 			assert.Empty(t, modelImpl.aggregatedItems)
 		})

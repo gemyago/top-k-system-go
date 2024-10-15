@@ -33,8 +33,8 @@ type ItemEventsAggregatorModelDeps struct {
 
 type itemEventsAggregatorModel interface {
 	aggregateItemEvent(offset int64, evt *models.ItemEvent)
-	flushMessages(ctx context.Context, counters counters)
-	fetchMessages(ctx context.Context) <-chan fetchMessageResult
+	flushMessages(ctx context.Context, state aggregationState)
+	fetchMessages(ctx context.Context, fromOffset int64) <-chan fetchMessageResult
 }
 
 type itemEventsAggregatorModelImpl struct {
@@ -55,14 +55,25 @@ func (m *itemEventsAggregatorModelImpl) aggregateItemEvent(offset int64, evt *mo
 
 // flushMessages method is not thread safe, should be only called from a same
 // goroutine as aggregateItemEvent.
-func (m *itemEventsAggregatorModelImpl) flushMessages(ctx context.Context, counters counters) {
+func (m *itemEventsAggregatorModelImpl) flushMessages(ctx context.Context, state aggregationState) {
 	m.logger.DebugContext(ctx, "Flushing aggregated messages")
-	counters.updateItemsCount(m.lastAggregatedOffset, m.aggregatedItems)
+	updatedItems := state.counters.updateItemsCount(m.lastAggregatedOffset, m.aggregatedItems)
+	for itemID, count := range updatedItems {
+		state.allTimeItems.updateIfGreater(topKItem{ItemID: itemID, Count: count})
+	}
 	clear(m.aggregatedItems)
 }
 
-func (m *itemEventsAggregatorModelImpl) fetchMessages(ctx context.Context) <-chan fetchMessageResult {
+func (m *itemEventsAggregatorModelImpl) fetchMessages(ctx context.Context, fromOffset int64) <-chan fetchMessageResult {
 	resultsChan := make(chan fetchMessageResult)
+	if err := m.deps.ItemEventsReader.SetOffset(fromOffset); err != nil {
+		go func() {
+			resultsChan <- fetchMessageResult{err: fmt.Errorf("failed to set offset: %w", err)}
+			close(resultsChan)
+		}()
+		return resultsChan
+	}
+
 	go func() {
 		for {
 			msg, err := m.deps.ItemEventsReader.FetchMessage(ctx)

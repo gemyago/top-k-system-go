@@ -23,10 +23,8 @@ type mockKafkaReader interface {
 	Close() error
 	CommitMessages(ctx context.Context, msgs ...kafka.Message) error
 	FetchMessage(ctx context.Context) (kafka.Message, error)
-	Offset() int64
 	SetOffset(offset int64) error
-	Stats() kafka.ReaderStats
-	ReadLag(ctx context.Context) (lag int64, err error)
+	ReadLastOffset(ctx context.Context) (int64, error)
 }
 
-var _ mockKafkaReader = (*kafka.Reader)(nil)
+var _ mockKafkaReader = (*ItemEventsKafkaReader)(nil)

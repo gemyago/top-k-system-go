@@ -3,6 +3,7 @@ package aggregation
 import (
 	"bytes"
 	"context"
+	"encoding/gob"
 	"encoding/json"
 	"fmt"
 
@@ -13,6 +14,7 @@ import (
 type checkPointManifest struct {
 	LastOffset           int64  `json:"lastOffset"`
 	CountersBlobFileName string `json:"countersBlobFileName"`
+	AllTimeItemsFileName string `json:"allTimeItemsFileName"`
 }
 
 type checkPointerModel interface {
@@ -20,6 +22,8 @@ type checkPointerModel interface {
 	writeManifest(ctx context.Context, manifest checkPointManifest) error
 	readCounters(ctx context.Context, blobFileName string) (map[string]int64, error)
 	writeCounters(ctx context.Context, blobFileName string, val map[string]int64) error
+	readItems(ctx context.Context, blobFileName string) ([]*topKItem, error)
+	writeItems(ctx context.Context, blobFileName string, val []*topKItem) error
 }
 
 type CheckPointerModelDeps struct {
@@ -62,12 +66,11 @@ func (m checkPointerModelImpl) writeManifest(ctx context.Context, manifest check
 
 func (m checkPointerModelImpl) readCounters(ctx context.Context, blobFileName string) (map[string]int64, error) {
 	var contents bytes.Buffer
-	//TODO: Use gob instead of json
 	if err := m.Storage.Download(ctx, blobFileName, &contents); err != nil {
 		return nil, fmt.Errorf("failed to download file: %w", err)
 	}
 	var result map[string]int64
-	if err := json.NewDecoder(&contents).Decode(&result); err != nil {
+	if err := gob.NewDecoder(&contents).Decode(&result); err != nil {
 		return nil, fmt.Errorf("failed to decode counters: %w", err)
 	}
 	return result, nil
@@ -75,7 +78,30 @@ func (m checkPointerModelImpl) readCounters(ctx context.Context, blobFileName st
 
 func (m checkPointerModelImpl) writeCounters(ctx context.Context, blobFileName string, val map[string]int64) error {
 	var contents bytes.Buffer
-	if err := json.NewEncoder(&contents).Encode(val); err != nil {
+	if err := gob.NewEncoder(&contents).Encode(val); err != nil {
+		return fmt.Errorf("failed to encode value: %w", err)
+	}
+	if err := m.Storage.Upload(ctx, blobFileName, &contents); err != nil {
+		return fmt.Errorf("failed to upload blob file %s: %w", blobFileName, err)
+	}
+	return nil
+}
+
+func (m checkPointerModelImpl) readItems(ctx context.Context, blobFileName string) ([]*topKItem, error) {
+	var contents bytes.Buffer
+	if err := m.Storage.Download(ctx, blobFileName, &contents); err != nil {
+		return nil, fmt.Errorf("failed to download file: %w", err)
+	}
+	var result []*topKItem
+	if err := gob.NewDecoder(&contents).Decode(&result); err != nil {
+		return nil, fmt.Errorf("failed to decode items: %w", err)
+	}
+	return result, nil
+}
+
+func (m checkPointerModelImpl) writeItems(ctx context.Context, blobFileName string, val []*topKItem) error {
+	var contents bytes.Buffer
+	if err := gob.NewEncoder(&contents).Encode(val); err != nil {
 		return fmt.Errorf("failed to encode value: %w", err)
 	}
 	if err := m.Storage.Upload(ctx, blobFileName, &contents); err != nil {

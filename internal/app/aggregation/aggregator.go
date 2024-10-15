@@ -9,13 +9,20 @@ import (
 	"go.uber.org/dig"
 )
 
+type aggregationState struct {
+	counters     counters
+	allTimeItems topKItems
+}
+
 type beginAggregatingOpts struct {
-	// TillOffset indicates the offset to aggregate until
-	TillOffset int64
+	sinceOffset int64
+
+	// tillOffset indicates the offset to aggregate until
+	tillOffset int64
 }
 
 type itemEventsAggregator interface {
-	beginAggregating(context context.Context, counters counters, opts beginAggregatingOpts) error
+	beginAggregating(context context.Context, state aggregationState, opts beginAggregatingOpts) error
 }
 
 type ItemEventsAggregatorDeps struct {
@@ -44,35 +51,33 @@ type itemEventsAggregatorImpl struct {
 
 func (a *itemEventsAggregatorImpl) beginAggregating(
 	ctx context.Context,
-	counters counters,
+	state aggregationState,
 	opts beginAggregatingOpts,
 ) error {
-	// TODO: Set the offset to start fetching from
-	// and keep fetching until the offset provided
-	messagesChan := a.AggregatorModel.fetchMessages(ctx)
+	messagesChan := a.AggregatorModel.fetchMessages(ctx, opts.sinceOffset)
 	flushTimer := a.ItemEventsAggregatorDeps.TickerFactory(a.FlushInterval)
 	for {
 		select {
 		case <-flushTimer.C:
-			a.AggregatorModel.flushMessages(ctx, counters)
+			a.AggregatorModel.flushMessages(ctx, state)
 		case res := <-messagesChan:
 			// TODO: Potentially Better error handling here
 			if res.err != nil {
 				a.logger.ErrorContext(ctx, "failed to fetch message", diag.ErrAttr(res.err))
 			} else {
 				a.AggregatorModel.aggregateItemEvent(res.offset, res.event)
-				if a.Verbose {
+				if a.Verbose || res.offset%10000 == 0 {
 					a.logger.DebugContext(ctx, "Item event aggregated",
 						slog.String("itemID", res.event.ItemID),
 						slog.Int64("offset", res.offset),
 					)
 				}
-				if opts.TillOffset > 0 && res.offset >= opts.TillOffset {
+				if opts.tillOffset > 0 && res.offset >= opts.tillOffset {
 					a.logger.InfoContext(ctx, "Target offset reached. Flushing and stopping aggregation.",
 						slog.Int64("offset", res.offset),
-						slog.Int64("tillOffset", opts.TillOffset),
+						slog.Int64("tillOffset", opts.tillOffset),
 					)
-					a.AggregatorModel.flushMessages(ctx, counters)
+					a.AggregatorModel.flushMessages(ctx, state)
 					return nil
 				}
 			}

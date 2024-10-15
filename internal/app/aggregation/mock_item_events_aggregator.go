@@ -23,17 +23,17 @@ func (_m *mockItemEventsAggregator) EXPECT() *mockItemEventsAggregator_Expecter 
 	return &mockItemEventsAggregator_Expecter{mock: &_m.Mock}
 }
 
-// beginAggregating provides a mock function with given fields: _a0, counters1, opts
-func (_m *mockItemEventsAggregator) beginAggregating(_a0 context.Context, counters1 counters, opts beginAggregatingOpts) error {
-	ret := _m.Called(_a0, counters1, opts)
+// beginAggregating provides a mock function with given fields: _a0, state, opts
+func (_m *mockItemEventsAggregator) beginAggregating(_a0 context.Context, state aggregationState, opts beginAggregatingOpts) error {
+	ret := _m.Called(_a0, state, opts)
 
 	if len(ret) == 0 {
 		panic("no return value specified for beginAggregating")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, counters, beginAggregatingOpts) error); ok {
-		r0 = rf(_a0, counters1, opts)
+	if rf, ok := ret.Get(0).(func(context.Context, aggregationState, beginAggregatingOpts) error); ok {
+		r0 = rf(_a0, state, opts)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -48,15 +48,15 @@ type mockItemEventsAggregator_beginAggregating_Call struct {
 
 // beginAggregating is a helper method to define mock.On call
 //   - _a0 context.Context
-//   - counters1 counters
+//   - state aggregationState
 //   - opts beginAggregatingOpts
-func (_e *mockItemEventsAggregator_Expecter) beginAggregating(_a0 interface{}, counters1 interface{}, opts interface{}) *mockItemEventsAggregator_beginAggregating_Call {
-	return &mockItemEventsAggregator_beginAggregating_Call{Call: _e.mock.On("beginAggregating", _a0, counters1, opts)}
+func (_e *mockItemEventsAggregator_Expecter) beginAggregating(_a0 interface{}, state interface{}, opts interface{}) *mockItemEventsAggregator_beginAggregating_Call {
+	return &mockItemEventsAggregator_beginAggregating_Call{Call: _e.mock.On("beginAggregating", _a0, state, opts)}
 }
 
-func (_c *mockItemEventsAggregator_beginAggregating_Call) Run(run func(_a0 context.Context, counters1 counters, opts beginAggregatingOpts)) *mockItemEventsAggregator_beginAggregating_Call {
+func (_c *mockItemEventsAggregator_beginAggregating_Call) Run(run func(_a0 context.Context, state aggregationState, opts beginAggregatingOpts)) *mockItemEventsAggregator_beginAggregating_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(counters), args[2].(beginAggregatingOpts))
+		run(args[0].(context.Context), args[1].(aggregationState), args[2].(beginAggregatingOpts))
 	})
 	return _c
 }
@@ -66,7 +66,7 @@ func (_c *mockItemEventsAggregator_beginAggregating_Call) Return(_a0 error) *moc
 	return _c
 }
 
-func (_c *mockItemEventsAggregator_beginAggregating_Call) RunAndReturn(run func(context.Context, counters, beginAggregatingOpts) error) *mockItemEventsAggregator_beginAggregating_Call {
+func (_c *mockItemEventsAggregator_beginAggregating_Call) RunAndReturn(run func(context.Context, aggregationState, beginAggregatingOpts) error) *mockItemEventsAggregator_beginAggregating_Call {
 	_c.Call.Return(run)
 	return _c
 }

@@ -13,6 +13,11 @@ packages:
           dir: 'pkg/diag'
           filename: "mock_slog_handler.go"
           mockname: MockSlogHandler
+  github.com/gemyago/top-k-system-go/cmd/mockdata:
+    interfaces:
+      eventsSender:
+        config:
+          mockname: "mock{{ .InterfaceName | camelcase }}"
   github.com/gemyago/top-k-system-go/internal/app/ingestion:
     config:
       filename: "{{.InterfaceNameSnake}}.go"
@@ -27,8 +32,14 @@ packages:
         config:
           mockname: "{{ .InterfaceName | camelcase }}"
           filename: "{{.InterfaceNameSnake}}.go"
+      mockQueries:
+        config:
+          mockname: "{{ .InterfaceName | camelcase }}"
+          filename: "{{.InterfaceNameSnake}}.go"
       countersFactory:
       counters:
+      topKItemsFactory:
+      topKItems:
       checkPointer:
       checkPointerModel:
       itemEventsAggregator:
@@ -40,6 +51,10 @@ packages:
     interfaces:
       mockKafkaWriter:
       mockKafkaReader:
+      kafkaConn:
+        config: 
+          filename: "mock_{{.InterfaceNameSnake}}.go"
+          mockname: "mock{{ .InterfaceName | camelcase }}"
   github.com/gemyago/top-k-system-go/internal/services/blobstorage:
     interfaces:
       Storage:

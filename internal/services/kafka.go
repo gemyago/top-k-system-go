@@ -1,6 +1,8 @@
 package services
 
 import (
+	"context"
+	"fmt"
 	"log/slog"
 	"time"
 
@@ -41,9 +43,14 @@ func NewItemEventsKafkaWriter(deps ItemEventsKafkaWriterDeps) ItemEventsKafkaWri
 	return ItemEventsKafkaWriter{Writer: writer}
 }
 
-type ItemEventsKafkaReader struct {
-	*kafka.Reader
+type kafkaConn interface {
+	ReadLastOffset() (int64, error)
+	Close() error
 }
+
+type kafkaLeaderDialer func(
+	ctx context.Context, network, addr, topic string, partition int,
+) (kafkaConn, error)
 
 type ItemEventsKafkaReaderDeps struct {
 	dig.In
@@ -57,16 +64,42 @@ type ItemEventsKafkaReaderDeps struct {
 
 	// services
 	*ShutdownHooks
+
+	// package internal
+	KafkaLeaderDialer kafkaLeaderDialer
 }
 
-func NewItemEventsKafkaReader(deps ItemEventsKafkaReaderDeps) ItemEventsKafkaReader {
+type ItemEventsKafkaReader struct {
+	deps ItemEventsKafkaReaderDeps
+	*kafka.Reader
+}
+
+// ReadLastOffset reads the last offset from the kafka topic. This is going to be an offset
+// for the next message produced.
+func (r *ItemEventsKafkaReader) ReadLastOffset(ctx context.Context) (int64, error) {
+	// TODO: Make partition configurable
+	conn, err := r.deps.KafkaLeaderDialer(ctx, "tcp", r.deps.KafkaAddress, r.deps.KafkaTopic, 0)
+	if err != nil {
+		return 0, fmt.Errorf("failed to dial kafka to read current offset: %w", err)
+	}
+	defer conn.Close()
+
+	offset, err := conn.ReadLastOffset()
+	if err != nil {
+		return 0, fmt.Errorf("failed to read last offset: %w", err)
+	}
+	return offset, nil
+}
+
+func NewItemEventsKafkaReader(deps ItemEventsKafkaReaderDeps) *ItemEventsKafkaReader {
 	reader := kafka.NewReader(kafka.ReaderConfig{
 		Brokers: []string{deps.KafkaAddress},
 		Topic:   deps.KafkaTopic,
 		MaxWait: deps.ReaderMaxWait,
+		// TODO: Make partition configurable
 	})
 
 	deps.ShutdownHooks.RegisterNoCtx("item-events-reader", reader.Close)
 
-	return ItemEventsKafkaReader{Reader: reader}
+	return &ItemEventsKafkaReader{deps: deps, Reader: reader}
 }

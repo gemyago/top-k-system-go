@@ -11,8 +11,8 @@ import (
 )
 
 type checkPointer interface {
-	restoreState(ctx context.Context, counters counters) error
-	dumpState(ctx context.Context, counters counters) error
+	restoreState(ctx context.Context, state aggregationState) error
+	dumpState(ctx context.Context, state aggregationState) error
 }
 
 type CheckPointerDeps struct {
@@ -32,7 +32,7 @@ type checkPointerImpl struct {
 	deps   CheckPointerDeps
 }
 
-func (cp *checkPointerImpl) restoreState(ctx context.Context, counters counters) error {
+func (cp *checkPointerImpl) restoreState(ctx context.Context, state aggregationState) error {
 	manifest, err := cp.deps.CheckPointerModel.readManifest(ctx)
 	if err != nil {
 		if errors.Is(err, fs.ErrNotExist) {
@@ -41,28 +41,54 @@ func (cp *checkPointerImpl) restoreState(ctx context.Context, counters counters)
 		}
 		return err
 	}
-	values, err := cp.deps.CheckPointerModel.readCounters(ctx, manifest.CountersBlobFileName)
+
+	// TODO: read in parallel
+
+	counterValues, err := cp.deps.CheckPointerModel.readCounters(ctx, manifest.CountersBlobFileName)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to read counters: %w", err)
 	}
-	counters.updateItemsCount(manifest.LastOffset, values)
+	state.counters.updateItemsCount(manifest.LastOffset, counterValues)
+
+	allTimeItems, err := cp.deps.CheckPointerModel.readItems(ctx, manifest.AllTimeItemsFileName)
+	if err != nil {
+		return fmt.Errorf("failed to read all time items: %w", err)
+	}
+	state.allTimeItems.load(allTimeItems)
+
 	return nil
 }
 
-func (cp *checkPointerImpl) dumpState(ctx context.Context, counters counters) error {
-	countersFileName := fmt.Sprintf("counters-%d", counters.getLastOffset())
+func (cp *checkPointerImpl) dumpState(ctx context.Context, state aggregationState) error {
+	countersFileName := fmt.Sprintf("counters-%d", state.counters.getLastOffset())
+	allTimeItemsFileName := fmt.Sprintf("all-time-items-%d", state.counters.getLastOffset())
 	newManifest := checkPointManifest{
-		LastOffset:           counters.getLastOffset(),
+		LastOffset:           state.counters.getLastOffset(),
 		CountersBlobFileName: countersFileName,
+		AllTimeItemsFileName: allTimeItemsFileName,
 	}
-	if err := cp.deps.CheckPointerModel.writeCounters(ctx, countersFileName, counters.getItemsCounters()); err != nil {
-		return err
+	// TODO: write in parallel (except the manifest)
+
+	if err := cp.deps.CheckPointerModel.writeCounters(
+		ctx,
+		countersFileName,
+		state.counters.getItemsCounters(),
+	); err != nil {
+		return fmt.Errorf("failed to write counters: %w", err)
+	}
+
+	if err := cp.deps.CheckPointerModel.writeItems(
+		ctx,
+		allTimeItemsFileName,
+		state.allTimeItems.getItems(topKGetAllItemsLimit),
+	); err != nil {
+		return fmt.Errorf("failed to write all time items: %w", err)
 	}
 
 	// We write manifest last so if counters fail, the manifest will point on the last
 	// counters
 	if err := cp.deps.CheckPointerModel.writeManifest(ctx, newManifest); err != nil {
-		return err
+		return fmt.Errorf("failed to write manifest: %w", err)
 	}
 	return nil
 }

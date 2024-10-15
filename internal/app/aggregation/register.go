@@ -8,15 +8,21 @@ import (
 
 func Register(container *dig.Container) error {
 	return di.ProvideAll(container,
-		di.ProvideAs[services.ItemEventsKafkaReader, itemEventsKafkaReader],
+		di.ProvideAs[*services.ItemEventsKafkaReader, itemEventsKafkaReader],
 
 		NewCommands,
+		NewQueries,
 
 		// package private deps
 		newItemEventsAggregatorModel,
 		newItemEventsAggregator,
 		newCheckPointerModel,
 		di.ProvideValue(countersFactory(countersFactoryFunc(newCounters))),
+		di.ProvideValue(topKItemsFactory(topKItemsFactoryFunc(newTopKItems))),
 		newCheckPointer,
+		di.ProvideValue(aggregationState{
+			counters:     newCounters(),
+			allTimeItems: newTopKItems(topKMaxItemsSize),
+		}),
 	)
 }

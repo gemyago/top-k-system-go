@@ -58,17 +58,17 @@ func (_c *mockItemEventsAggregatorModel_aggregateItemEvent_Call) RunAndReturn(ru
 	return _c
 }
 
-// fetchMessages provides a mock function with given fields: ctx
-func (_m *mockItemEventsAggregatorModel) fetchMessages(ctx context.Context) <-chan fetchMessageResult {
-	ret := _m.Called(ctx)
+// fetchMessages provides a mock function with given fields: ctx, fromOffset
+func (_m *mockItemEventsAggregatorModel) fetchMessages(ctx context.Context, fromOffset int64) <-chan fetchMessageResult {
+	ret := _m.Called(ctx, fromOffset)
 
 	if len(ret) == 0 {
 		panic("no return value specified for fetchMessages")
 	}
 
 	var r0 <-chan fetchMessageResult
-	if rf, ok := ret.Get(0).(func(context.Context) <-chan fetchMessageResult); ok {
-		r0 = rf(ctx)
+	if rf, ok := ret.Get(0).(func(context.Context, int64) <-chan fetchMessageResult); ok {
+		r0 = rf(ctx, fromOffset)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(<-chan fetchMessageResult)
@@ -85,13 +85,14 @@ type mockItemEventsAggregatorModel_fetchMessages_Call struct {
 
 // fetchMessages is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *mockItemEventsAggregatorModel_Expecter) fetchMessages(ctx interface{}) *mockItemEventsAggregatorModel_fetchMessages_Call {
-	return &mockItemEventsAggregatorModel_fetchMessages_Call{Call: _e.mock.On("fetchMessages", ctx)}
+//   - fromOffset int64
+func (_e *mockItemEventsAggregatorModel_Expecter) fetchMessages(ctx interface{}, fromOffset interface{}) *mockItemEventsAggregatorModel_fetchMessages_Call {
+	return &mockItemEventsAggregatorModel_fetchMessages_Call{Call: _e.mock.On("fetchMessages", ctx, fromOffset)}
 }
 
-func (_c *mockItemEventsAggregatorModel_fetchMessages_Call) Run(run func(ctx context.Context)) *mockItemEventsAggregatorModel_fetchMessages_Call {
+func (_c *mockItemEventsAggregatorModel_fetchMessages_Call) Run(run func(ctx context.Context, fromOffset int64)) *mockItemEventsAggregatorModel_fetchMessages_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context))
+		run(args[0].(context.Context), args[1].(int64))
 	})
 	return _c
 }
@@ -101,14 +102,14 @@ func (_c *mockItemEventsAggregatorModel_fetchMessages_Call) Return(_a0 <-chan fe
 	return _c
 }
 
-func (_c *mockItemEventsAggregatorModel_fetchMessages_Call) RunAndReturn(run func(context.Context) <-chan fetchMessageResult) *mockItemEventsAggregatorModel_fetchMessages_Call {
+func (_c *mockItemEventsAggregatorModel_fetchMessages_Call) RunAndReturn(run func(context.Context, int64) <-chan fetchMessageResult) *mockItemEventsAggregatorModel_fetchMessages_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
-// flushMessages provides a mock function with given fields: ctx, counters1
-func (_m *mockItemEventsAggregatorModel) flushMessages(ctx context.Context, counters1 counters) {
-	_m.Called(ctx, counters1)
+// flushMessages provides a mock function with given fields: ctx, state
+func (_m *mockItemEventsAggregatorModel) flushMessages(ctx context.Context, state aggregationState) {
+	_m.Called(ctx, state)
 }
 
 // mockItemEventsAggregatorModel_flushMessages_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'flushMessages'
@@ -118,14 +119,14 @@ type mockItemEventsAggregatorModel_flushMessages_Call struct {
 
 // flushMessages is a helper method to define mock.On call
 //   - ctx context.Context
-//   - counters1 counters
-func (_e *mockItemEventsAggregatorModel_Expecter) flushMessages(ctx interface{}, counters1 interface{}) *mockItemEventsAggregatorModel_flushMessages_Call {
-	return &mockItemEventsAggregatorModel_flushMessages_Call{Call: _e.mock.On("flushMessages", ctx, counters1)}
+//   - state aggregationState
+func (_e *mockItemEventsAggregatorModel_Expecter) flushMessages(ctx interface{}, state interface{}) *mockItemEventsAggregatorModel_flushMessages_Call {
+	return &mockItemEventsAggregatorModel_flushMessages_Call{Call: _e.mock.On("flushMessages", ctx, state)}
 }
 
-func (_c *mockItemEventsAggregatorModel_flushMessages_Call) Run(run func(ctx context.Context, counters1 counters)) *mockItemEventsAggregatorModel_flushMessages_Call {
+func (_c *mockItemEventsAggregatorModel_flushMessages_Call) Run(run func(ctx context.Context, state aggregationState)) *mockItemEventsAggregatorModel_flushMessages_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(counters))
+		run(args[0].(context.Context), args[1].(aggregationState))
 	})
 	return _c
 }
@@ -135,7 +136,7 @@ func (_c *mockItemEventsAggregatorModel_flushMessages_Call) Return() *mockItemEv
 	return _c
 }
 
-func (_c *mockItemEventsAggregatorModel_flushMessages_Call) RunAndReturn(run func(context.Context, counters)) *mockItemEventsAggregatorModel_flushMessages_Call {
+func (_c *mockItemEventsAggregatorModel_flushMessages_Call) RunAndReturn(run func(context.Context, aggregationState)) *mockItemEventsAggregatorModel_flushMessages_Call {
 	_c.Call.Return(run)
 	return _c
 }

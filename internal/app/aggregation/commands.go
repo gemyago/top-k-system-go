@@ -4,7 +4,9 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"time"
 
+	"github.com/samber/lo"
 	"github.com/segmentio/kafka-go"
 	"go.uber.org/dig"
 )
@@ -12,7 +14,7 @@ import (
 type itemEventsKafkaReader interface {
 	FetchMessage(ctx context.Context) (kafka.Message, error)
 	SetOffset(offset int64) error
-	ReadLag(ctx context.Context) (lag int64, err error)
+	ReadLastOffset(ctx context.Context) (int64, error)
 }
 
 type CommandsDeps struct {
@@ -30,6 +32,8 @@ type CommandsDeps struct {
 	ItemEventsAggregator itemEventsAggregator
 	CheckPointer         checkPointer
 	CountersFactory      countersFactory
+	TopKItemsFactory     topKItemsFactory
+	AggregationState     aggregationState
 }
 
 type Commands struct {
@@ -38,67 +42,74 @@ type Commands struct {
 }
 
 func (c *Commands) StartAggregator(ctx context.Context) error {
-	c.logger.InfoContext(ctx, "Restoring counters state")
-	cnt := c.deps.CountersFactory.newCounters()
-	if err := c.deps.CheckPointer.restoreState(ctx, cnt); err != nil {
+	c.logger.DebugContext(ctx, "Restoring counters state")
+	startedAt := time.Now()
+	if err := c.deps.CheckPointer.restoreState(ctx, c.deps.AggregationState); err != nil {
 		return fmt.Errorf("failed to restore state while starting aggregator: %w", err)
 	}
 
-	// TODO: Here we need some way to activate counters
-	// so then API layer could query them
-
-	c.logger.InfoContext(ctx, "Starting aggregation")
-	return c.deps.ItemEventsAggregator.beginAggregating(ctx, cnt, beginAggregatingOpts{})
+	counters := c.deps.AggregationState.counters
+	c.logger.InfoContext(ctx, "Counters state restored",
+		slog.Int("totalItemsCount", len(counters.getItemsCounters())),
+		slog.Int64("lastOffset", counters.getLastOffset()),
+		slog.Duration("restorationDuration", time.Since(startedAt)),
+	)
+	lastOffset := counters.getLastOffset()
+	sinceOffset := lo.If(lastOffset == 0, int64(0)).Else(lastOffset + 1)
+	c.logger.InfoContext(ctx,
+		"Starting aggregation",
+		slog.Int64("sinceOffset", sinceOffset),
+	)
+	return c.deps.ItemEventsAggregator.beginAggregating(ctx, c.deps.AggregationState, beginAggregatingOpts{
+		sinceOffset: sinceOffset,
+	})
 }
 
 func (c *Commands) CreateCheckPoint(ctx context.Context) error {
 	ctn := c.deps.CountersFactory.newCounters()
+	allTimesItems := c.deps.TopKItemsFactory.newTopKItems(topKMaxItemsSize)
+	state := aggregationState{
+		counters:     ctn,
+		allTimeItems: allTimesItems,
+	}
 
 	c.logger.InfoContext(ctx, "Starting creating check point. Restoring last state.")
-	if err := c.deps.CheckPointer.restoreState(ctx, ctn); err != nil {
+	if err := c.deps.CheckPointer.restoreState(ctx, state); err != nil {
 		return fmt.Errorf("failed to restore state while creating check point: %w", err)
 	}
 
-	lag, err := c.deps.ItemEventsReader.ReadLag(ctx)
+	streamTail, err := c.deps.ItemEventsReader.ReadLastOffset(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to read the lag: %w", err)
 	}
 
 	lastOffset := ctn.getLastOffset()
-	if lastOffset > 0 {
-		// We want to consume starting form the next offset, so doing +1
-		if err = c.deps.ItemEventsReader.SetOffset(lastOffset + 1); err != nil {
-			return fmt.Errorf("failed to set next offset: %w", err)
-		}
-	}
 
-	// lag count starts from zero
-	if lag-lastOffset-1 <= 0 {
+	// the streamTail will have a next offset
+	if streamTail-lastOffset-1 <= 0 {
 		c.logger.InfoContext(ctx,
 			"No new messages produced. Checkpoint skipped.",
 			slog.Int64("lastOffset", lastOffset),
-			slog.Int64("lag", lag),
+			slog.Int64("streamTail", streamTail),
 		)
 		return nil
 	}
 
-	// We assume we didn't consume anything yet and the lag is exactly the
-	// tail of the stream
-	tillOffset := lag - 1
-
+	sinceOffset := lo.If(lastOffset == 0, int64(0)).Else(lastOffset + 1)
 	c.logger.InfoContext(ctx,
 		"Aggregating remaining messages",
-		slog.Int64("sinceOffset", ctn.getLastOffset()),
-		slog.Int64("tillOffset", tillOffset),
+		slog.Int64("sinceOffset", sinceOffset),
+		slog.Int64("streamTail", streamTail),
 	)
-	if err = c.deps.ItemEventsAggregator.beginAggregating(ctx, ctn, beginAggregatingOpts{
-		TillOffset: tillOffset,
+	if err = c.deps.ItemEventsAggregator.beginAggregating(ctx, state, beginAggregatingOpts{
+		sinceOffset: sinceOffset,
+		tillOffset:  streamTail - 1,
 	}); err != nil {
 		return fmt.Errorf("failed to aggregate till offset: %w", err)
 	}
 
 	c.logger.InfoContext(ctx, "Producing new state")
-	if err = c.deps.CheckPointer.dumpState(ctx, ctn); err != nil {
+	if err = c.deps.CheckPointer.dumpState(ctx, state); err != nil {
 		return fmt.Errorf("failed to dump state: %w", err)
 	}
 

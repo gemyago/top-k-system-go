@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/gemyago/top-k-system-go/internal/app/aggregation"
 	"github.com/gemyago/top-k-system-go/internal/app/ingestion"
 	"github.com/gemyago/top-k-system-go/internal/di"
 	"github.com/gemyago/top-k-system-go/internal/diag"
@@ -32,6 +33,7 @@ func WriteData(req *http.Request, log *slog.Logger, writer io.Writer, data []byt
 func Register(container *dig.Container) error {
 	return di.ProvideAll(container,
 		di.ProvideAs[*ingestion.Commands, ingestionCommands],
+		di.ProvideAs[*aggregation.Queries, aggregationQueries],
 
 		NewHealthCheckRoutesGroup,
 		NewItemsRoutesGroup,

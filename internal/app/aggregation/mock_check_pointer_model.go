@@ -82,6 +82,65 @@ func (_c *mockCheckPointerModel_readCounters_Call) RunAndReturn(run func(context
 	return _c
 }
 
+// readItems provides a mock function with given fields: ctx, blobFileName
+func (_m *mockCheckPointerModel) readItems(ctx context.Context, blobFileName string) ([]*topKItem, error) {
+	ret := _m.Called(ctx, blobFileName)
+
+	if len(ret) == 0 {
+		panic("no return value specified for readItems")
+	}
+
+	var r0 []*topKItem
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, string) ([]*topKItem, error)); ok {
+		return rf(ctx, blobFileName)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, string) []*topKItem); ok {
+		r0 = rf(ctx, blobFileName)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*topKItem)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, blobFileName)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// mockCheckPointerModel_readItems_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'readItems'
+type mockCheckPointerModel_readItems_Call struct {
+	*mock.Call
+}
+
+// readItems is a helper method to define mock.On call
+//   - ctx context.Context
+//   - blobFileName string
+func (_e *mockCheckPointerModel_Expecter) readItems(ctx interface{}, blobFileName interface{}) *mockCheckPointerModel_readItems_Call {
+	return &mockCheckPointerModel_readItems_Call{Call: _e.mock.On("readItems", ctx, blobFileName)}
+}
+
+func (_c *mockCheckPointerModel_readItems_Call) Run(run func(ctx context.Context, blobFileName string)) *mockCheckPointerModel_readItems_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(string))
+	})
+	return _c
+}
+
+func (_c *mockCheckPointerModel_readItems_Call) Return(_a0 []*topKItem, _a1 error) *mockCheckPointerModel_readItems_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *mockCheckPointerModel_readItems_Call) RunAndReturn(run func(context.Context, string) ([]*topKItem, error)) *mockCheckPointerModel_readItems_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // readManifest provides a mock function with given fields: ctx
 func (_m *mockCheckPointerModel) readManifest(ctx context.Context) (checkPointManifest, error) {
 	ret := _m.Called(ctx)
@@ -182,6 +241,54 @@ func (_c *mockCheckPointerModel_writeCounters_Call) Return(_a0 error) *mockCheck
 }
 
 func (_c *mockCheckPointerModel_writeCounters_Call) RunAndReturn(run func(context.Context, string, map[string]int64) error) *mockCheckPointerModel_writeCounters_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// writeItems provides a mock function with given fields: ctx, blobFileName, val
+func (_m *mockCheckPointerModel) writeItems(ctx context.Context, blobFileName string, val []*topKItem) error {
+	ret := _m.Called(ctx, blobFileName, val)
+
+	if len(ret) == 0 {
+		panic("no return value specified for writeItems")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, string, []*topKItem) error); ok {
+		r0 = rf(ctx, blobFileName, val)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// mockCheckPointerModel_writeItems_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'writeItems'
+type mockCheckPointerModel_writeItems_Call struct {
+	*mock.Call
+}
+
+// writeItems is a helper method to define mock.On call
+//   - ctx context.Context
+//   - blobFileName string
+//   - val []*topKItem
+func (_e *mockCheckPointerModel_Expecter) writeItems(ctx interface{}, blobFileName interface{}, val interface{}) *mockCheckPointerModel_writeItems_Call {
+	return &mockCheckPointerModel_writeItems_Call{Call: _e.mock.On("writeItems", ctx, blobFileName, val)}
+}
+
+func (_c *mockCheckPointerModel_writeItems_Call) Run(run func(ctx context.Context, blobFileName string, val []*topKItem)) *mockCheckPointerModel_writeItems_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(string), args[2].([]*topKItem))
+	})
+	return _c
+}
+
+func (_c *mockCheckPointerModel_writeItems_Call) Return(_a0 error) *mockCheckPointerModel_writeItems_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *mockCheckPointerModel_writeItems_Call) RunAndReturn(run func(context.Context, string, []*topKItem) error) *mockCheckPointerModel_writeItems_Call {
 	_c.Call.Return(run)
 	return _c
 }

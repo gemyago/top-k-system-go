@@ -186,57 +186,12 @@ func (_c *MockKafkaReader_FetchMessage_Call) RunAndReturn(run func(context.Conte
 	return _c
 }
 
-// Offset provides a mock function with given fields:
-func (_m *MockKafkaReader) Offset() int64 {
-	ret := _m.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for Offset")
-	}
-
-	var r0 int64
-	if rf, ok := ret.Get(0).(func() int64); ok {
-		r0 = rf()
-	} else {
-		r0 = ret.Get(0).(int64)
-	}
-
-	return r0
-}
-
-// MockKafkaReader_Offset_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Offset'
-type MockKafkaReader_Offset_Call struct {
-	*mock.Call
-}
-
-// Offset is a helper method to define mock.On call
-func (_e *MockKafkaReader_Expecter) Offset() *MockKafkaReader_Offset_Call {
-	return &MockKafkaReader_Offset_Call{Call: _e.mock.On("Offset")}
-}
-
-func (_c *MockKafkaReader_Offset_Call) Run(run func()) *MockKafkaReader_Offset_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run()
-	})
-	return _c
-}
-
-func (_c *MockKafkaReader_Offset_Call) Return(_a0 int64) *MockKafkaReader_Offset_Call {
-	_c.Call.Return(_a0)
-	return _c
-}
-
-func (_c *MockKafkaReader_Offset_Call) RunAndReturn(run func() int64) *MockKafkaReader_Offset_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// ReadLag provides a mock function with given fields: ctx
-func (_m *MockKafkaReader) ReadLag(ctx context.Context) (int64, error) {
+// ReadLastOffset provides a mock function with given fields: ctx
+func (_m *MockKafkaReader) ReadLastOffset(ctx context.Context) (int64, error) {
 	ret := _m.Called(ctx)
 
 	if len(ret) == 0 {
-		panic("no return value specified for ReadLag")
+		panic("no return value specified for ReadLastOffset")
 	}
 
 	var r0 int64
@@ -259,30 +214,30 @@ func (_m *MockKafkaReader) ReadLag(ctx context.Context) (int64, error) {
 	return r0, r1
 }
 
-// MockKafkaReader_ReadLag_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ReadLag'
-type MockKafkaReader_ReadLag_Call struct {
+// MockKafkaReader_ReadLastOffset_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ReadLastOffset'
+type MockKafkaReader_ReadLastOffset_Call struct {
 	*mock.Call
 }
 
-// ReadLag is a helper method to define mock.On call
+// ReadLastOffset is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockKafkaReader_Expecter) ReadLag(ctx interface{}) *MockKafkaReader_ReadLag_Call {
-	return &MockKafkaReader_ReadLag_Call{Call: _e.mock.On("ReadLag", ctx)}
+func (_e *MockKafkaReader_Expecter) ReadLastOffset(ctx interface{}) *MockKafkaReader_ReadLastOffset_Call {
+	return &MockKafkaReader_ReadLastOffset_Call{Call: _e.mock.On("ReadLastOffset", ctx)}
 }
 
-func (_c *MockKafkaReader_ReadLag_Call) Run(run func(ctx context.Context)) *MockKafkaReader_ReadLag_Call {
+func (_c *MockKafkaReader_ReadLastOffset_Call) Run(run func(ctx context.Context)) *MockKafkaReader_ReadLastOffset_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(context.Context))
 	})
 	return _c
 }
 
-func (_c *MockKafkaReader_ReadLag_Call) Return(lag int64, err error) *MockKafkaReader_ReadLag_Call {
-	_c.Call.Return(lag, err)
+func (_c *MockKafkaReader_ReadLastOffset_Call) Return(_a0 int64, _a1 error) *MockKafkaReader_ReadLastOffset_Call {
+	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *MockKafkaReader_ReadLag_Call) RunAndReturn(run func(context.Context) (int64, error)) *MockKafkaReader_ReadLag_Call {
+func (_c *MockKafkaReader_ReadLastOffset_Call) RunAndReturn(run func(context.Context) (int64, error)) *MockKafkaReader_ReadLastOffset_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -329,51 +284,6 @@ func (_c *MockKafkaReader_SetOffset_Call) Return(_a0 error) *MockKafkaReader_Set
 }
 
 func (_c *MockKafkaReader_SetOffset_Call) RunAndReturn(run func(int64) error) *MockKafkaReader_SetOffset_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// Stats provides a mock function with given fields:
-func (_m *MockKafkaReader) Stats() kafka.ReaderStats {
-	ret := _m.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for Stats")
-	}
-
-	var r0 kafka.ReaderStats
-	if rf, ok := ret.Get(0).(func() kafka.ReaderStats); ok {
-		r0 = rf()
-	} else {
-		r0 = ret.Get(0).(kafka.ReaderStats)
-	}
-
-	return r0
-}
-
-// MockKafkaReader_Stats_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Stats'
-type MockKafkaReader_Stats_Call struct {
-	*mock.Call
-}
-
-// Stats is a helper method to define mock.On call
-func (_e *MockKafkaReader_Expecter) Stats() *MockKafkaReader_Stats_Call {
-	return &MockKafkaReader_Stats_Call{Call: _e.mock.On("Stats")}
-}
-
-func (_c *MockKafkaReader_Stats_Call) Run(run func()) *MockKafkaReader_Stats_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run()
-	})
-	return _c
-}
-
-func (_c *MockKafkaReader_Stats_Call) Return(_a0 kafka.ReaderStats) *MockKafkaReader_Stats_Call {
-	_c.Call.Return(_a0)
-	return _c
-}
-
-func (_c *MockKafkaReader_Stats_Call) RunAndReturn(run func() kafka.ReaderStats) *MockKafkaReader_Stats_Call {
 	_c.Call.Return(run)
 	return _c
 }

@@ -19,3 +19,12 @@ type mockCommands interface {
 }
 
 var _ mockCommands = (*Commands)(nil)
+
+type mockQueries interface {
+	GetTopKItems(
+		_ context.Context,
+		params GetTopKItemsParams,
+	) (*GetTopKItemsResponse, error)
+}
+
+var _ mockQueries = (*Queries)(nil)
