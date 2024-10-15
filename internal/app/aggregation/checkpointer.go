@@ -10,9 +10,14 @@ import (
 	"go.uber.org/dig"
 )
 
+type checkPointerState struct {
+	counters     counters
+	allTimeItems topKItems
+}
+
 type checkPointer interface {
-	restoreState(ctx context.Context, counters counters) error
-	dumpState(ctx context.Context, counters counters) error
+	restoreState(ctx context.Context, state checkPointerState) error
+	dumpState(ctx context.Context, state checkPointerState) error
 }
 
 type CheckPointerDeps struct {
@@ -32,7 +37,7 @@ type checkPointerImpl struct {
 	deps   CheckPointerDeps
 }
 
-func (cp *checkPointerImpl) restoreState(ctx context.Context, counters counters) error {
+func (cp *checkPointerImpl) restoreState(ctx context.Context, state checkPointerState) error {
 	manifest, err := cp.deps.CheckPointerModel.readManifest(ctx)
 	if err != nil {
 		if errors.Is(err, fs.ErrNotExist) {
@@ -45,17 +50,21 @@ func (cp *checkPointerImpl) restoreState(ctx context.Context, counters counters)
 	if err != nil {
 		return fmt.Errorf("failed to read counters: %w", err)
 	}
-	counters.updateItemsCount(manifest.LastOffset, values)
+	state.counters.updateItemsCount(manifest.LastOffset, values)
 	return nil
 }
 
-func (cp *checkPointerImpl) dumpState(ctx context.Context, counters counters) error {
-	countersFileName := fmt.Sprintf("counters-%d", counters.getLastOffset())
+func (cp *checkPointerImpl) dumpState(ctx context.Context, state checkPointerState) error {
+	countersFileName := fmt.Sprintf("counters-%d", state.counters.getLastOffset())
 	newManifest := checkPointManifest{
-		LastOffset:           counters.getLastOffset(),
+		LastOffset:           state.counters.getLastOffset(),
 		CountersBlobFileName: countersFileName,
 	}
-	if err := cp.deps.CheckPointerModel.writeCounters(ctx, countersFileName, counters.getItemsCounters()); err != nil {
+	if err := cp.deps.CheckPointerModel.writeCounters(
+		ctx,
+		countersFileName,
+		state.counters.getItemsCounters(),
+	); err != nil {
 		return err
 	}
 

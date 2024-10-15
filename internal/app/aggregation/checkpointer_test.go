@@ -36,7 +36,9 @@ func TestCheckPointer(t *testing.T) {
 			mockModel.EXPECT().readCounters(ctx, manifest.CountersBlobFileName).Return(values, nil)
 
 			counters, _ := newCounters().(*countersImpl)
-			require.NoError(t, cp.restoreState(ctx, counters))
+			require.NoError(t, cp.restoreState(ctx, checkPointerState{
+				counters: counters,
+			}))
 
 			assert.Equal(t, manifest.LastOffset, counters.lastOffset)
 			assert.Equal(t, values, counters.itemCounters)
@@ -51,7 +53,9 @@ func TestCheckPointer(t *testing.T) {
 			mockModel.EXPECT().readManifest(ctx).Return(checkPointManifest{}, fmt.Errorf("empty state: %w", fs.ErrNotExist))
 
 			counters, _ := newCounters().(*countersImpl)
-			require.NoError(t, cp.restoreState(ctx, counters))
+			require.NoError(t, cp.restoreState(ctx, checkPointerState{
+				counters: counters,
+			}))
 
 			assert.Equal(t, int64(0), counters.lastOffset)
 			assert.Empty(t, counters.itemCounters)
@@ -70,7 +74,9 @@ func TestCheckPointer(t *testing.T) {
 			mockModel.EXPECT().readCounters(ctx, manifest.CountersBlobFileName).Return(nil, wantErr)
 
 			counters, _ := newCounters().(*countersImpl)
-			require.ErrorIs(t, cp.restoreState(ctx, counters), wantErr)
+			require.ErrorIs(t, cp.restoreState(ctx, checkPointerState{
+				counters: counters,
+			}), wantErr)
 		})
 		t.Run("should fail on counters reading errors", func(t *testing.T) {
 			deps := newMockDeps(t)
@@ -83,7 +89,9 @@ func TestCheckPointer(t *testing.T) {
 			mockModel.EXPECT().readManifest(ctx).Return(checkPointManifest{}, wantErr)
 
 			counters, _ := newCounters().(*countersImpl)
-			require.ErrorIs(t, cp.restoreState(ctx, counters), wantErr)
+			require.ErrorIs(t, cp.restoreState(ctx, checkPointerState{
+				counters: counters,
+			}), wantErr)
 		})
 	})
 
@@ -111,7 +119,9 @@ func TestCheckPointer(t *testing.T) {
 				},
 			).Return(nil)
 
-			require.NoError(t, cp.dumpState(ctx, cnt))
+			require.NoError(t, cp.dumpState(ctx, checkPointerState{
+				counters: cnt,
+			}))
 		})
 		t.Run("should handle write counters errors", func(t *testing.T) {
 			deps := newMockDeps(t)
@@ -130,7 +140,9 @@ func TestCheckPointer(t *testing.T) {
 				values,
 			).Return(wantErr)
 
-			require.ErrorIs(t, cp.dumpState(ctx, cnt), wantErr)
+			require.ErrorIs(t, cp.dumpState(ctx, checkPointerState{
+				counters: cnt,
+			}), wantErr)
 		})
 		t.Run("should handle write manifest errors", func(t *testing.T) {
 			deps := newMockDeps(t)
@@ -156,7 +168,9 @@ func TestCheckPointer(t *testing.T) {
 				},
 			).Return(wantErr)
 
-			require.ErrorIs(t, cp.dumpState(ctx, cnt), wantErr)
+			require.ErrorIs(t, cp.dumpState(ctx, checkPointerState{
+				counters: cnt,
+			}), wantErr)
 		})
 	})
 }

@@ -14,6 +14,7 @@ import (
 type checkPointManifest struct {
 	LastOffset           int64  `json:"lastOffset"`
 	CountersBlobFileName string `json:"countersBlobFileName"`
+	AllTimeItemsFileName string `json:"allTimeItemsFileName"`
 }
 
 type checkPointerModel interface {

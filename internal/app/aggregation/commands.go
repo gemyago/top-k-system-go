@@ -40,7 +40,9 @@ type Commands struct {
 func (c *Commands) StartAggregator(ctx context.Context) error {
 	c.logger.InfoContext(ctx, "Restoring counters state")
 	cnt := c.deps.CountersFactory.newCounters()
-	if err := c.deps.CheckPointer.restoreState(ctx, cnt); err != nil {
+	if err := c.deps.CheckPointer.restoreState(ctx, checkPointerState{
+		counters: cnt,
+	}); err != nil {
 		return fmt.Errorf("failed to restore state while starting aggregator: %w", err)
 	}
 
@@ -55,7 +57,9 @@ func (c *Commands) CreateCheckPoint(ctx context.Context) error {
 	ctn := c.deps.CountersFactory.newCounters()
 
 	c.logger.InfoContext(ctx, "Starting creating check point. Restoring last state.")
-	if err := c.deps.CheckPointer.restoreState(ctx, ctn); err != nil {
+	if err := c.deps.CheckPointer.restoreState(ctx, checkPointerState{
+		counters: ctn,
+	}); err != nil {
 		return fmt.Errorf("failed to restore state while creating check point: %w", err)
 	}
 
@@ -94,7 +98,9 @@ func (c *Commands) CreateCheckPoint(ctx context.Context) error {
 	}
 
 	c.logger.InfoContext(ctx, "Producing new state")
-	if err = c.deps.CheckPointer.dumpState(ctx, ctn); err != nil {
+	if err = c.deps.CheckPointer.dumpState(ctx, checkPointerState{
+		counters: ctn,
+	}); err != nil {
 		return fmt.Errorf("failed to dump state: %w", err)
 	}
 
