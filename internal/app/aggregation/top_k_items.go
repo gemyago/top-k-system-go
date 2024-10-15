@@ -4,6 +4,7 @@ import (
 	"container/heap"
 	"slices"
 	"strconv"
+	"strings"
 
 	"github.com/google/btree"
 )
@@ -168,6 +169,9 @@ func (items *topKHeapItems) getItems(limit int) []*topKItem {
 	result := make([]*topKItem, len(items.items))
 	copy(result, items.items)
 	slices.SortFunc(result, func(i, j *topKItem) int {
+		if i.Count == j.Count {
+			return strings.Compare(j.ItemID, i.ItemID)
+		}
 		return int(j.Count - i.Count)
 	})
 	if limit >= len(result) {
