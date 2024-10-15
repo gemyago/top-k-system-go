@@ -20,14 +20,22 @@ type TopKItem struct {
 }
 
 type GetTopKItemsResponse struct {
-	Items []TopKItem `json:"items"`
+	Data []TopKItem `json:"data"`
 }
 
 func (q *Queries) GetTopKItems(
-	ctx context.Context,
+	_ context.Context,
 	params GetTopKItemsParams,
 ) (*GetTopKItemsResponse, error) {
-	return nil, nil
+	items := q.allTimeItems.getItems(params.Limit)
+	result := make([]TopKItem, len(items))
+	for i, item := range items {
+		result[i] = TopKItem{
+			ItemID: item.itemID,
+			Count:  item.count,
+		}
+	}
+	return &GetTopKItemsResponse{Data: result}, nil
 }
 
 type QueriesDeps struct {

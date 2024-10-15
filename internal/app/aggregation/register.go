@@ -11,6 +11,7 @@ func Register(container *dig.Container) error {
 		di.ProvideAs[*services.ItemEventsKafkaReader, itemEventsKafkaReader],
 
 		NewCommands,
+		NewQueries,
 
 		// package private deps
 		newItemEventsAggregatorModel,
