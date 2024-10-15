@@ -17,6 +17,7 @@ func Register(container *dig.Container) error {
 		newItemEventsAggregator,
 		newCheckPointerModel,
 		di.ProvideValue(countersFactory(countersFactoryFunc(newCounters))),
+		di.ProvideValue(topKItemsFactory(topKItemsFactoryFunc(newTopKItems))),
 		newCheckPointer,
 	)
 }

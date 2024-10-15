@@ -11,6 +11,10 @@ import (
 // topKGetAllItemsLimit is used to get all items in the topKItems.
 const topKGetAllItemsLimit = -1
 
+// topKMaxItemsSize is the maximum number of items that can be stored in the
+// topKItems.
+const topKMaxItemsSize = 1000
+
 type topKItem struct {
 	itemID string
 	count  int64
@@ -194,4 +198,21 @@ func newTopKHeapItems(maxSize int) *topKHeapItems {
 		maxSize: maxSize,
 		items:   make([]*topKItem, 0, maxSize),
 	}
+}
+
+type topKItemsFactory interface {
+	newTopKItems(maxSize int) topKItems
+}
+
+type topKItemsFactoryFunc func(maxSize int) topKItems
+
+func (f topKItemsFactoryFunc) newTopKItems(maxSize int) topKItems {
+	return f(maxSize)
+}
+
+var _ topKItemsFactory = topKItemsFactoryFunc(nil)
+
+func newTopKItems(maxSize int) topKItems {
+	// btree implementation is more performant
+	return newTopKBTreeItems(maxSize)
 }

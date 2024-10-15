@@ -34,6 +34,8 @@ packages:
           filename: "{{.InterfaceNameSnake}}.go"
       countersFactory:
       counters:
+      topKItemsFactory:
+      topKItems:
       checkPointer:
       checkPointerModel:
       itemEventsAggregator:
