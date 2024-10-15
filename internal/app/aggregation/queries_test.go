@@ -38,8 +38,8 @@ func TestQueries(t *testing.T) {
 				wantRawItems,
 				func(item *topKItem, _ int) TopKItem {
 					return TopKItem{
-						ItemID: item.itemID,
-						Count:  item.count,
+						ItemID: item.ItemID,
+						Count:  item.Count,
 					}
 				},
 			)

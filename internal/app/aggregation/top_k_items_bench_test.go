@@ -10,8 +10,8 @@ import (
 
 func randomTopKItem() *topKItem {
 	return &topKItem{
-		itemID: faker.UUIDHyphenated(),
-		count:  1000 + rand.Int64N(100000),
+		ItemID: faker.UUIDHyphenated(),
+		Count:  1000 + rand.Int64N(100000),
 	}
 }
 
@@ -57,7 +57,7 @@ func BenchmarkTopKItems(b *testing.B) {
 			b.Run("replace existing item", func(b *testing.B) {
 				for i := 0; i < b.N; i++ {
 					item := *randomItem
-					item.count = maxItem.count + int64(i) + 1
+					item.Count = maxItem.Count + int64(i) + 1
 					items.updateIfGreater(item)
 				}
 			})
@@ -65,8 +65,8 @@ func BenchmarkTopKItems(b *testing.B) {
 			b.Run("replace existing if greater", func(b *testing.B) {
 				for i := 0; i < b.N; i++ {
 					item := *maxItem
-					item.itemID += strconv.Itoa(i)
-					item.count = maxItem.count + int64(i) + 1
+					item.ItemID += strconv.Itoa(i)
+					item.Count = maxItem.Count + int64(i) + 1
 					items.updateIfGreater(item)
 				}
 			})

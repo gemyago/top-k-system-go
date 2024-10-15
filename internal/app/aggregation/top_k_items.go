@@ -16,13 +16,13 @@ const topKGetAllItemsLimit = -1
 const topKMaxItemsSize = 1000
 
 type topKItem struct {
-	itemID string
-	count  int64
+	ItemID string
+	Count  int64
 }
 
 // String is used mostly for debugging purposes.
 func (i *topKItem) String() string {
-	return i.itemID + ":" + strconv.FormatInt(i.count, 10)
+	return i.ItemID + ":" + strconv.FormatInt(i.Count, 10)
 }
 
 type topKItems interface {
@@ -53,44 +53,44 @@ func (items *topKBTreeItems) getItems(limit int) []*topKItem {
 func (items *topKBTreeItems) load(vals []*topKItem) {
 	for _, val := range vals {
 		items.tree.ReplaceOrInsert(val)
-		items.itemsByID[val.itemID] = val
+		items.itemsByID[val.ItemID] = val
 	}
 	for items.tree.Len() > items.maxSize {
 		if minItem, ok := items.tree.Min(); ok {
 			items.tree.Delete(minItem)
-			delete(items.itemsByID, minItem.itemID)
+			delete(items.itemsByID, minItem.ItemID)
 		}
 	}
 }
 
 func (items *topKBTreeItems) updateIfGreater(item topKItem) {
-	existingItem := items.itemsByID[item.itemID]
+	existingItem := items.itemsByID[item.ItemID]
 
 	// if existing item then we do update only
 	if existingItem != nil {
 		items.tree.Delete(existingItem)
-		delete(items.itemsByID, existingItem.itemID)
+		delete(items.itemsByID, existingItem.ItemID)
 
 		items.tree.ReplaceOrInsert(&item)
-		items.itemsByID[item.itemID] = &item
+		items.itemsByID[item.ItemID] = &item
 		return
 	}
 
 	// if we have space then we insert
 	if items.tree.Len() < items.maxSize {
 		items.tree.ReplaceOrInsert(&item)
-		items.itemsByID[item.itemID] = &item
+		items.itemsByID[item.ItemID] = &item
 		return
 	}
 
 	// if we don't have space, we only insert if new item is greater than
 	// existing min item
-	if minItem, ok := items.tree.Min(); ok && item.count > minItem.count {
+	if minItem, ok := items.tree.Min(); ok && item.Count > minItem.Count {
 		items.tree.Delete(minItem)
-		delete(items.itemsByID, minItem.itemID)
+		delete(items.itemsByID, minItem.ItemID)
 
 		items.tree.ReplaceOrInsert(&item)
-		items.itemsByID[item.itemID] = &item
+		items.itemsByID[item.ItemID] = &item
 	}
 }
 
@@ -103,7 +103,7 @@ func newTopKBTreeItems(maxSize int) *topKBTreeItems {
 		maxSize:   maxSize,
 		itemsByID: make(map[string]*topKItem),
 		tree: btree.NewG(topKItemsTreeDegree, func(a, b *topKItem) bool {
-			return a.count < b.count
+			return a.Count < b.Count
 		}),
 	}
 }
@@ -115,7 +115,7 @@ func (items topKHeapItemsList) Len() int {
 }
 
 func (items topKHeapItemsList) Less(i, j int) bool {
-	return items[i].count < items[j].count
+	return items[i].Count < items[j].Count
 }
 
 func (items topKHeapItemsList) Swap(i, j int) {
@@ -142,7 +142,7 @@ type topKHeapItems struct {
 
 func (items *topKHeapItems) findItemIndex(itemID string) (int, bool) {
 	for i, item := range items.items {
-		if item.itemID == itemID {
+		if item.ItemID == itemID {
 			return i, true
 		}
 	}
@@ -165,7 +165,7 @@ func (items *topKHeapItems) getItems(limit int) []*topKItem {
 	result := make([]*topKItem, len(items.items))
 	copy(result, items.items)
 	slices.SortFunc(result, func(i, j *topKItem) int {
-		return int(j.count - i.count)
+		return int(j.Count - i.Count)
 	})
 	if limit >= len(result) {
 		return result
@@ -179,13 +179,13 @@ func (items *topKHeapItems) updateIfGreater(item topKItem) {
 		return
 	}
 
-	if itemIndex, ok := items.findItemIndex(item.itemID); ok {
+	if itemIndex, ok := items.findItemIndex(item.ItemID); ok {
 		items.items[itemIndex] = &item
 		heap.Fix(&items.items, itemIndex)
 		return
 	}
 
-	if item.count > items.items[0].count {
+	if item.Count > items.items[0].Count {
 		heap.Pop(&items.items)
 		heap.Push(&items.items, &item)
 	}

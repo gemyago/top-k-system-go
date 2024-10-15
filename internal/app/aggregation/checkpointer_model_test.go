@@ -2,6 +2,7 @@ package aggregation
 
 import (
 	"context"
+	"encoding/gob"
 	"encoding/json"
 	"errors"
 	"io"
@@ -115,7 +116,7 @@ func TestCheckPointerModel(t *testing.T) {
 			storage.EXPECT().Download(
 				ctx, wantFile, mock.Anything,
 			).RunAndReturn(func(_ context.Context, _ string, w io.Writer) error {
-				return json.NewEncoder(w).Encode(wantCounters)
+				return gob.NewEncoder(w).Encode(wantCounters)
 			})
 
 			got, err := model.readCounters(ctx, wantFile)
@@ -175,7 +176,7 @@ func TestCheckPointerModel(t *testing.T) {
 				ctx, wantFile, mock.Anything,
 			).RunAndReturn(func(_ context.Context, _ string, r io.Reader) error {
 				var got map[string]int64
-				require.NoError(t, json.NewDecoder(r).Decode(&got))
+				require.NoError(t, gob.NewDecoder(r).Decode(&got))
 				assert.Equal(t, wantCounters, got)
 				return nil
 			})
@@ -200,6 +201,111 @@ func TestCheckPointerModel(t *testing.T) {
 			).Return(wantErr)
 
 			err := model.writeCounters(ctx, wantFile, wantCounters)
+			require.ErrorIs(t, err, wantErr)
+		})
+	})
+
+	t.Run("readItems", func(t *testing.T) {
+		t.Run("should read items from a given file", func(t *testing.T) {
+			deps := newMockDeps(t)
+			model := newCheckPointerModel(deps)
+
+			wantItems := randomTopKItems(10)
+			wantFile := faker.Word()
+
+			ctx := context.Background()
+
+			storage, _ := deps.Storage.(*blobstorage.MockStorage)
+			storage.EXPECT().Download(
+				ctx, wantFile, mock.Anything,
+			).RunAndReturn(func(_ context.Context, _ string, w io.Writer) error {
+				return gob.NewEncoder(w).Encode(wantItems)
+			})
+
+			got, err := model.readItems(ctx, wantFile)
+			require.NoError(t, err)
+			assert.Equal(t, wantItems, got)
+		})
+
+		t.Run("should return error if failed to read items", func(t *testing.T) {
+			deps := newMockDeps(t)
+			model := newCheckPointerModel(deps)
+
+			wantFile := faker.Word()
+			wantErr := errors.New(faker.Sentence())
+
+			ctx := context.Background()
+
+			storage, _ := deps.Storage.(*blobstorage.MockStorage)
+			storage.EXPECT().Download(
+				ctx, wantFile, mock.Anything,
+			).Return(wantErr)
+
+			_, err := model.readItems(ctx, wantFile)
+			require.ErrorIs(t, err, wantErr)
+		})
+
+		t.Run("should return error if failed to decode items", func(t *testing.T) {
+			deps := newMockDeps(t)
+			model := newCheckPointerModel(deps)
+
+			wantFile := faker.Word()
+
+			ctx := context.Background()
+
+			storage, _ := deps.Storage.(*blobstorage.MockStorage)
+			storage.EXPECT().Download(
+				ctx, wantFile, mock.Anything,
+			).RunAndReturn(func(_ context.Context, _ string, w io.Writer) error {
+				_, err := w.Write([]byte(faker.Sentence()))
+				return err
+			})
+
+			_, err := model.readItems(ctx, wantFile)
+			require.Error(t, err)
+		})
+	})
+
+	t.Run("writeItems", func(t *testing.T) {
+		t.Run("should write items to a given file", func(t *testing.T) {
+			deps := newMockDeps(t)
+			model := newCheckPointerModel(deps)
+
+			wantItems := randomTopKItems(10)
+			wantFile := faker.Word()
+
+			ctx := context.Background()
+
+			storage, _ := deps.Storage.(*blobstorage.MockStorage)
+			storage.EXPECT().Upload(
+				ctx, wantFile, mock.Anything,
+			).RunAndReturn(func(_ context.Context, _ string, r io.Reader) error {
+				var got []*topKItem
+				require.NoError(t, gob.NewDecoder(r).Decode(&got))
+				assert.Equal(t, wantItems, got)
+				return nil
+			})
+
+			err := model.writeItems(ctx, wantFile, wantItems)
+			require.NoError(t, err)
+		})
+
+		t.Run("should return error if failed to upload items", func(t *testing.T) {
+			deps := newMockDeps(t)
+			model := newCheckPointerModel(deps)
+
+			wantItems := randomTopKItems(10)
+			wantFile := faker.Word()
+			wantErr := errors.New(faker.Sentence())
+
+			ctx := context.Background()
+
+			storage, _ := deps.Storage.(*blobstorage.MockStorage)
+			storage.EXPECT().Upload(
+				ctx, wantFile, mock.Anything,
+			).Return(wantErr)
+
+			err := model.writeItems(ctx, wantFile, wantItems)
 			require.ErrorIs(t, err, wantErr)
 		})
 	})

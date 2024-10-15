@@ -31,8 +31,8 @@ func (q *Queries) GetTopKItems(
 	result := make([]TopKItem, len(items))
 	for i, item := range items {
 		result[i] = TopKItem{
-			ItemID: item.itemID,
-			Count:  item.count,
+			ItemID: item.ItemID,
+			Count:  item.Count,
 		}
 	}
 	return &GetTopKItemsResponse{Data: result}, nil

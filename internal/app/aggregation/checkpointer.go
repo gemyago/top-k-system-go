@@ -43,7 +43,7 @@ func (cp *checkPointerImpl) restoreState(ctx context.Context, counters counters)
 	}
 	values, err := cp.deps.CheckPointerModel.readCounters(ctx, manifest.CountersBlobFileName)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to read counters: %w", err)
 	}
 	counters.updateItemsCount(manifest.LastOffset, values)
 	return nil
