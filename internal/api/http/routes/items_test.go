@@ -83,6 +83,44 @@ func TestItemsRoutes(t *testing.T) {
 			var gotResponse aggregation.GetTopKItemsResponse
 			require.NoError(t, json.Unmarshal(w.Body.Bytes(), &gotResponse))
 		})
+
+		t.Run("should fail if no limit", func(t *testing.T) {
+			req := httptest.NewRequest(http.MethodGet, "/items/top", http.NoBody)
+			w := httptest.NewRecorder()
+			deps := makeDeps(t)
+
+			NewItemsRoutesGroup(deps.ItemsRoutesDeps).Mount(deps.Mux)
+			deps.Mux.ServeHTTP(w, req)
+
+			assert.Equal(t, http.StatusBadRequest, w.Code)
+		})
+
+		t.Run("should handle query error", func(t *testing.T) {
+			wantLimit := 100 + rand.IntN(100)
+			req := httptest.NewRequest(
+				http.MethodGet,
+				fmt.Sprintf("/items/top?limit=%d", wantLimit),
+				http.NoBody,
+			)
+			w := httptest.NewRecorder()
+			deps := makeDeps(t)
+
+			mockQueries, _ := deps.Queries.(*aggregation.MockQueries)
+
+			wantErr := errors.New(faker.Sentence())
+
+			mockQueries.EXPECT().GetTopKItems(
+				mock.AnythingOfType("backgroundCtx"),
+				aggregation.GetTopKItemsParams{
+					Limit: wantLimit,
+				},
+			).Return(nil, wantErr)
+
+			NewItemsRoutesGroup(deps.ItemsRoutesDeps).Mount(deps.Mux)
+			deps.Mux.ServeHTTP(w, req)
+
+			assert.Equal(t, http.StatusInternalServerError, w.Code)
+		})
 	})
 
 	t.Run("POST /items/events", func(t *testing.T) {
