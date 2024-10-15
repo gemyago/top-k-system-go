@@ -12,6 +12,7 @@ func randomManifest() checkPointManifest {
 	return checkPointManifest{
 		LastOffset:           rand.Int64N(10000),
 		CountersBlobFileName: faker.Word(),
+		AllTimeItemsFileName: faker.Word(),
 	}
 }
 
