@@ -5,6 +5,7 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/google/btree"
 )
@@ -207,6 +208,31 @@ func newTopKHeapItems(maxSize int) *topKHeapItems {
 	}
 }
 
+type synchronisedTopKItems struct {
+	topKItems
+	rwLock sync.RWMutex
+}
+
+func (items *synchronisedTopKItems) getItems(limit int) []*topKItem {
+	items.rwLock.RLock()
+	defer items.rwLock.RUnlock()
+	return items.topKItems.getItems(limit)
+}
+
+func (items *synchronisedTopKItems) updateIfGreater(item topKItem) {
+	items.rwLock.Lock()
+	defer items.rwLock.Unlock()
+	items.topKItems.updateIfGreater(item)
+}
+
+func (items *synchronisedTopKItems) load(vals []*topKItem) {
+	items.rwLock.Lock()
+	defer items.rwLock.Unlock()
+	items.topKItems.load(vals)
+}
+
+var _ topKItems = (*synchronisedTopKItems)(nil)
+
 type topKItemsFactory interface {
 	newTopKItems(maxSize int) topKItems
 }
@@ -220,6 +246,8 @@ func (f topKItemsFactoryFunc) newTopKItems(maxSize int) topKItems {
 var _ topKItemsFactory = topKItemsFactoryFunc(nil)
 
 func newTopKItems(maxSize int) topKItems {
-	// btree implementation is more performant
-	return newTopKBTreeItems(maxSize)
+	return &synchronisedTopKItems{
+		// btree implementation is more performant
+		topKItems: newTopKBTreeItems(maxSize),
+	}
 }

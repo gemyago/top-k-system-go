@@ -79,9 +79,25 @@ func BenchmarkTopKItems(b *testing.B) {
 		})
 	})
 
+	b.Run("topKBTreeItems(sync)", func(b *testing.B) {
+		runTopKItemsTestSuite(b, func(maxSize int) topKItems {
+			return &synchronisedTopKItems{
+				topKItems: newTopKBTreeItems(maxSize),
+			}
+		})
+	})
+
 	b.Run("topKHeapItems", func(b *testing.B) {
 		runTopKItemsTestSuite(b, func(maxSize int) topKItems {
 			return newTopKHeapItems(maxSize)
+		})
+	})
+
+	b.Run("topKHeapItems(sync)", func(b *testing.B) {
+		runTopKItemsTestSuite(b, func(maxSize int) topKItems {
+			return &synchronisedTopKItems{
+				topKItems: newTopKHeapItems(maxSize),
+			}
 		})
 	})
 }

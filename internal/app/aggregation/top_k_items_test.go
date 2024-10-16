@@ -310,4 +310,12 @@ func TestTopKItems(t *testing.T) {
 			return newTopKHeapItems(maxSize)
 		})
 	})
+
+	t.Run("synchronisedTopKItems", func(t *testing.T) {
+		topKItemsTestSuite(t, func(maxSize int) topKItems {
+			return &synchronisedTopKItems{
+				topKItems: newTopKBTreeItems(maxSize),
+			}
+		})
+	})
 }
