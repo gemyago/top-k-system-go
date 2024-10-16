@@ -16,7 +16,8 @@
   },
   "aggregator": {
     "flushInterval": "60s",
-    "verbose": false
+    "verbose": false,
+    "itemEventLogRate": 10000
   },
   "blobstorage": {
     "localFolder": "tmp/blobs"

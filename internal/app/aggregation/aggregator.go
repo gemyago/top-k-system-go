@@ -34,8 +34,9 @@ type ItemEventsAggregatorDeps struct {
 	RootLogger *slog.Logger
 
 	// config
-	FlushInterval time.Duration `name:"config.aggregator.flushInterval"`
-	Verbose       bool          `name:"config.aggregator.verbose"`
+	FlushInterval    time.Duration `name:"config.aggregator.flushInterval"`
+	Verbose          bool          `name:"config.aggregator.verbose"`
+	ItemEventLogRate int64         `name:"config.aggregator.itemEventLogRate"`
 
 	// service layer
 	TickerFactory func(d time.Duration) *time.Ticker
@@ -66,7 +67,8 @@ func (a *itemEventsAggregatorImpl) beginAggregating(
 				a.logger.ErrorContext(ctx, "failed to fetch message", diag.ErrAttr(res.err))
 			} else {
 				a.AggregatorModel.aggregateItemEvent(res.offset, res.event)
-				if a.Verbose || res.offset%10000 == 0 {
+				shouldLog := a.Verbose || (a.ItemEventLogRate > 0 && res.offset%a.ItemEventLogRate == 0)
+				if shouldLog {
 					a.logger.DebugContext(ctx, "Item event aggregated",
 						slog.String("itemID", res.event.ItemID),
 						slog.Int64("offset", res.offset),
