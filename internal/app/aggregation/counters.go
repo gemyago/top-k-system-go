@@ -10,6 +10,8 @@ type counters interface {
 	updateItemsCount(lastOffset int64, increments map[string]int64) map[string]int64
 }
 
+// We are not synchronizing this component because it is only used in a single
+// goroutine that is responsible for the aggregation.
 type countersImpl struct {
 	lastOffset   int64
 	itemCounters map[string]int64
@@ -24,7 +26,6 @@ func (c *countersImpl) getLastOffset() int64 {
 }
 
 func (c *countersImpl) updateItemsCount(lastOffset int64, increments map[string]int64) map[string]int64 {
-	// TODO: We may have to potentially synchronize
 	c.lastOffset = lastOffset
 	result := make(map[string]int64, len(increments))
 	for itemID, increment := range increments {
