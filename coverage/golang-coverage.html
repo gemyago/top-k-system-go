@@ -133,7 +133,7 @@
 				
 				<option value="file38">github.com/gemyago/top-k-system-go/internal/app/aggregation/testing.go (100.0%)</option>
 				
-				<option value="file39">github.com/gemyago/top-k-system-go/internal/app/aggregation/top_k_items.go (98.7%)</option>
+				<option value="file39">github.com/gemyago/top-k-system-go/internal/app/aggregation/top_k_items.go (98.8%)</option>
 				
 				<option value="file40">github.com/gemyago/top-k-system-go/internal/app/ingestion/commands.go (87.5%)</option>
 				
@@ -475,12 +475,12 @@ type defaultEventsSender struct {
         RandIntN randIntN
 }
 
-func (impl *defaultEventsSender) sendTestEvent(ctx context.Context, itemID string, eventsNumber int) error <span class="cov4" title="5">{
+func (impl *defaultEventsSender) sendTestEvent(ctx context.Context, itemID string, eventsNumber int) error <span class="cov5" title="5">{
         evt := &amp;models.ItemEvent{
                 ItemID:     itemID,
                 IngestedAt: impl.Time.Now(),
         }
-        for range eventsNumber </span><span class="cov10" title="40">{
+        for range eventsNumber </span><span class="cov10" title="25">{
                 if err := impl.IngestionCommands.IngestItemEvent(ctx, evt); err != nil </span><span class="cov1" title="1">{
                         return fmt.Errorf("failed to ingest item event: %w", err)
                 }</span>
@@ -505,7 +505,7 @@ func (impl *defaultEventsSender) sendTestEvents(
                 return fmt.Errorf("failed to download item IDs from file %s: %w", itemIDsFile, err)
         }</span>
         <span class="cov1" title="1">itemIDs := strings.Split(strings.Trim(data.String(), "\n"), "\n")
-        for _, itemID := range itemIDs </span><span class="cov3" title="3">{
+        for _, itemID := range itemIDs </span><span class="cov4" title="3">{
                 eventsNumber := impl.RandIntN(eventsMax-eventsMin) + eventsMin
                 if err := impl.sendTestEvent(ctx, itemID, eventsNumber); err != nil </span><span class="cov0" title="0">{
                         return fmt.Errorf("failed to send test events for item %s: %w", itemID, err)
@@ -529,7 +529,7 @@ type noopEventsSender struct {
         logger *slog.Logger
 }
 
-func (s *noopEventsSender) sendTestEvent(ctx context.Context, itemID string, eventsNumber int) error <span class="cov3" title="3">{
+func (s *noopEventsSender) sendTestEvent(ctx context.Context, itemID string, eventsNumber int) error <span class="cov4" title="3">{
         if s.noop </span><span class="cov2" title="2">{
                 s.logger.InfoContext(ctx, "NOOP: sending test event",
                         slog.String("itemID", itemID),
@@ -545,7 +545,7 @@ func (s *noopEventsSender) sendTestEvents(
         itemIDsFile string,
         eventsMin int,
         eventsMax int,
-) error <span class="cov3" title="3">{
+) error <span class="cov4" title="3">{
         if s.noop </span><span class="cov2" title="2">{
                 s.logger.InfoContext(ctx, "NOOP: sending test events",
                         slog.String("itemIDsFile", itemIDsFile),
@@ -1704,8 +1704,9 @@ type ItemEventsAggregatorDeps struct {
         RootLogger *slog.Logger
 
         // config
-        FlushInterval time.Duration `name:"config.aggregator.flushInterval"`
-        Verbose       bool          `name:"config.aggregator.verbose"`
+        FlushInterval    time.Duration `name:"config.aggregator.flushInterval"`
+        Verbose          bool          `name:"config.aggregator.verbose"`
+        ItemEventLogRate int64         `name:"config.aggregator.itemEventLogRate"`
 
         // service layer
         TickerFactory func(d time.Duration) *time.Ticker
@@ -1736,7 +1737,8 @@ func (a *itemEventsAggregatorImpl) beginAggregating(
                                 a.logger.ErrorContext(ctx, "failed to fetch message", diag.ErrAttr(res.err))
                         }</span> else<span class="cov7" title="6"> {
                                 a.AggregatorModel.aggregateItemEvent(res.offset, res.event)
-                                if a.Verbose || res.offset%10000 == 0 </span><span class="cov7" title="6">{
+                                shouldLog := a.Verbose || (a.ItemEventLogRate &gt; 0 &amp;&amp; res.offset%a.ItemEventLogRate == 0)
+                                if shouldLog </span><span class="cov7" title="6">{
                                         a.logger.DebugContext(ctx, "Item event aggregated",
                                                 slog.String("itemID", res.event.ItemID),
                                                 slog.Int64("offset", res.offset),
@@ -2234,6 +2236,8 @@ type counters interface {
         updateItemsCount(lastOffset int64, increments map[string]int64) map[string]int64
 }
 
+// We are not synchronizing this component because it is only used in a single
+// goroutine that is responsible for the aggregation.
 type countersImpl struct {
         lastOffset   int64
         itemCounters map[string]int64
@@ -2248,7 +2252,6 @@ func (c *countersImpl) getLastOffset() int64 <span class="cov9" title="25">{
 }</span>
 
 func (c *countersImpl) updateItemsCount(lastOffset int64, increments map[string]int64) map[string]int64 <span class="cov6" title="8">{
-        // TODO: We may have to potentially synchronize
         c.lastOffset = lastOffset
         result := make(map[string]int64, len(increments))
         for itemID, increment := range increments </span><span class="cov10" title="26">{
@@ -3862,6 +3865,7 @@ import (
         "slices"
         "strconv"
         "strings"
+        "sync"
 
         "github.com/google/btree"
 )
@@ -3896,36 +3900,36 @@ type topKBTreeItems struct {
 }
 
 // getItems returns all items in the tree in descending order.
-func (items *topKBTreeItems) getItems(limit int) []*topKItem <span class="cov5" title="19">{
-        if limit == topKGetAllItemsLimit </span><span class="cov3" title="6">{
+func (items *topKBTreeItems) getItems(limit int) []*topKItem <span class="cov6" title="30">{
+        if limit == topKGetAllItemsLimit </span><span class="cov3" title="7">{
                 limit = items.tree.Len()
         }</span>
-        <span class="cov5" title="19">result := make([]*topKItem, 0, limit)
-        items.tree.Descend(func(i *topKItem) bool </span><span class="cov8" title="130">{
+        <span class="cov6" title="30">result := make([]*topKItem, 0, limit)
+        items.tree.Descend(func(i *topKItem) bool </span><span class="cov8" title="180">{
                 result = append(result, i)
                 return len(result) &lt; limit
         }</span>)
-        <span class="cov5" title="19">return result</span>
+        <span class="cov6" title="30">return result</span>
 }
 
-func (items *topKBTreeItems) load(vals []*topKItem) <span class="cov5" title="16">{
-        for _, val := range vals </span><span class="cov8" title="105">{
+func (items *topKBTreeItems) load(vals []*topKItem) <span class="cov5" title="27">{
+        for _, val := range vals </span><span class="cov8" title="160">{
                 items.tree.ReplaceOrInsert(val)
                 items.itemsByID[val.ItemID] = val
         }</span>
-        <span class="cov5" title="16">for items.tree.Len() &gt; items.maxSize </span><span class="cov2" title="3">{
-                if minItem, ok := items.tree.Min(); ok </span><span class="cov2" title="3">{
+        <span class="cov5" title="27">for items.tree.Len() &gt; items.maxSize </span><span class="cov3" title="6">{
+                if minItem, ok := items.tree.Min(); ok </span><span class="cov3" title="6">{
                         items.tree.Delete(minItem)
                         delete(items.itemsByID, minItem.ItemID)
                 }</span>
         }
 }
 
-func (items *topKBTreeItems) updateIfGreater(item topKItem) <span class="cov3" title="5">{
+func (items *topKBTreeItems) updateIfGreater(item topKItem) <span class="cov4" title="10">{
         existingItem := items.itemsByID[item.ItemID]
 
         // if existing item then we do update only
-        if existingItem != nil </span><span class="cov2" title="2">{
+        if existingItem != nil </span><span class="cov3" title="4">{
                 items.tree.Delete(existingItem)
                 items.tree.ReplaceOrInsert(&amp;item)
                 items.itemsByID[item.ItemID] = &amp;item
@@ -3933,7 +3937,7 @@ func (items *topKBTreeItems) updateIfGreater(item topKItem) <span class="cov3" t
         }</span>
 
         // if we have space then we insert
-        <span class="cov2" title="3">if items.tree.Len() &lt; items.maxSize </span><span class="cov1" title="1">{
+        <span class="cov3" title="6">if items.tree.Len() &lt; items.maxSize </span><span class="cov2" title="2">{
                 items.tree.ReplaceOrInsert(&amp;item)
                 items.itemsByID[item.ItemID] = &amp;item
                 return
@@ -3941,7 +3945,7 @@ func (items *topKBTreeItems) updateIfGreater(item topKItem) <span class="cov3" t
 
         // if we don't have space, we only insert if new item is greater than
         // existing min item
-        <span class="cov2" title="2">if minItem, ok := items.tree.Min(); ok &amp;&amp; item.Count &gt; minItem.Count </span><span class="cov1" title="1">{
+        <span class="cov3" title="4">if minItem, ok := items.tree.Min(); ok &amp;&amp; item.Count &gt; minItem.Count </span><span class="cov2" title="2">{
                 items.tree.Delete(minItem)
                 delete(items.itemsByID, minItem.ItemID)
 
@@ -3954,15 +3958,15 @@ var _ topKItems = (*topKBTreeItems)(nil)
 
 const topKItemsTreeDegree = 10
 
-func newTopKBTreeItems(maxSize int) *topKBTreeItems <span class="cov5" title="22">{
+func newTopKBTreeItems(maxSize int) *topKBTreeItems <span class="cov6" title="33">{
         return &amp;topKBTreeItems{
                 maxSize:   maxSize,
                 itemsByID: make(map[string]*topKItem),
-                tree: btree.NewG(topKItemsTreeDegree, func(a, b *topKItem) bool </span><span class="cov10" title="288">{
-                        if a.Count == b.Count </span><span class="cov5" title="16">{
+                tree: btree.NewG(topKItemsTreeDegree, func(a, b *topKItem) bool </span><span class="cov10" title="439">{
+                        if a.Count == b.Count </span><span class="cov6" title="32">{
                                 return a.ItemID &lt; b.ItemID
                         }</span>
-                        <span class="cov9" title="272">return a.Count &lt; b.Count</span>
+                        <span class="cov9" title="407">return a.Count &lt; b.Count</span>
                 }),
         }
 }
@@ -4025,11 +4029,11 @@ func (items *topKHeapItems) getItems(limit int) []*topKItem <span class="cov4" t
         }</span>
         <span class="cov4" title="11">result := make([]*topKItem, len(items.items))
         copy(result, items.items)
-        slices.SortFunc(result, func(i, j *topKItem) int </span><span class="cov8" title="106">{
+        slices.SortFunc(result, func(i, j *topKItem) int </span><span class="cov7" title="106">{
                 if i.Count == j.Count </span><span class="cov2" title="2">{
                         return strings.Compare(j.ItemID, i.ItemID)
                 }</span>
-                <span class="cov8" title="104">return int(j.Count - i.Count)</span>
+                <span class="cov7" title="104">return int(j.Count - i.Count)</span>
         })
         <span class="cov4" title="11">if limit &gt;= len(result) </span><span class="cov4" title="10">{
                 return result
@@ -4064,6 +4068,31 @@ func newTopKHeapItems(maxSize int) *topKHeapItems <span class="cov4" title="11">
         }
 }</span>
 
+type synchronisedTopKItems struct {
+        topKItems
+        rwLock sync.RWMutex
+}
+
+func (items *synchronisedTopKItems) getItems(limit int) []*topKItem <span class="cov5" title="19">{
+        items.rwLock.RLock()
+        defer items.rwLock.RUnlock()
+        return items.topKItems.getItems(limit)
+}</span>
+
+func (items *synchronisedTopKItems) updateIfGreater(item topKItem) <span class="cov3" title="5">{
+        items.rwLock.Lock()
+        defer items.rwLock.Unlock()
+        items.topKItems.updateIfGreater(item)
+}</span>
+
+func (items *synchronisedTopKItems) load(vals []*topKItem) <span class="cov5" title="16">{
+        items.rwLock.Lock()
+        defer items.rwLock.Unlock()
+        items.topKItems.load(vals)
+}</span>
+
+var _ topKItems = (*synchronisedTopKItems)(nil)
+
 type topKItemsFactory interface {
         newTopKItems(maxSize int) topKItems
 }
@@ -4077,8 +4106,10 @@ func (f topKItemsFactoryFunc) newTopKItems(maxSize int) topKItems <span class="c
 var _ topKItemsFactory = topKItemsFactoryFunc(nil)
 
 func newTopKItems(maxSize int) topKItems <span class="cov4" title="11">{
-        // btree implementation is more performant
-        return newTopKBTreeItems(maxSize)
+        return &amp;synchronisedTopKItems{
+                // btree implementation is more performant
+                topKItems: newTopKBTreeItems(maxSize),
+        }
 }</span>
 </pre>
 		
@@ -4156,26 +4187,26 @@ type MockCommands_Expecter struct {
         mock *mock.Mock
 }
 
-func (_m *MockCommands) EXPECT() *MockCommands_Expecter <span class="cov9" title="37">{
+func (_m *MockCommands) EXPECT() *MockCommands_Expecter <span class="cov10" title="32">{
         return &amp;MockCommands_Expecter{mock: &amp;_m.Mock}
 }</span>
 
 // IngestItemEvent provides a mock function with given fields: ctx, evt
-func (_m *MockCommands) IngestItemEvent(ctx context.Context, evt *models.ItemEvent) error <span class="cov10" title="42">{
+func (_m *MockCommands) IngestItemEvent(ctx context.Context, evt *models.ItemEvent) error <span class="cov9" title="27">{
         ret := _m.Called(ctx, evt)
 
         if len(ret) == 0 </span><span class="cov0" title="0">{
                 panic("no return value specified for IngestItemEvent")</span>
         }
 
-        <span class="cov10" title="42">var r0 error
+        <span class="cov9" title="27">var r0 error
         if rf, ok := ret.Get(0).(func(context.Context, *models.ItemEvent) error); ok </span><span class="cov0" title="0">{
                 r0 = rf(ctx, evt)
-        }</span> else<span class="cov10" title="42"> {
+        }</span> else<span class="cov9" title="27"> {
                 r0 = ret.Error(0)
         }</span>
 
-        <span class="cov10" title="42">return r0</span>
+        <span class="cov9" title="27">return r0</span>
 }
 
 // MockCommands_IngestItemEvent_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'IngestItemEvent'
@@ -4186,7 +4217,7 @@ type MockCommands_IngestItemEvent_Call struct {
 // IngestItemEvent is a helper method to define mock.On call
 //   - ctx context.Context
 //   - evt *models.ItemEvent
-func (_e *MockCommands_Expecter) IngestItemEvent(ctx interface{}, evt interface{}) *MockCommands_IngestItemEvent_Call <span class="cov9" title="37">{
+func (_e *MockCommands_Expecter) IngestItemEvent(ctx interface{}, evt interface{}) *MockCommands_IngestItemEvent_Call <span class="cov10" title="32">{
         return &amp;MockCommands_IngestItemEvent_Call{Call: _e.mock.On("IngestItemEvent", ctx, evt)}
 }</span>
 
@@ -4197,7 +4228,7 @@ func (_c *MockCommands_IngestItemEvent_Call) Run(run func(ctx context.Context, e
         <span class="cov0" title="0">return _c</span>
 }
 
-func (_c *MockCommands_IngestItemEvent_Call) Return(_a0 error) *MockCommands_IngestItemEvent_Call <span class="cov9" title="37">{
+func (_c *MockCommands_IngestItemEvent_Call) Return(_a0 error) *MockCommands_IngestItemEvent_Call <span class="cov10" title="32">{
         _c.Call.Return(_a0)
         return _c
 }</span>
@@ -4333,22 +4364,26 @@ type configValueProvider struct {
         diPath     string
 }
 
-func provideConfigValue(cfg *viper.Viper, path string) configValueProvider <span class="cov10" title="70">{
+func provideConfigValue(cfg *viper.Viper, path string) configValueProvider <span class="cov10" title="75">{
         if !cfg.IsSet(path) </span><span class="cov1" title="1">{
                 panic(fmt.Errorf("config key not found: %s", path))</span>
         }
-        <span class="cov9" title="69">return configValueProvider{cfg, path, "config." + path}</span>
+        <span class="cov9" title="74">return configValueProvider{cfg, path, "config." + path}</span>
 }
 
 func (p configValueProvider) asInt() di.ConstructorWithOpts <span class="cov4" title="6">{
         return di.ProvideValue(p.cfg.GetInt(p.configPath), dig.Name(p.diPath))
 }</span>
 
+func (p configValueProvider) asInt64() di.ConstructorWithOpts <span class="cov4" title="5">{
+        return di.ProvideValue(p.cfg.GetInt64(p.configPath), dig.Name(p.diPath))
+}</span>
+
 func (p configValueProvider) asString() di.ConstructorWithOpts <span class="cov6" title="16">{
         return di.ProvideValue(p.cfg.GetString(p.configPath), dig.Name(p.diPath))
 }</span>
 
-func (p configValueProvider) asBool() di.ConstructorWithOpts <span class="cov6" title="11">{
+func (p configValueProvider) asBool() di.ConstructorWithOpts <span class="cov5" title="11">{
         return di.ProvideValue(p.cfg.GetBool(p.configPath), dig.Name(p.diPath))
 }</span>
 
@@ -4376,6 +4411,7 @@ func Provide(container *dig.Container, cfg *viper.Viper) error <span class="cov4
                 // aggregator
                 provideConfigValue(cfg, "aggregator.flushInterval").asDuration(),
                 provideConfigValue(cfg, "aggregator.verbose").asBool(),
+                provideConfigValue(cfg, "aggregator.itemEventLogRate").asInt64(),
 
                 // blob storage
                 provideConfigValue(cfg, "blobstorage.localFolder").asString(),
@@ -4400,9 +4436,9 @@ type ConstructorWithOpts struct {
 }
 
 func ProvideAll(container *dig.Container, providers ...interface{}) error <span class="cov7" title="39">{
-        for i, provider := range providers </span><span class="cov10" title="206">{
+        for i, provider := range providers </span><span class="cov10" title="211">{
                 switch p := provider.(type) </span>{
-                case ConstructorWithOpts:<span class="cov8" title="107">
+                case ConstructorWithOpts:<span class="cov8" title="112">
                         if err := container.Provide(p.Constructor, p.Options...); err != nil </span><span class="cov1" title="1">{
                                 return fmt.Errorf("failed to provide %d-th dependency: %w", i, err)
                         }</span>
@@ -4416,9 +4452,9 @@ func ProvideAll(container *dig.Container, providers ...interface{}) error <span 
 }
 
 // ProvideValue will create a constructor (e.g func) from a given value.
-func ProvideValue[T any](val T, opts ...dig.ProvideOption) ConstructorWithOpts <span class="cov8" title="108">{
+func ProvideValue[T any](val T, opts ...dig.ProvideOption) ConstructorWithOpts <span class="cov8" title="113">{
         return ConstructorWithOpts{
-                Constructor: func() T </span><span class="cov7" title="56">{ return val }</span>,
+                Constructor: func() T </span><span class="cov7" title="58">{ return val }</span>,
                 Options:     opts,
         }
 }
