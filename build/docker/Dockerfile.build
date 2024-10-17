@@ -7,7 +7,7 @@ WORKDIR /go/app
 RUN apk update && apk add make
 
 RUN mkdir -p /go/app
-COPY go.mod go.sum Makefile /go/app/
+COPY go.mod go.sum /go/app/
 COPY internal/tools /go/app/internal/tools
 RUN go mod download
 
