@@ -20,10 +20,11 @@ $(cover_dir):
 tools:
 	go install github.com/mitranim/gow@latest
 
-dist/bin: 
+.PHONY: bin
+bin: 
 	go build \
 		-tags=release \
-		-o dist/bin/ ./cmd/...;
+		-o bin/ ./cmd/...;
 
 go_path=$(shell go env GOPATH)
 go-test-coverage=$(go_path)/bin/go-test-coverage

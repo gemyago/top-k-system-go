@@ -16,7 +16,7 @@ dockerBuildArgs=\
 
 dockerOutArgs=\
 		--build-arg BUILD_IMAGE=$(shell cat .local-build-image) \
-		--build-arg RUNTIME_IMAGE=$(baseRuntimeImage) \
+		--build-arg RUNTIME_IMAGE=$(runtimeImage) \
 		-f Dockerfile.out \
 		../../
 

@@ -1,4 +1,6 @@
+# BUILD_IMAGE is set in the Makefile and passed in as an argument
 ARG BUILD_IMAGE=localhost:6000/app:latest
+# RUNTIME_IMAGE is set in the docker.variables.mk file
 ARG RUNTIME_IMAGE=alpine:3.20.3
 FROM ${BUILD_IMAGE} AS build
 

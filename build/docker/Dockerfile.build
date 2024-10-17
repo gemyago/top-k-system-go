@@ -1,3 +1,4 @@
+# BASE_BUILD_IMAGE is set in the docker.variables.mk file
 ARG BASE_BUILD_IMAGE=golang:1.23.1-alpine3.20
 FROM ${BASE_BUILD_IMAGE}
 
