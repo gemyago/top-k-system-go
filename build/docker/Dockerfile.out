@@ -5,4 +5,4 @@ ARG RUNTIME_IMAGE=alpine:3.20.3
 FROM ${BUILD_IMAGE} AS build
 
 FROM ${RUNTIME_IMAGE}
-COPY --from=build /go/app/bin/ /usr/local/bin/
+COPY --from=build /go/app/build/bin /usr/local/bin/

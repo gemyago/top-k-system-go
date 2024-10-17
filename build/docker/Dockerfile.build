@@ -12,4 +12,4 @@ COPY internal/tools /go/app/internal/tools
 RUN go mod download
 
 COPY ./ /go/app
-RUN make bin
+RUN make build/bin

@@ -20,11 +20,15 @@ $(cover_dir):
 tools:
 	go install github.com/mitranim/gow@latest
 
-.PHONY: bin
-bin: 
+.PHONY: build/bin
+build/bin: 
 	go build \
 		-tags=release \
-		-o bin/ ./cmd/...;
+		-o build/bin/ ./cmd/...;
+
+local-docker-image:
+	make -C build/docker/ clean-images
+	make -C build/docker/ .local-out-image
 
 go_path=$(shell go env GOPATH)
 go-test-coverage=$(go_path)/bin/go-test-coverage
