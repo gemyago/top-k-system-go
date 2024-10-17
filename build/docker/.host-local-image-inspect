@@ -1,0 +1,60 @@
+[
+    {
+        "Id": "sha256:601ef3dba152f67b436bbb512880a9af74719e9e947f38a6f3c22ad86109fb09",
+        "RepoTags": [
+            "localhost:6000/top-k-system-go:latest"
+        ],
+        "RepoDigests": [],
+        "Parent": "",
+        "Comment": "buildkit.dockerfile.v0",
+        "Created": "2024-10-17T19:15:19.486986808+02:00",
+        "DockerVersion": "",
+        "Author": "",
+        "Config": {
+            "Hostname": "",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+            ],
+            "Cmd": [
+                "/bin/sh"
+            ],
+            "Image": "",
+            "Volumes": null,
+            "WorkingDir": "",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": null
+        },
+        "Architecture": "arm64",
+        "Variant": "v8",
+        "Os": "linux",
+        "Size": 44239635,
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/86a45f94e440fab771bb479334f5c75ca82c5ca7cc5d228e451f09565ab8f715/diff",
+                "MergedDir": "/var/lib/docker/overlay2/uqk9trcjoummlu4kvo88fs8br/merged",
+                "UpperDir": "/var/lib/docker/overlay2/uqk9trcjoummlu4kvo88fs8br/diff",
+                "WorkDir": "/var/lib/docker/overlay2/uqk9trcjoummlu4kvo88fs8br/work"
+            },
+            "Name": "overlay2"
+        },
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:16113d51b7181f20135f51e8ffbaead20a7671cd783017601f198748ce8a8ebf",
+                "sha256:cf0fccb7f9fba35dc7fc4d2e502567c6c34606281a10d1fbdc5a725b785f1c0b"
+            ]
+        },
+        "Metadata": {
+            "LastTagTime": "2024-10-17T19:18:24.411753422+02:00"
+        }
+    }
+]

@@ -31,9 +31,15 @@ build/bin:
 		-tags=release \
 		-o build/bin/ ./cmd/...;
 
-local-docker-image:
+docker-local-image:
 	make -C build/docker/ clean-images
 	make -C build/docker/ .local-out-image
+
+# NOTE: If building image like this, the platform must be match target execution env while building binaries
+# e.g GOOS=linux GOARCH=amd64 make docker-host-local-image
+docker-host-local-image: build/bin
+	make -C build/docker/ clean-images
+	make -C build/docker/ .host-local-image
 
 go_path=$(shell go env GOPATH)
 go-test-coverage=$(go_path)/bin/go-test-coverage

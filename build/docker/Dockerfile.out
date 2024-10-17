@@ -1,3 +1,8 @@
+# This dockerfile is used to build the final small image.
+# It copies the built binary from the build image to the runtime image.
+# Alternative is to build binarries on host and copy them to the runtime image.
+# This is done via Dockerfile.host file.
+
 # BUILD_IMAGE is set in the Makefile and passed in as an argument
 ARG BUILD_IMAGE=localhost:6000/app:latest
 # RUNTIME_IMAGE is set in the docker.variables.mk file
