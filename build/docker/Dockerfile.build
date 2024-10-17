@@ -1,0 +1,14 @@
+ARG BASE_BUILD_IMAGE=golang:1.23.1-alpine3.20
+FROM ${BASE_BUILD_IMAGE}
+
+WORKDIR /go/app
+
+RUN apk update && apk add make
+
+RUN mkdir -p /go/app
+COPY go.mod go.sum Makefile /go/app/
+COPY internal/tools /go/app/internal/tools
+RUN go mod download
+
+COPY ./ /go/app
+RUN make bin
