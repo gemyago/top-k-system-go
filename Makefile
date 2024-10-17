@@ -20,9 +20,13 @@ $(cover_dir):
 tools:
 	go install github.com/mitranim/gow@latest
 
+# We reduce the binary size by removing the debug information
+# and the symbol table. If it is required for some reason,
+# remove the ldflags (-w and -s).
 .PHONY: build/bin
 build/bin: 
 	go build \
+		-ldflags="-w -s" \
 		-tags=release \
 		-o build/bin/ ./cmd/...;
 
