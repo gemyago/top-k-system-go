@@ -22,10 +22,11 @@ tools:
 
 # We reduce the binary size by removing the debug information
 # and the symbol table. If it is required for some reason,
-# remove the ldflags (-w and -s).
+# remove the -w and -s ldflags.
 .PHONY: build/bin
 build/bin: 
 	go build \
+		-trimpath \
 		-ldflags="-w -s" \
 		-tags=release \
 		-o build/bin/ ./cmd/...;
