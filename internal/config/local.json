@@ -2,7 +2,9 @@
   "defaultLogLevel": "DEBUG",
   "kafka": {
     "allowAutoTopicCreation": true,
-    "readerMaxWait": "1s"
+    "readerMaxWait": "1s",
+    "writeTimeout": "2s",
+    "maxWriteAttempts": 2
   },
   "aggregator": {
     "verbose": false
