@@ -1,0 +1,11 @@
+releases:
+- name: graphql-gateway
+  namespace: platform-services
+  chart: service
+  values:
+  - image:
+      ref: {{ readFile "../docker/.build-image" }}
+  - service/deploy-env/{{ .Environment.Name }}.yaml
+
+environments:
+  local: {}
