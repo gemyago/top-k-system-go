@@ -37,11 +37,7 @@ spec:
           image: "{{ .Values.image.ref }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
-            - server
-            - http
-            - "--json-logs"
-            - "-e"
-            - "local-k8s"
+            {{- toYaml .Values.serviceContainer.args | nindent 12 }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}

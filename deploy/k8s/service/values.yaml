@@ -8,6 +8,14 @@ image:
   ref: localhost:6000/service:latest # This must be set by the caller
   pullPolicy: IfNotPresent
 
+serviceContainer:
+  args:
+    - server
+    - http
+    - --json-logs
+    - -e
+    - local-k8s
+
 imagePullSecrets:
   - name: github-registry
 nameOverride: ""
