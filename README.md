@@ -126,6 +126,17 @@ curl --location 'localhost:8080/items/top?limit=100'
 curl --location --request POST 'localhost:8080/items/events/320d87f0-2a9c-4e66-a28d-34ef4cbaa937'
 ```
 
+### Docker & Kubernetes
+
+Prerequisites:
+- local k8s cluster is up and running
+- the cluster has kafka deployed on host `kafka-broker:29092`
+
+Build local docker image:
+```sh
+make docker-local-image
+```
+
 ## Testing
 
 When generating random data for testing, it is useful to have a fixed set of random itemIDs. Please use a command below to generate the list of random itemIDs:
