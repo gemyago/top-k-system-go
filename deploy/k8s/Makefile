@@ -44,9 +44,6 @@ kubectl_version=$(shell cat .kubectl-version)
 kubectl_url="https://dl.k8s.io/release/v$(kubectl_version)/bin/$(os)/$(arch)/kubectl"
 kubectl=$(bin)/kubectl
 
-app_name:=$(shell sed -e 's/.*"name": "\(.*\)".*/\1/' -e "t" -e "d" ../package.json)
-app_version:=$(shell sed -e 's/.*"version": "\(.*\)".*/\1/' -e "t" -e "d" ../package.json)
-
 # Deploying to local by default
 DEPLOY_ENV ?= default
 
@@ -82,7 +79,7 @@ tools: $(helm) $(helmfile) $(kubectl)
 
 .PHONY: $(helmfile_args_file)
 $(helmfile_args_file): 
-	@echo "-e $(DEPLOY_ENV) --state-values-set app.name=$(app_name),app.version=$(app_version)" > $@
+	@echo "-e $(DEPLOY_ENV)" > $@
 #	@echo "--debug" >> $@
 
 diff: $(helmfile) $(helmfile_args_file)
