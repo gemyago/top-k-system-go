@@ -25,6 +25,8 @@ endif
 bin=bin
 tmp=./tmp
 
+appName=$(shell sed -n 's/^module .*\/\([^/]*\)$$/\1/p' ../../go.mod)
+
 # See https://github.com/helm/helm/releases for available versions
 helm_version=$(shell cat .helm-version)
 helm_archive_name=helm-v$(helm_version)-$(os)-$(arch).tar.gz
@@ -79,7 +81,7 @@ tools: $(helm) $(helmfile) $(kubectl)
 
 .PHONY: $(helmfile_args_file)
 $(helmfile_args_file): 
-	@echo "-e $(DEPLOY_ENV)" > $@
+	@echo "-e $(DEPLOY_ENV) --state-values-set app.name=$(appName)" > $@
 #	@echo "--debug" >> $@
 
 diff: $(helmfile) $(helmfile_args_file)

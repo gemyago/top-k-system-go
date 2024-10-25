@@ -37,7 +37,11 @@ spec:
           image: "{{ .Values.image.ref }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
-            - start
+            - server
+            - http
+            - "--json-logs"
+            - "-e"
+            - "local-k8s"
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
