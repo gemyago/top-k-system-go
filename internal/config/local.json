@@ -1,5 +1,6 @@
 {
   "defaultLogLevel": "DEBUG",
+  "jsonLogs": false,
   "kafka": {
     "allowAutoTopicCreation": true,
     "readerMaxWait": "1s",

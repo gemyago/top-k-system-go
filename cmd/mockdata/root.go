@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
-	"math/rand/v2"
 
 	"github.com/gemyago/top-k-system-go/internal/app/aggregation"
 	"github.com/gemyago/top-k-system-go/internal/app/ingestion"
@@ -12,21 +11,19 @@ import (
 	"github.com/gemyago/top-k-system-go/internal/di"
 	"github.com/gemyago/top-k-system-go/internal/diag"
 	"github.com/gemyago/top-k-system-go/internal/services"
+	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"go.uber.org/dig"
 )
 
 func newRootCmd(container *dig.Container) *cobra.Command {
 	logsOutputFile := ""
-	jsonLogs := false
-	env := ""
 
 	cmd := &cobra.Command{
 		Use:          "local-broker",
 		Short:        "Commands to setup and interact with local broker",
 		SilenceUsage: true,
 	}
-	cmd.SilenceUsage = true
 	cmd.PersistentFlags().StringP("log-level", "l", "", "Produce logs with given level. Default is env specific.")
 	cmd.PersistentFlags().StringVar(
 		&logsOutputFile,
@@ -34,27 +31,22 @@ func newRootCmd(container *dig.Container) *cobra.Command {
 		"",
 		"Produce logs to file instead of stdout. Used for tests only.",
 	)
-	cmd.PersistentFlags().BoolVar(
-		&jsonLogs,
+	cmd.PersistentFlags().Bool(
 		"json-logs",
 		false,
 		"Indicates if logs should be in JSON format or text (default)",
 	)
-	cmd.PersistentFlags().StringVarP(
-		&env,
+	cmd.PersistentFlags().StringP(
 		"env",
 		"e",
 		"",
 		"Env that the process is running in.",
 	)
 	cfg := config.New()
+	lo.Must0(cfg.BindPFlags(cmd.PersistentFlags()))
 	cmd.PersistentPreRunE = func(_ *cobra.Command, _ []string) error {
-		err := config.Load(cfg, config.NewLoadOpts().WithEnv(env))
+		err := config.Load(cfg, config.NewLoadOpts().WithEnv(cfg.GetString("env")))
 		if err != nil {
-			return err
-		}
-
-		if err = cfg.BindPFlag("defaultLogLevel", cmd.PersistentFlags().Lookup("log-level")); err != nil {
 			return err
 		}
 
@@ -65,7 +57,7 @@ func newRootCmd(container *dig.Container) *cobra.Command {
 
 		rootLogger := diag.SetupRootLogger(
 			diag.NewRootLoggerOpts().
-				WithJSONLogs(jsonLogs).
+				WithJSONLogs(cfg.GetBool("jsonLogs")).
 				WithLogLevel(logLevel).
 				WithOptionalOutputFile(logsOutputFile),
 		)
@@ -82,11 +74,6 @@ func newRootCmd(container *dig.Container) *cobra.Command {
 
 			di.ProvideAll(container,
 				di.ProvideValue(rootLogger),
-
-				// package internal
-				di.ProvideAs[*ingestion.Commands, ingestionCommands],
-				func(s defaultEventsSender) eventsSender { return &s },
-				di.ProvideValue[randIntN](rand.IntN),
 			),
 		)
 		if err != nil {

@@ -3,6 +3,7 @@ package config
 import (
 	"embed"
 	"fmt"
+	"strings"
 
 	"github.com/spf13/viper"
 )
@@ -44,7 +45,10 @@ func NewLoadOpts() *LoadOpts {
 
 func New() *viper.Viper {
 	v := viper.New()
+	v.SetEnvPrefix("APP")
 	v.SetConfigType("json")
+	v.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
+	v.AutomaticEnv()
 	return v
 }
 
@@ -56,6 +60,10 @@ func Load(cfg *viper.Viper, opts *LoadOpts) error {
 	if err := mergeResourceCfg(cfg, opts.env+".json"); err != nil {
 		return err
 	}
+
+	// Some common aliases to have cli params with the same name as config keys
+	cfg.RegisterAlias("defaultLogLevel", "log-level")
+	cfg.RegisterAlias("jsonLogs", "json-logs")
 
 	return nil
 }
