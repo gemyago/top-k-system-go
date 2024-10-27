@@ -42,17 +42,20 @@ func NewLoadOpts() *LoadOpts {
 	}
 }
 
-func Load(opts *LoadOpts) (*viper.Viper, error) {
-	cfg := viper.New()
-	cfg.SetConfigType("json")
+func New() *viper.Viper {
+	v := viper.New()
+	v.SetConfigType("json")
+	return v
+}
 
+func Load(cfg *viper.Viper, opts *LoadOpts) error {
 	if err := mergeResourceCfg(cfg, opts.defaultConfigFileName); err != nil {
-		return nil, err
+		return err
 	}
 
 	if err := mergeResourceCfg(cfg, opts.env+".json"); err != nil {
-		return nil, err
+		return err
 	}
 
-	return cfg, nil
+	return nil
 }
