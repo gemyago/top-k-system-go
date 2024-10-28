@@ -5,7 +5,9 @@ releases:
   values:
   - image:
       ref: {{ readFile "../../build/docker/.local-out-image" }} #TODO: Figure out how to build for prod
-  - fullnameOverride: "{{ .Values.app.name }}"
+    app:
+      name: "{{ .Values.app.name }}"
+      env: "{{ .Environment.Name }}"
   - service/deploy-env/{{ .Environment.Name }}.yaml
 
 environments:
