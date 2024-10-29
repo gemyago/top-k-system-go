@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log/slog"
 	"os"
 	"path"
 
@@ -12,10 +13,13 @@ import (
 
 type localStorage struct {
 	LocalStorageDeps
+	logger *slog.Logger
 }
 
-func (s *localStorage) Upload(_ context.Context, key string, contents io.Reader) error {
-	file, err := os.Create(path.Join(s.LocalStorageFolder, key))
+func (s *localStorage) Upload(ctx context.Context, key string, contents io.Reader) error {
+	filePath := path.Join(s.LocalStorageFolder, key)
+	s.logger.DebugContext(ctx, "Writing file", slog.String("key", key), slog.String("path", filePath))
+	file, err := os.Create(filePath)
 	if err != nil {
 		return fmt.Errorf("failed to create file %s: %w", key, err)
 	}
@@ -28,8 +32,9 @@ func (s *localStorage) Upload(_ context.Context, key string, contents io.Reader)
 	return nil
 }
 
-func (s *localStorage) Download(_ context.Context, key string, out io.Writer) error {
+func (s *localStorage) Download(ctx context.Context, key string, out io.Writer) error {
 	filePath := path.Join(s.LocalStorageFolder, key)
+	s.logger.DebugContext(ctx, "Reading file", slog.String("key", key), slog.String("path", filePath))
 	file, err := os.Open(filePath)
 	if err != nil {
 		return fmt.Errorf("failed to open file %s: %w", filePath, err)
@@ -53,10 +58,15 @@ func (s *localStorage) Delete(_ context.Context, key string) error {
 type LocalStorageDeps struct {
 	dig.In
 
+	RootLogger *slog.Logger
+
 	// config
 	LocalStorageFolder string `name:"config.blobstorage.localFolder"`
 }
 
 func NewLocalStorage(deps LocalStorageDeps) Storage {
-	return &localStorage{LocalStorageDeps: deps}
+	return &localStorage{
+		LocalStorageDeps: deps,
+		logger:           deps.RootLogger.WithGroup("local-storage"),
+	}
 }

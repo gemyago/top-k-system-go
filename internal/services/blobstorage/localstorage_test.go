@@ -7,6 +7,7 @@ import (
 	"path"
 	"testing"
 
+	"github.com/gemyago/top-k-system-go/internal/diag"
 	"github.com/go-faker/faker/v4"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
@@ -17,6 +18,7 @@ func TestLocalStorage(t *testing.T) {
 	newMockDeps := func(t *testing.T) LocalStorageDeps {
 		return LocalStorageDeps{
 			LocalStorageFolder: t.TempDir(),
+			RootLogger:         diag.RootTestLogger(),
 		}
 	}
 
