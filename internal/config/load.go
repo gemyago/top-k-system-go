@@ -47,7 +47,9 @@ func New() *viper.Viper {
 	v := viper.New()
 	v.SetEnvPrefix("APP")
 	v.SetConfigType("json")
-	v.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
+	v.SetEnvKeyReplacer(
+		strings.NewReplacer("-", "_", ".", "_"),
+	)
 	v.AutomaticEnv()
 	return v
 }

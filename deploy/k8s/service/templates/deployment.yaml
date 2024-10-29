@@ -43,8 +43,8 @@ spec:
               containerPort: {{ .Values.service.port }}
               protocol: TCP
           env:
-            - name: PORT
-              value: "8080"
+            - name: APP_HTTPSERVER_PORT
+              value: "{{ .Values.service.port }}"
             - name: APP_ENV
               value: "{{ .Values.app.env }}"
             {{- with .Values.env }}
