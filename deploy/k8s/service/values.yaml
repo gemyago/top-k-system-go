@@ -21,7 +21,7 @@ imagePullSecrets:
 nameOverride: ""
 
 env:
-  - name: BLOBSTORAGE_LOCALFOLDER
+  - name: APP_BLOBSTORAGE_LOCALFOLDER
     value: /var/lib/blobstorage
 
 serviceAccount:
