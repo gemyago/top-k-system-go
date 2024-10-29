@@ -3,7 +3,5 @@
 ingress:
   enabled: false
 
-env:
-  # Add environment variables here.
-  # - name: ENV_VAR_NAME
-  #   value: "value"
+app:
+  env: local-k8s
