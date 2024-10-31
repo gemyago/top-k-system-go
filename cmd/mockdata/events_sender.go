@@ -24,7 +24,7 @@ type eventsSender interface {
 	) error
 }
 
-type defaultEventsSender struct {
+type defaultEventsSenderDeps struct {
 	// all injectable fields must be exported
 	// to let dig inject them
 
@@ -43,17 +43,21 @@ type defaultEventsSender struct {
 	RandIntN randIntN
 }
 
+type defaultEventsSender struct {
+	deps defaultEventsSenderDeps
+}
+
 func (impl *defaultEventsSender) sendTestEvent(ctx context.Context, itemID string, eventsNumber int) error {
 	evt := &models.ItemEvent{
 		ItemID:     itemID,
-		IngestedAt: impl.Time.Now(),
+		IngestedAt: impl.deps.Time.Now(),
 	}
 	for range eventsNumber {
-		if err := impl.IngestionCommands.IngestItemEvent(ctx, evt); err != nil {
+		if err := impl.deps.IngestionCommands.IngestItemEvent(ctx, evt); err != nil {
 			return fmt.Errorf("failed to ingest item event: %w", err)
 		}
 	}
-	impl.RootLogger.DebugContext(
+	impl.deps.RootLogger.DebugContext(
 		ctx,
 		"Test events sent",
 		slog.Int("number", eventsNumber),
@@ -69,17 +73,17 @@ func (impl *defaultEventsSender) sendTestEvents(
 	eventsMax int,
 ) error {
 	var data bytes.Buffer
-	if err := impl.Storage.Download(ctx, itemIDsFile, &data); err != nil {
+	if err := impl.deps.Storage.Download(ctx, itemIDsFile, &data); err != nil {
 		return fmt.Errorf("failed to download item IDs from file %s: %w", itemIDsFile, err)
 	}
 	itemIDs := strings.Split(strings.Trim(data.String(), "\n"), "\n")
 	for _, itemID := range itemIDs {
-		eventsNumber := impl.RandIntN(eventsMax-eventsMin) + eventsMin
+		eventsNumber := impl.deps.RandIntN(eventsMax-eventsMin) + eventsMin
 		if err := impl.sendTestEvent(ctx, itemID, eventsNumber); err != nil {
 			return fmt.Errorf("failed to send test events for item %s: %w", itemID, err)
 		}
 	}
-	impl.RootLogger.InfoContext(
+	impl.deps.RootLogger.InfoContext(
 		ctx,
 		"Test events sent",
 		slog.Int("itemIDsNumber", len(itemIDs)),
@@ -89,7 +93,11 @@ func (impl *defaultEventsSender) sendTestEvents(
 	return nil
 }
 
-var _ eventsSender = &defaultEventsSender{}
+func newDefaultEventsSender(deps defaultEventsSenderDeps) eventsSender {
+	return &defaultEventsSender{
+		deps: deps,
+	}
+}
 
 type noopEventsSender struct {
 	noop   bool

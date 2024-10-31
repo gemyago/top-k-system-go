@@ -1,5 +1,6 @@
 {
   "defaultLogLevel": "INFO",
+  "jsonLogs": true,
   "gracefulShutdownTimeout": "10s",
   "httpServer": {
     "port": 8080,
@@ -12,7 +13,9 @@
     "address": "localhost:29092",
     "itemEventsTopic": "item-events",
     "allowAutoTopicCreation": false,
-    "readerMaxWait": "10s"
+    "readerMaxWait": "10s",
+    "writeTimeout": "10s",
+    "maxWriteAttempts": 10
   },
   "aggregator": {
     "flushInterval": "60s",

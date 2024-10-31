@@ -7,10 +7,7 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/gemyago/top-k-system-go/internal/api/http/routes"
-	"github.com/gemyago/top-k-system-go/internal/api/http/server"
 	"github.com/gemyago/top-k-system-go/internal/app/aggregation"
-	"github.com/gemyago/top-k-system-go/internal/di"
 	"github.com/gemyago/top-k-system-go/internal/diag"
 	"github.com/gemyago/top-k-system-go/internal/services"
 	"github.com/spf13/cobra"
@@ -87,17 +84,6 @@ func newCreateCheckPointCmd(container *dig.Container) *cobra.Command {
 		false,
 		"Do not start. Just setup deps and exit. Useful for testing if setup is all working.",
 	)
-	cmd.PreRunE = func(_ *cobra.Command, _ []string) error {
-		return errors.Join(
-			// http related dependencies
-			routes.Register(container),
-			di.ProvideAll(
-				container,
-				server.NewHTTPServer,
-				server.NewRootHandler,
-			),
-		)
-	}
 	cmd.RunE = func(_ *cobra.Command, _ []string) error {
 		return container.Invoke(func(params createCheckPointParams) error {
 			params.noop = noop

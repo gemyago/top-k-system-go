@@ -1,0 +1,7 @@
+# Values suitable for local development. Will be merged with the base values (from ../values.yaml).
+
+ingress:
+  enabled: false
+
+app:
+  env: local-k8s

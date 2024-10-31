@@ -1,0 +1,8 @@
+# This dockerfile is used if host has golang installed. In this case
+# the binaries are built on the host and copied to the runtime image.
+# It may generally be faster on CI environments.
+
+# RUNTIME_IMAGE is set in the docker.variables.mk file
+ARG RUNTIME_IMAGE=alpine:3.20.3
+FROM ${RUNTIME_IMAGE}
+COPY /build/bin /usr/local/bin/

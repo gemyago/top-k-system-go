@@ -14,25 +14,49 @@ type ItemEventsKafkaWriter struct {
 	*kafka.Writer
 }
 
+// We may want to remove this once below PR is merged and new version is released:
+// https://github.com/segmentio/kafka-go/pull/1341
+func (w ItemEventsKafkaWriter) Close() error {
+	err := w.Writer.Close()
+	if err != nil {
+		return fmt.Errorf("failed to close kafka writer: %w", err)
+	}
+	errorsCount := w.Writer.Stats().Errors
+	if errorsCount > 0 {
+		return fmt.Errorf("failed to close writer gracefully, %d errors occurred", errorsCount)
+	}
+	return err
+}
+
 type ItemEventsKafkaWriterDeps struct {
 	dig.In
 
 	RootLogger *slog.Logger
 
 	// config
-	KafkaTopic                  string `name:"config.kafka.itemEventsTopic"`
-	KafkaAddress                string `name:"config.kafka.address"`
-	KafkaAllowAutoTopicCreation bool   `name:"config.kafka.allowAutoTopicCreation"`
+	KafkaTopic                  string        `name:"config.kafka.itemEventsTopic"`
+	KafkaAddress                string        `name:"config.kafka.address"`
+	KafkaAllowAutoTopicCreation bool          `name:"config.kafka.allowAutoTopicCreation"`
+	KafkaWriteTimeout           time.Duration `name:"config.kafka.writeTimeout"`
+	KafkaMaxWriteAttempts       int           `name:"config.kafka.maxWriteAttempts"`
 
 	// services
 	*ShutdownHooks
 }
 
 func NewItemEventsKafkaWriter(deps ItemEventsKafkaWriterDeps) ItemEventsKafkaWriter {
+	logger := deps.RootLogger.WithGroup("kafka-writer")
 	writer := &kafka.Writer{
 		Topic:                  deps.KafkaTopic,
 		AllowAutoTopicCreation: deps.KafkaAllowAutoTopicCreation,
 		Addr:                   kafka.TCP(deps.KafkaAddress),
+		ErrorLogger: kafka.LoggerFunc(func(s string, i ...interface{}) { // coverage-ignore
+			// no context here
+			logger.ErrorContext(context.Background(), fmt.Sprintf(s, i...))
+		}),
+
+		MaxAttempts:  deps.KafkaMaxWriteAttempts,
+		WriteTimeout: deps.KafkaWriteTimeout,
 
 		// TODO: This may need some thinking
 		Async: true,

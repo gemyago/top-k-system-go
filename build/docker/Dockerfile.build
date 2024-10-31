@@ -1,0 +1,19 @@
+# This dockerfile is used to build the binary if no golang is installed on the host.
+# It's quite fat, but it's only used for building purposes. Binaries are copied to the runtime image.
+# See Dockerfile.out for the runtime image details.
+
+# BASE_BUILD_IMAGE is set in the docker.variables.mk file
+ARG BASE_BUILD_IMAGE=golang:1.23.1-alpine3.20
+FROM ${BASE_BUILD_IMAGE}
+
+WORKDIR /go/app
+
+RUN apk update && apk add make
+
+RUN mkdir -p /go/app
+COPY go.mod go.sum /go/app/
+COPY internal/tools /go/app/internal/tools
+RUN go mod download
+
+COPY ./ /go/app
+RUN make build/bin

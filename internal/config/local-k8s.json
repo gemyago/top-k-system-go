@@ -1,0 +1,6 @@
+{
+  "kafka": {
+    "allowAutoTopicCreation": true,
+    "address": "kafka-broker:29092"
+  }
+}

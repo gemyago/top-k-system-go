@@ -1,0 +1,13 @@
+releases:
+- name: "{{ .Values.app.name }}" # Set by caller
+  namespace: platform-services
+  chart: service
+  values:
+  - image:
+      ref: {{ readFile "../../build/docker/.local-out-image" }} #TODO: Figure out how to build for prod
+    app:
+      name: "{{ .Values.app.name }}"
+  - service/deploy-env/{{ .Environment.Name }}.yaml
+
+environments:
+  local-k8s: {}

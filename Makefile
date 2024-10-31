@@ -20,10 +20,26 @@ $(cover_dir):
 tools:
 	go install github.com/mitranim/gow@latest
 
-dist/bin: 
+# We reduce the binary size by removing the debug information
+# and the symbol table. If it is required for some reason,
+# remove the -w and -s ldflags.
+.PHONY: build/bin
+build/bin: 
 	go build \
+		-trimpath \
+		-ldflags="-w -s" \
 		-tags=release \
-		-o dist/bin/ ./cmd/...;
+		-o build/bin/ ./cmd/...;
+
+docker-local-image:
+	make -C build/docker/ clean-images
+	make -C build/docker/ .local-out-image
+
+# NOTE: If building image like this, the platform must be match target execution env while building binaries
+# e.g GOOS=linux GOARCH=amd64 make docker-host-local-image
+docker-host-local-image: build/bin
+	make -C build/docker/ clean-images
+	make -C build/docker/ .host-local-image
 
 go_path=$(shell go env GOPATH)
 go-test-coverage=$(go_path)/bin/go-test-coverage

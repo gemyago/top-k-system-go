@@ -126,6 +126,19 @@ curl --location 'localhost:8080/items/top?limit=100'
 curl --location --request POST 'localhost:8080/items/events/320d87f0-2a9c-4e66-a28d-34ef4cbaa937'
 ```
 
+### Docker & Kubernetes
+
+Prerequisites:
+- local k8s cluster is up and running
+- the cluster has kafka deployed on host `kafka-broker:29092`
+
+Build local docker image:
+```sh
+make docker-local-image
+```
+
+See `deploy/k8s/README.md` for more details on how to deploy the service to k8s.
+
 ## Testing
 
 When generating random data for testing, it is useful to have a fixed set of random itemIDs. Please use a command below to generate the list of random itemIDs:
@@ -159,4 +172,13 @@ go run ./cmd/mockdata/ send-test-events -n 10 --item-id 320d87f0-2a9c-4e66-a28d-
 Create checkpoint:
 ```sh
 go run ./cmd/checkpointer/ create-check-point
+```
+
+In order to generate test data inside of the kubernetes cluster, all above commands can be executed as jobs. Examples:
+```sh
+# Generate 10k random itemIDs
+./scripts/invoke-k8s-job.sh -c mockdata -a generate-item-ids -a "-n" -a "10000" -a "-o" -a "10k-items.txt"
+
+# Send from 5 to 15 test events for each item in 10k-items.txt
+./scripts/invoke-k8s-job.sh -c mockdata -a send-test-events -a "--item-ids-file" -a "10k-items.txt" -a "-n" -a "5"
 ```

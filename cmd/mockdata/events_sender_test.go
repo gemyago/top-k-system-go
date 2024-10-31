@@ -21,8 +21,8 @@ import (
 )
 
 func Test_eventsSender(t *testing.T) {
-	newDefaultSender := func(t *testing.T) *defaultEventsSender {
-		return &defaultEventsSender{
+	makeMockDeps := func(t *testing.T) defaultEventsSenderDeps {
+		return defaultEventsSenderDeps{
 			RootLogger:        diag.RootTestLogger(),
 			IngestionCommands: ingestion.NewMockCommands(t),
 			Storage:           blobstorage.NewMockStorage(t),
@@ -36,14 +36,15 @@ func Test_eventsSender(t *testing.T) {
 	t.Run("default", func(t *testing.T) {
 		t.Run("sendTestEvent", func(t *testing.T) {
 			t.Run("should send a given number of test events", func(t *testing.T) {
-				sender := newDefaultSender(t)
+				deps := makeMockDeps(t)
+				sender := newDefaultEventsSender(deps)
 				ctx := context.Background()
 				wantTestEvents := rand.IntN(5) + 5
 				wantItemID := faker.UUIDHyphenated()
 
-				mockTime, _ := sender.Time.(*services.MockNow)
+				mockTime, _ := deps.Time.(*services.MockNow)
 
-				commands, _ := sender.IngestionCommands.(*ingestion.MockCommands)
+				commands, _ := deps.IngestionCommands.(*ingestion.MockCommands)
 				wantEvt := &models.ItemEvent{
 					ItemID:     wantItemID,
 					IngestedAt: mockTime.Now(),
@@ -56,15 +57,16 @@ func Test_eventsSender(t *testing.T) {
 			})
 
 			t.Run("should return error if failed to ingest item event", func(t *testing.T) {
-				sender := newDefaultSender(t)
+				deps := makeMockDeps(t)
+				sender := newDefaultEventsSender(deps)
 				ctx := context.Background()
 				wantTestEvents := rand.IntN(5) + 5
 				wantItemID := faker.UUIDHyphenated()
 				wantErr := errors.New(faker.Sentence())
 
-				mockTime, _ := sender.Time.(*services.MockNow)
+				mockTime, _ := deps.Time.(*services.MockNow)
 
-				commands, _ := sender.IngestionCommands.(*ingestion.MockCommands)
+				commands, _ := deps.IngestionCommands.(*ingestion.MockCommands)
 				wantEvt := &models.ItemEvent{
 					ItemID:     wantItemID,
 					IngestedAt: mockTime.Now(),
@@ -81,7 +83,8 @@ func Test_eventsSender(t *testing.T) {
 
 		t.Run("sendTestEvents", func(t *testing.T) {
 			t.Run("should read events from file and send test events from each item", func(t *testing.T) {
-				sender := newDefaultSender(t)
+				deps := makeMockDeps(t)
+				sender := newDefaultEventsSender(deps)
 				ctx := context.Background()
 				wantTestEventsMin := rand.IntN(5)
 				wantTestEventsMax := rand.IntN(5) + wantTestEventsMin
@@ -89,14 +92,14 @@ func Test_eventsSender(t *testing.T) {
 				itemIDs := []string{faker.UUIDHyphenated(), faker.UUIDHyphenated(), faker.UUIDHyphenated()}
 				wantRandTimes := rand.IntN(5) + 5
 
-				sender.RandIntN = func(n int) int {
+				deps.RandIntN = func(n int) int {
 					assert.Equal(t, wantTestEventsMax-wantTestEventsMin, n)
 					return wantRandTimes
 				}
 
-				mockTime, _ := sender.Time.(*services.MockNow)
+				mockTime, _ := deps.Time.(*services.MockNow)
 
-				storage, _ := sender.Storage.(*blobstorage.MockStorage)
+				storage, _ := deps.Storage.(*blobstorage.MockStorage)
 				storage.EXPECT().Download(ctx, wantItemsFile, mock.Anything).RunAndReturn(
 					func(_ context.Context, _ string, w io.Writer) error {
 						_, err := io.Copy(w, bytes.NewBufferString(strings.Join(itemIDs, "\n")+"\n"))
@@ -104,7 +107,7 @@ func Test_eventsSender(t *testing.T) {
 					},
 				)
 
-				commands, _ := sender.IngestionCommands.(*ingestion.MockCommands)
+				commands, _ := deps.IngestionCommands.(*ingestion.MockCommands)
 				for _, itemID := range itemIDs {
 					wantEvt := &models.ItemEvent{ItemID: itemID, IngestedAt: mockTime.Now()}
 					for range wantRandTimes {
@@ -116,14 +119,15 @@ func Test_eventsSender(t *testing.T) {
 			})
 
 			t.Run("should return error if failed to download item IDs", func(t *testing.T) {
-				sender := newDefaultSender(t)
+				deps := makeMockDeps(t)
+				sender := newDefaultEventsSender(deps)
 				ctx := context.Background()
 				wantTestEventsMin := rand.IntN(5)
 				wantTestEventsMax := rand.IntN(5) + wantTestEventsMin
 				wantItemsFile := faker.DomainName()
 				wantErr := errors.New(faker.Sentence())
 
-				storage, _ := sender.Storage.(*blobstorage.MockStorage)
+				storage, _ := deps.Storage.(*blobstorage.MockStorage)
 				storage.EXPECT().Download(ctx, wantItemsFile, mock.Anything).Return(wantErr)
 
 				err := sender.sendTestEvents(ctx, wantItemsFile, wantTestEventsMin, wantTestEventsMax)
