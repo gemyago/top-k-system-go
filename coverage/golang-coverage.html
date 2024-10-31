@@ -55,13 +55,13 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">github.com/gemyago/top-k-system-go/cmd/checkpointer/check_point.go (91.2%)</option>
+				<option value="file0">github.com/gemyago/top-k-system-go/cmd/checkpointer/check_point.go (90.6%)</option>
 				
 				<option value="file1">github.com/gemyago/top-k-system-go/cmd/checkpointer/main.go (57.1%)</option>
 				
-				<option value="file2">github.com/gemyago/top-k-system-go/cmd/checkpointer/root.go (91.3%)</option>
+				<option value="file2">github.com/gemyago/top-k-system-go/cmd/checkpointer/root.go (95.2%)</option>
 				
-				<option value="file3">github.com/gemyago/top-k-system-go/cmd/mockdata/events_sender.go (96.0%)</option>
+				<option value="file3">github.com/gemyago/top-k-system-go/cmd/mockdata/events_sender.go (96.2%)</option>
 				
 				<option value="file4">github.com/gemyago/top-k-system-go/cmd/mockdata/generate_item_ids.go (86.1%)</option>
 				
@@ -69,15 +69,15 @@
 				
 				<option value="file6">github.com/gemyago/top-k-system-go/cmd/mockdata/mock_events_sender.go (63.2%)</option>
 				
-				<option value="file7">github.com/gemyago/top-k-system-go/cmd/mockdata/root.go (92.0%)</option>
+				<option value="file7">github.com/gemyago/top-k-system-go/cmd/mockdata/root.go (95.2%)</option>
 				
-				<option value="file8">github.com/gemyago/top-k-system-go/cmd/mockdata/send_test_event.go (90.6%)</option>
+				<option value="file8">github.com/gemyago/top-k-system-go/cmd/mockdata/send_test_event.go (90.9%)</option>
 				
 				<option value="file9">github.com/gemyago/top-k-system-go/cmd/server/http_server.go (90.2%)</option>
 				
 				<option value="file10">github.com/gemyago/top-k-system-go/cmd/server/main.go (57.1%)</option>
 				
-				<option value="file11">github.com/gemyago/top-k-system-go/cmd/server/root.go (91.3%)</option>
+				<option value="file11">github.com/gemyago/top-k-system-go/cmd/server/root.go (95.2%)</option>
 				
 				<option value="file12">github.com/gemyago/top-k-system-go/internal/api/http/middleware/chain.go (100.0%)</option>
 				
@@ -143,7 +143,7 @@
 				
 				<option value="file43">github.com/gemyago/top-k-system-go/internal/app/models/testing.go (100.0%)</option>
 				
-				<option value="file44">github.com/gemyago/top-k-system-go/internal/config/load.go (94.4%)</option>
+				<option value="file44">github.com/gemyago/top-k-system-go/internal/config/load.go (95.8%)</option>
 				
 				<option value="file45">github.com/gemyago/top-k-system-go/internal/config/provide.go (100.0%)</option>
 				
@@ -157,11 +157,11 @@
 				
 				<option value="file50">github.com/gemyago/top-k-system-go/internal/diag/testing.go (75.0%)</option>
 				
-				<option value="file51">github.com/gemyago/top-k-system-go/internal/services/blobstorage/localstorage.go (90.5%)</option>
+				<option value="file51">github.com/gemyago/top-k-system-go/internal/services/blobstorage/localstorage.go (91.7%)</option>
 				
 				<option value="file52">github.com/gemyago/top-k-system-go/internal/services/blobstorage/mock_storage.go (55.6%)</option>
 				
-				<option value="file53">github.com/gemyago/top-k-system-go/internal/services/kafka.go (100.0%)</option>
+				<option value="file53">github.com/gemyago/top-k-system-go/internal/services/kafka.go (87.0%)</option>
 				
 				<option value="file54">github.com/gemyago/top-k-system-go/internal/services/mock_kafka_conn.go (63.6%)</option>
 				
@@ -209,10 +209,7 @@ import (
         "os/signal"
         "time"
 
-        "github.com/gemyago/top-k-system-go/internal/api/http/routes"
-        "github.com/gemyago/top-k-system-go/internal/api/http/server"
         "github.com/gemyago/top-k-system-go/internal/app/aggregation"
-        "github.com/gemyago/top-k-system-go/internal/di"
         "github.com/gemyago/top-k-system-go/internal/diag"
         "github.com/gemyago/top-k-system-go/internal/services"
         "github.com/spf13/cobra"
@@ -289,18 +286,7 @@ func newCreateCheckPointCmd(container *dig.Container) *cobra.Command <span class
                 false,
                 "Do not start. Just setup deps and exit. Useful for testing if setup is all working.",
         )
-        cmd.PreRunE = func(_ *cobra.Command, _ []string) error </span><span class="cov1" title="1">{
-                return errors.Join(
-                        // http related dependencies
-                        routes.Register(container),
-                        di.ProvideAll(
-                                container,
-                                server.NewHTTPServer,
-                                server.NewRootHandler,
-                        ),
-                )
-        }</span>
-        <span class="cov10" title="3">cmd.RunE = func(_ *cobra.Command, _ []string) error </span><span class="cov1" title="1">{
+        cmd.RunE = func(_ *cobra.Command, _ []string) error </span><span class="cov1" title="1">{
                 return container.Invoke(func(params createCheckPointParams) error </span><span class="cov1" title="1">{
                         params.noop = noop
                         return createCheckPoint(params)
@@ -350,14 +336,13 @@ import (
         "github.com/gemyago/top-k-system-go/internal/di"
         "github.com/gemyago/top-k-system-go/internal/diag"
         "github.com/gemyago/top-k-system-go/internal/services"
+        "github.com/samber/lo"
         "github.com/spf13/cobra"
         "go.uber.org/dig"
 )
 
 func newRootCmd(container *dig.Container) *cobra.Command <span class="cov10" title="3">{
         logsOutputFile := ""
-        jsonLogs := false
-        env := ""
 
         cmd := &amp;cobra.Command{
                 Use:          "checkpointer",
@@ -371,26 +356,22 @@ func newRootCmd(container *dig.Container) *cobra.Command <span class="cov10" tit
                 "",
                 "Produce logs to file instead of stdout. Used for tests only.",
         )
-        cmd.PersistentFlags().BoolVar(
-                &amp;jsonLogs,
+        cmd.PersistentFlags().Bool(
                 "json-logs",
                 false,
                 "Indicates if logs should be in JSON format or text (default)",
         )
-        cmd.PersistentFlags().StringVarP(
-                &amp;env,
+        cmd.PersistentFlags().StringP(
                 "env",
                 "e",
                 "",
                 "Env that the process is running in.",
         )
+        cfg := config.New()
+        lo.Must0(cfg.BindPFlags(cmd.PersistentFlags()))
         cmd.PersistentPreRunE = func(_ *cobra.Command, _ []string) error </span><span class="cov10" title="3">{
-                cfg, err := config.Load(config.NewLoadOpts().WithEnv(env))
+                err := config.Load(cfg, config.NewLoadOpts().WithEnv(cfg.GetString("env")))
                 if err != nil </span><span class="cov1" title="1">{
-                        return err
-                }</span>
-
-                <span class="cov6" title="2">if err = cfg.BindPFlag("defaultLogLevel", cmd.PersistentFlags().Lookup("log-level")); err != nil </span><span class="cov0" title="0">{
                         return err
                 }</span>
 
@@ -401,7 +382,7 @@ func newRootCmd(container *dig.Container) *cobra.Command <span class="cov10" tit
 
                 <span class="cov1" title="1">rootLogger := diag.SetupRootLogger(
                         diag.NewRootLoggerOpts().
-                                WithJSONLogs(jsonLogs).
+                                WithJSONLogs(cfg.GetBool("jsonLogs")).
                                 WithLogLevel(logLevel).
                                 WithOptionalOutputFile(logsOutputFile),
                 )
@@ -456,7 +437,7 @@ type eventsSender interface {
         ) error
 }
 
-type defaultEventsSender struct {
+type defaultEventsSenderDeps struct {
         // all injectable fields must be exported
         // to let dig inject them
 
@@ -475,17 +456,21 @@ type defaultEventsSender struct {
         RandIntN randIntN
 }
 
-func (impl *defaultEventsSender) sendTestEvent(ctx context.Context, itemID string, eventsNumber int) error <span class="cov5" title="5">{
+type defaultEventsSender struct {
+        deps defaultEventsSenderDeps
+}
+
+func (impl *defaultEventsSender) sendTestEvent(ctx context.Context, itemID string, eventsNumber int) error <span class="cov6" title="5">{
         evt := &amp;models.ItemEvent{
                 ItemID:     itemID,
-                IngestedAt: impl.Time.Now(),
+                IngestedAt: impl.deps.Time.Now(),
         }
-        for range eventsNumber </span><span class="cov10" title="25">{
-                if err := impl.IngestionCommands.IngestItemEvent(ctx, evt); err != nil </span><span class="cov1" title="1">{
+        for range eventsNumber </span><span class="cov10" title="13">{
+                if err := impl.deps.IngestionCommands.IngestItemEvent(ctx, evt); err != nil </span><span class="cov1" title="1">{
                         return fmt.Errorf("failed to ingest item event: %w", err)
                 }</span>
         }
-        <span class="cov4" title="4">impl.RootLogger.DebugContext(
+        <span class="cov5" title="4">impl.deps.RootLogger.DebugContext(
                 ctx,
                 "Test events sent",
                 slog.Int("number", eventsNumber),
@@ -499,19 +484,19 @@ func (impl *defaultEventsSender) sendTestEvents(
         itemIDsFile string,
         eventsMin int,
         eventsMax int,
-) error <span class="cov2" title="2">{
+) error <span class="cov3" title="2">{
         var data bytes.Buffer
-        if err := impl.Storage.Download(ctx, itemIDsFile, &amp;data); err != nil </span><span class="cov1" title="1">{
+        if err := impl.deps.Storage.Download(ctx, itemIDsFile, &amp;data); err != nil </span><span class="cov1" title="1">{
                 return fmt.Errorf("failed to download item IDs from file %s: %w", itemIDsFile, err)
         }</span>
         <span class="cov1" title="1">itemIDs := strings.Split(strings.Trim(data.String(), "\n"), "\n")
         for _, itemID := range itemIDs </span><span class="cov4" title="3">{
-                eventsNumber := impl.RandIntN(eventsMax-eventsMin) + eventsMin
+                eventsNumber := impl.deps.RandIntN(eventsMax-eventsMin) + eventsMin
                 if err := impl.sendTestEvent(ctx, itemID, eventsNumber); err != nil </span><span class="cov0" title="0">{
                         return fmt.Errorf("failed to send test events for item %s: %w", itemID, err)
                 }</span>
         }
-        <span class="cov1" title="1">impl.RootLogger.InfoContext(
+        <span class="cov1" title="1">impl.deps.RootLogger.InfoContext(
                 ctx,
                 "Test events sent",
                 slog.Int("itemIDsNumber", len(itemIDs)),
@@ -521,7 +506,11 @@ func (impl *defaultEventsSender) sendTestEvents(
         return nil</span>
 }
 
-var _ eventsSender = &amp;defaultEventsSender{}
+func newDefaultEventsSender(deps defaultEventsSenderDeps) eventsSender <span class="cov7" title="6">{
+        return &amp;defaultEventsSender{
+                deps: deps,
+        }
+}</span>
 
 type noopEventsSender struct {
         noop   bool
@@ -530,7 +519,7 @@ type noopEventsSender struct {
 }
 
 func (s *noopEventsSender) sendTestEvent(ctx context.Context, itemID string, eventsNumber int) error <span class="cov4" title="3">{
-        if s.noop </span><span class="cov2" title="2">{
+        if s.noop </span><span class="cov3" title="2">{
                 s.logger.InfoContext(ctx, "NOOP: sending test event",
                         slog.String("itemID", itemID),
                         slog.Int("eventsNumber", eventsNumber),
@@ -546,7 +535,7 @@ func (s *noopEventsSender) sendTestEvents(
         eventsMin int,
         eventsMax int,
 ) error <span class="cov4" title="3">{
-        if s.noop </span><span class="cov2" title="2">{
+        if s.noop </span><span class="cov3" title="2">{
                 s.logger.InfoContext(ctx, "NOOP: sending test events",
                         slog.String("itemIDsFile", itemIDsFile),
                         slog.Int("eventsMin", eventsMin),
@@ -557,7 +546,7 @@ func (s *noopEventsSender) sendTestEvents(
         <span class="cov1" title="1">return s.target.sendTestEvents(ctx, itemIDsFile, eventsMin, eventsMax)</span>
 }
 
-func newNoopEventsSender(rootLogger *slog.Logger, target eventsSender, noop bool) eventsSender <span class="cov2" title="2">{
+func newNoopEventsSender(rootLogger *slog.Logger, target eventsSender, noop bool) eventsSender <span class="cov3" title="2">{
         return &amp;noopEventsSender{
                 target: target,
                 noop:   noop,
@@ -853,7 +842,6 @@ import (
         "errors"
         "fmt"
         "log/slog"
-        "math/rand/v2"
 
         "github.com/gemyago/top-k-system-go/internal/app/aggregation"
         "github.com/gemyago/top-k-system-go/internal/app/ingestion"
@@ -861,21 +849,19 @@ import (
         "github.com/gemyago/top-k-system-go/internal/di"
         "github.com/gemyago/top-k-system-go/internal/diag"
         "github.com/gemyago/top-k-system-go/internal/services"
+        "github.com/samber/lo"
         "github.com/spf13/cobra"
         "go.uber.org/dig"
 )
 
 func newRootCmd(container *dig.Container) *cobra.Command <span class="cov10" title="5">{
         logsOutputFile := ""
-        jsonLogs := false
-        env := ""
 
         cmd := &amp;cobra.Command{
                 Use:          "local-broker",
                 Short:        "Commands to setup and interact with local broker",
                 SilenceUsage: true,
         }
-        cmd.SilenceUsage = true
         cmd.PersistentFlags().StringP("log-level", "l", "", "Produce logs with given level. Default is env specific.")
         cmd.PersistentFlags().StringVar(
                 &amp;logsOutputFile,
@@ -883,26 +869,22 @@ func newRootCmd(container *dig.Container) *cobra.Command <span class="cov10" tit
                 "",
                 "Produce logs to file instead of stdout. Used for tests only.",
         )
-        cmd.PersistentFlags().BoolVar(
-                &amp;jsonLogs,
+        cmd.PersistentFlags().Bool(
                 "json-logs",
                 false,
                 "Indicates if logs should be in JSON format or text (default)",
         )
-        cmd.PersistentFlags().StringVarP(
-                &amp;env,
+        cmd.PersistentFlags().StringP(
                 "env",
                 "e",
                 "",
                 "Env that the process is running in.",
         )
+        cfg := config.New()
+        lo.Must0(cfg.BindPFlags(cmd.PersistentFlags()))
         cmd.PersistentPreRunE = func(_ *cobra.Command, _ []string) error </span><span class="cov10" title="5">{
-                cfg, err := config.Load(config.NewLoadOpts().WithEnv(env))
+                err := config.Load(cfg, config.NewLoadOpts().WithEnv(cfg.GetString("env")))
                 if err != nil </span><span class="cov1" title="1">{
-                        return err
-                }</span>
-
-                <span class="cov8" title="4">if err = cfg.BindPFlag("defaultLogLevel", cmd.PersistentFlags().Lookup("log-level")); err != nil </span><span class="cov0" title="0">{
                         return err
                 }</span>
 
@@ -913,7 +895,7 @@ func newRootCmd(container *dig.Container) *cobra.Command <span class="cov10" tit
 
                 <span class="cov7" title="3">rootLogger := diag.SetupRootLogger(
                         diag.NewRootLoggerOpts().
-                                WithJSONLogs(jsonLogs).
+                                WithJSONLogs(cfg.GetBool("jsonLogs")).
                                 WithLogLevel(logLevel).
                                 WithOptionalOutputFile(logsOutputFile),
                 )
@@ -930,14 +912,9 @@ func newRootCmd(container *dig.Container) *cobra.Command <span class="cov10" tit
 
                         di.ProvideAll(container,
                                 di.ProvideValue(rootLogger),
-
-                                // package internal
-                                di.ProvideAs[*ingestion.Commands, ingestionCommands],
-                                func(s defaultEventsSender) eventsSender </span><span class="cov4" title="2">{ return &amp;s }</span>,
-                                di.ProvideValue[randIntN](rand.IntN),
                         ),
                 )
-                <span class="cov7" title="3">if err != nil </span><span class="cov0" title="0">{
+                if err != nil </span><span class="cov0" title="0">{
                         return fmt.Errorf("failed to inject dependencies: %w", err)
                 }</span>
 
@@ -954,8 +931,11 @@ import (
         "errors"
         "fmt"
         "log/slog"
+        "math/rand/v2"
 
+        "github.com/gemyago/top-k-system-go/internal/app/ingestion"
         "github.com/gemyago/top-k-system-go/internal/app/models"
+        "github.com/gemyago/top-k-system-go/internal/di"
         "github.com/gemyago/top-k-system-go/internal/services"
         "github.com/gofrs/uuid/v5"
         "github.com/samber/lo"
@@ -1006,6 +986,13 @@ func newSendTestEventCmd(container *dig.Container) *cobra.Command <span class="c
                 Use:   "send-test-events",
                 Short: "Send test item events",
                 RunE: func(cmd *cobra.Command, _ []string) error </span><span class="cov4" title="2">{
+                        lo.Must0(di.ProvideAll(
+                                container,
+                                newDefaultEventsSender,
+                                di.ProvideAs[*ingestion.Commands, ingestionCommands],
+                                di.ProvideValue(randIntN(rand.IntN)),
+                        ))
+
                         lo.Must0(container.Decorate(func(rootLogger *slog.Logger, sender eventsSender) eventsSender </span><span class="cov4" title="2">{
                                 return newNoopEventsSender(rootLogger, sender, noop)
                         }</span>))
@@ -1219,14 +1206,13 @@ import (
         "github.com/gemyago/top-k-system-go/internal/di"
         "github.com/gemyago/top-k-system-go/internal/diag"
         "github.com/gemyago/top-k-system-go/internal/services"
+        "github.com/samber/lo"
         "github.com/spf13/cobra"
         "go.uber.org/dig"
 )
 
 func newRootCmd(container *dig.Container) *cobra.Command <span class="cov10" title="3">{
         logsOutputFile := ""
-        jsonLogs := false
-        env := ""
 
         cmd := &amp;cobra.Command{
                 Use:          "server",
@@ -1240,26 +1226,22 @@ func newRootCmd(container *dig.Container) *cobra.Command <span class="cov10" tit
                 "",
                 "Produce logs to file instead of stdout. Used for tests only.",
         )
-        cmd.PersistentFlags().BoolVar(
-                &amp;jsonLogs,
+        cmd.PersistentFlags().Bool(
                 "json-logs",
                 false,
                 "Indicates if logs should be in JSON format or text (default)",
         )
-        cmd.PersistentFlags().StringVarP(
-                &amp;env,
+        cmd.PersistentFlags().StringP(
                 "env",
                 "e",
                 "",
                 "Env that the process is running in.",
         )
+        cfg := config.New()
+        lo.Must0(cfg.BindPFlags(cmd.PersistentFlags()))
         cmd.PersistentPreRunE = func(_ *cobra.Command, _ []string) error </span><span class="cov10" title="3">{
-                cfg, err := config.Load(config.NewLoadOpts().WithEnv(env))
+                err := config.Load(cfg, config.NewLoadOpts().WithEnv(cfg.GetString("env")))
                 if err != nil </span><span class="cov1" title="1">{
-                        return err
-                }</span>
-
-                <span class="cov6" title="2">if err = cfg.BindPFlag("defaultLogLevel", cmd.PersistentFlags().Lookup("log-level")); err != nil </span><span class="cov0" title="0">{
                         return err
                 }</span>
 
@@ -1270,7 +1252,7 @@ func newRootCmd(container *dig.Container) *cobra.Command <span class="cov10" tit
 
                 <span class="cov1" title="1">rootLogger := diag.SetupRootLogger(
                         diag.NewRootLoggerOpts().
-                                WithJSONLogs(jsonLogs).
+                                WithJSONLogs(cfg.GetBool("jsonLogs")).
                                 WithLogLevel(logLevel).
                                 WithOptionalOutputFile(logsOutputFile),
                 )
@@ -1539,7 +1521,7 @@ func WriteData(req *http.Request, log *slog.Logger, writer io.Writer, data []byt
         }</span>
 }
 
-func Register(container *dig.Container) error <span class="cov6" title="2">{
+func Register(container *dig.Container) error <span class="cov1" title="1">{
         return di.ProvideAll(container,
                 di.ProvideAs[*ingestion.Commands, ingestionCommands],
                 di.ProvideAs[*aggregation.Queries, aggregationQueries],
@@ -3962,11 +3944,11 @@ func newTopKBTreeItems(maxSize int) *topKBTreeItems <span class="cov6" title="33
         return &amp;topKBTreeItems{
                 maxSize:   maxSize,
                 itemsByID: make(map[string]*topKItem),
-                tree: btree.NewG(topKItemsTreeDegree, func(a, b *topKItem) bool </span><span class="cov10" title="439">{
+                tree: btree.NewG(topKItemsTreeDegree, func(a, b *topKItem) bool </span><span class="cov10" title="437">{
                         if a.Count == b.Count </span><span class="cov6" title="32">{
                                 return a.ItemID &lt; b.ItemID
                         }</span>
-                        <span class="cov9" title="407">return a.Count &lt; b.Count</span>
+                        <span class="cov9" title="405">return a.Count &lt; b.Count</span>
                 }),
         }
 }
@@ -4187,26 +4169,26 @@ type MockCommands_Expecter struct {
         mock *mock.Mock
 }
 
-func (_m *MockCommands) EXPECT() *MockCommands_Expecter <span class="cov10" title="32">{
+func (_m *MockCommands) EXPECT() *MockCommands_Expecter <span class="cov10" title="39">{
         return &amp;MockCommands_Expecter{mock: &amp;_m.Mock}
 }</span>
 
 // IngestItemEvent provides a mock function with given fields: ctx, evt
-func (_m *MockCommands) IngestItemEvent(ctx context.Context, evt *models.ItemEvent) error <span class="cov9" title="27">{
+func (_m *MockCommands) IngestItemEvent(ctx context.Context, evt *models.ItemEvent) error <span class="cov7" title="15">{
         ret := _m.Called(ctx, evt)
 
         if len(ret) == 0 </span><span class="cov0" title="0">{
                 panic("no return value specified for IngestItemEvent")</span>
         }
 
-        <span class="cov9" title="27">var r0 error
+        <span class="cov7" title="15">var r0 error
         if rf, ok := ret.Get(0).(func(context.Context, *models.ItemEvent) error); ok </span><span class="cov0" title="0">{
                 r0 = rf(ctx, evt)
-        }</span> else<span class="cov9" title="27"> {
+        }</span> else<span class="cov7" title="15"> {
                 r0 = ret.Error(0)
         }</span>
 
-        <span class="cov9" title="27">return r0</span>
+        <span class="cov7" title="15">return r0</span>
 }
 
 // MockCommands_IngestItemEvent_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'IngestItemEvent'
@@ -4217,7 +4199,7 @@ type MockCommands_IngestItemEvent_Call struct {
 // IngestItemEvent is a helper method to define mock.On call
 //   - ctx context.Context
 //   - evt *models.ItemEvent
-func (_e *MockCommands_Expecter) IngestItemEvent(ctx interface{}, evt interface{}) *MockCommands_IngestItemEvent_Call <span class="cov10" title="32">{
+func (_e *MockCommands_Expecter) IngestItemEvent(ctx interface{}, evt interface{}) *MockCommands_IngestItemEvent_Call <span class="cov10" title="39">{
         return &amp;MockCommands_IngestItemEvent_Call{Call: _e.mock.On("IngestItemEvent", ctx, evt)}
 }</span>
 
@@ -4228,7 +4210,7 @@ func (_c *MockCommands_IngestItemEvent_Call) Run(run func(ctx context.Context, e
         <span class="cov0" title="0">return _c</span>
 }
 
-func (_c *MockCommands_IngestItemEvent_Call) Return(_a0 error) *MockCommands_IngestItemEvent_Call <span class="cov10" title="32">{
+func (_c *MockCommands_IngestItemEvent_Call) Return(_a0 error) *MockCommands_IngestItemEvent_Call <span class="cov10" title="39">{
         _c.Call.Return(_a0)
         return _c
 }</span>
@@ -4293,6 +4275,7 @@ func MakeRandomItemEvent() ItemEvent <span class="cov10" title="20">{
 import (
         "embed"
         "fmt"
+        "strings"
 
         "github.com/spf13/viper"
 )
@@ -4332,19 +4315,31 @@ func NewLoadOpts() *LoadOpts <span class="cov8" title="15">{
         }
 }</span>
 
-func Load(opts *LoadOpts) (*viper.Viper, error) <span class="cov8" title="15">{
-        cfg := viper.New()
-        cfg.SetConfigType("json")
+func New() *viper.Viper <span class="cov8" title="15">{
+        v := viper.New()
+        v.SetEnvPrefix("APP")
+        v.SetConfigType("json")
+        v.SetEnvKeyReplacer(
+                strings.NewReplacer("-", "_", ".", "_"),
+        )
+        v.AutomaticEnv()
+        return v
+}</span>
 
+func Load(cfg *viper.Viper, opts *LoadOpts) error <span class="cov8" title="15">{
         if err := mergeResourceCfg(cfg, opts.defaultConfigFileName); err != nil </span><span class="cov1" title="1">{
-                return nil, err
+                return err
         }</span>
 
         <span class="cov8" title="14">if err := mergeResourceCfg(cfg, opts.env+".json"); err != nil </span><span class="cov4" title="4">{
-                return nil, err
+                return err
         }</span>
 
-        <span class="cov7" title="10">return cfg, nil</span>
+        // Some common aliases to have cli params with the same name as config keys
+        <span class="cov7" title="10">cfg.RegisterAlias("defaultLogLevel", "log-level")
+        cfg.RegisterAlias("jsonLogs", "json-logs")
+
+        return nil</span>
 }
 </pre>
 		
@@ -4364,14 +4359,14 @@ type configValueProvider struct {
         diPath     string
 }
 
-func provideConfigValue(cfg *viper.Viper, path string) configValueProvider <span class="cov10" title="75">{
+func provideConfigValue(cfg *viper.Viper, path string) configValueProvider <span class="cov10" title="85">{
         if !cfg.IsSet(path) </span><span class="cov1" title="1">{
                 panic(fmt.Errorf("config key not found: %s", path))</span>
         }
-        <span class="cov9" title="74">return configValueProvider{cfg, path, "config." + path}</span>
+        <span class="cov9" title="84">return configValueProvider{cfg, path, "config." + path}</span>
 }
 
-func (p configValueProvider) asInt() di.ConstructorWithOpts <span class="cov4" title="6">{
+func (p configValueProvider) asInt() di.ConstructorWithOpts <span class="cov5" title="11">{
         return di.ProvideValue(p.cfg.GetInt(p.configPath), dig.Name(p.diPath))
 }</span>
 
@@ -4387,7 +4382,7 @@ func (p configValueProvider) asBool() di.ConstructorWithOpts <span class="cov5" 
         return di.ProvideValue(p.cfg.GetBool(p.configPath), dig.Name(p.diPath))
 }</span>
 
-func (p configValueProvider) asDuration() di.ConstructorWithOpts <span class="cov8" title="36">{
+func (p configValueProvider) asDuration() di.ConstructorWithOpts <span class="cov8" title="41">{
         return di.ProvideValue(p.cfg.GetDuration(p.configPath), dig.Name(p.diPath))
 }</span>
 
@@ -4407,6 +4402,8 @@ func Provide(container *dig.Container, cfg *viper.Viper) error <span class="cov4
                 provideConfigValue(cfg, "kafka.itemEventsTopic").asString(),
                 provideConfigValue(cfg, "kafka.allowAutoTopicCreation").asBool(),
                 provideConfigValue(cfg, "kafka.readerMaxWait").asDuration(),
+                provideConfigValue(cfg, "kafka.writeTimeout").asDuration(),
+                provideConfigValue(cfg, "kafka.maxWriteAttempts").asInt(),
 
                 // aggregator
                 provideConfigValue(cfg, "aggregator.flushInterval").asDuration(),
@@ -4436,13 +4433,13 @@ type ConstructorWithOpts struct {
 }
 
 func ProvideAll(container *dig.Container, providers ...interface{}) error <span class="cov7" title="39">{
-        for i, provider := range providers </span><span class="cov10" title="211">{
+        for i, provider := range providers </span><span class="cov10" title="212">{
                 switch p := provider.(type) </span>{
-                case ConstructorWithOpts:<span class="cov8" title="112">
+                case ConstructorWithOpts:<span class="cov9" title="121">
                         if err := container.Provide(p.Constructor, p.Options...); err != nil </span><span class="cov1" title="1">{
                                 return fmt.Errorf("failed to provide %d-th dependency: %w", i, err)
                         }</span>
-                default:<span class="cov8" title="99">
+                default:<span class="cov8" title="91">
                         if err := container.Provide(provider); err != nil </span><span class="cov1" title="1">{
                                 return fmt.Errorf("failed to provide %d-th dependency: %w", i, err)
                         }</span>
@@ -4452,9 +4449,9 @@ func ProvideAll(container *dig.Container, providers ...interface{}) error <span 
 }
 
 // ProvideValue will create a constructor (e.g func) from a given value.
-func ProvideValue[T any](val T, opts ...dig.ProvideOption) ConstructorWithOpts <span class="cov8" title="113">{
+func ProvideValue[T any](val T, opts ...dig.ProvideOption) ConstructorWithOpts <span class="cov9" title="122">{
         return ConstructorWithOpts{
-                Constructor: func() T </span><span class="cov7" title="58">{ return val }</span>,
+                Constructor: func() T </span><span class="cov7" title="64">{ return val }</span>,
                 Options:     opts,
         }
 }
@@ -4772,25 +4769,25 @@ type diagLogHandler struct {
         target slog.Handler
 }
 
-func (h *diagLogHandler) Enabled(ctx context.Context, lvl slog.Level) bool <span class="cov10" title="70">{
+func (h *diagLogHandler) Enabled(ctx context.Context, lvl slog.Level) bool <span class="cov9" title="75">{
         return h.target.Enabled(ctx, lvl)
 }</span>
 
-func (h *diagLogHandler) Handle(ctx context.Context, rec slog.Record) error <span class="cov9" title="58">{
+func (h *diagLogHandler) Handle(ctx context.Context, rec slog.Record) error <span class="cov9" title="59">{
         if diagAttributes, ok := ctx.Value(contextDiagAttrs).(LogAttributes); ok </span><span class="cov1" title="1">{
                 rec.AddAttrs(
                         slog.Attr{Key: "correlationId", Value: diagAttributes.CorrelationID},
                 )
         }</span>
 
-        <span class="cov9" title="58">return h.target.Handle(ctx, rec)</span>
+        <span class="cov9" title="59">return h.target.Handle(ctx, rec)</span>
 }
 
-func (h *diagLogHandler) WithAttrs(attrs []slog.Attr) slog.Handler <span class="cov9" title="63">{
+func (h *diagLogHandler) WithAttrs(attrs []slog.Attr) slog.Handler <span class="cov10" title="79">{
         return &amp;diagLogHandler{target: h.target.WithAttrs(attrs)}
 }</span>
 
-func (h *diagLogHandler) WithGroup(name string) slog.Handler <span class="cov9" title="62">{
+func (h *diagLogHandler) WithGroup(name string) slog.Handler <span class="cov9" title="78">{
         // Using WithAttrs here since group will nest all the attributes
         // inside of it (including correlationId), which makes it harder to
         // filter logs by the correlationId.
@@ -4819,7 +4816,7 @@ func (opts *RootLoggerOpts) WithLogLevel(logLevel slog.Level) *RootLoggerOpts <s
         return opts
 }</span>
 
-func (opts *RootLoggerOpts) WithOutput(output io.Writer) *RootLoggerOpts <span class="cov9" title="56">{
+func (opts *RootLoggerOpts) WithOutput(output io.Writer) *RootLoggerOpts <span class="cov9" title="64">{
         opts.output = output
         return opts
 }</span>
@@ -4836,21 +4833,21 @@ func (opts *RootLoggerOpts) WithOptionalOutputFile(outputFile string) *RootLogge
         return opts</span>
 }
 
-func NewRootLoggerOpts() *RootLoggerOpts <span class="cov9" title="63">{
+func NewRootLoggerOpts() *RootLoggerOpts <span class="cov9" title="71">{
         return &amp;RootLoggerOpts{
                 output: os.Stdout,
         }
 }</span>
 
-func SetupRootLogger(opts *RootLoggerOpts) *slog.Logger <span class="cov9" title="63">{
+func SetupRootLogger(opts *RootLoggerOpts) *slog.Logger <span class="cov9" title="71">{
         logHandlerOpts := &amp;slog.HandlerOptions{Level: opts.logLevel}
         var logHandler slog.Handler
         if opts.jsonLogs </span><span class="cov1" title="1">{
                 logHandler = slog.NewJSONHandler(opts.output, logHandlerOpts)
-        }</span> else<span class="cov9" title="62"> {
+        }</span> else<span class="cov9" title="70"> {
                 logHandler = slog.NewTextHandler(opts.output, logHandlerOpts)
         }</span>
-        <span class="cov9" title="63">return slog.New(&amp;diagLogHandler{target: logHandler})</span>
+        <span class="cov9" title="71">return slog.New(&amp;diagLogHandler{target: logHandler})</span>
 }
 </pre>
 		
@@ -4867,7 +4864,7 @@ import (
 )
 
 // openTestLogFile will open a log file in a project root directory.
-func openTestLogFile() *os.File <span class="cov6" title="10">{
+func openTestLogFile() *os.File <span class="cov6" title="11">{
         _, filename, _, _ := runtime.Caller(0) // Will be current file
         testFilePath := filepath.Join(filename, "..", "..", "..", "test.log")
         f, err := os.OpenFile(testFilePath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0o666)
@@ -4875,12 +4872,12 @@ func openTestLogFile() *os.File <span class="cov6" title="10">{
                 err = fmt.Errorf("fail to open log file %q for test logging: %w", testFilePath, err)
                 panic(err)</span>
         }
-        <span class="cov6" title="10">return f</span>
+        <span class="cov6" title="11">return f</span>
 }
 
 var testOutput = openTestLogFile() //nolint:gochecknoglobals //it's ok for tests
 
-func RootTestLogger() *slog.Logger <span class="cov10" title="56">{
+func RootTestLogger() *slog.Logger <span class="cov10" title="64">{
         return SetupRootLogger(
                 NewRootLoggerOpts().WithOutput(testOutput),
         )
@@ -4893,6 +4890,7 @@ import (
         "context"
         "fmt"
         "io"
+        "log/slog"
         "os"
         "path"
 
@@ -4901,10 +4899,13 @@ import (
 
 type localStorage struct {
         LocalStorageDeps
+        logger *slog.Logger
 }
 
-func (s *localStorage) Upload(_ context.Context, key string, contents io.Reader) error <span class="cov5" title="3">{
-        file, err := os.Create(path.Join(s.LocalStorageFolder, key))
+func (s *localStorage) Upload(ctx context.Context, key string, contents io.Reader) error <span class="cov5" title="3">{
+        filePath := path.Join(s.LocalStorageFolder, key)
+        s.logger.DebugContext(ctx, "Writing file", slog.String("key", key), slog.String("path", filePath))
+        file, err := os.Create(filePath)
         if err != nil </span><span class="cov1" title="1">{
                 return fmt.Errorf("failed to create file %s: %w", key, err)
         }</span>
@@ -4917,8 +4918,9 @@ func (s *localStorage) Upload(_ context.Context, key string, contents io.Reader)
         <span class="cov3" title="2">return nil</span>
 }
 
-func (s *localStorage) Download(_ context.Context, key string, out io.Writer) error <span class="cov3" title="2">{
+func (s *localStorage) Download(ctx context.Context, key string, out io.Writer) error <span class="cov3" title="2">{
         filePath := path.Join(s.LocalStorageFolder, key)
+        s.logger.DebugContext(ctx, "Reading file", slog.String("key", key), slog.String("path", filePath))
         file, err := os.Open(filePath)
         if err != nil </span><span class="cov1" title="1">{
                 return fmt.Errorf("failed to open file %s: %w", filePath, err)
@@ -4942,12 +4944,17 @@ func (s *localStorage) Delete(_ context.Context, key string) error <span class="
 type LocalStorageDeps struct {
         dig.In
 
+        RootLogger *slog.Logger
+
         // config
         LocalStorageFolder string `name:"config.blobstorage.localFolder"`
 }
 
 func NewLocalStorage(deps LocalStorageDeps) Storage <span class="cov10" title="11">{
-        return &amp;localStorage{LocalStorageDeps: deps}
+        return &amp;localStorage{
+                LocalStorageDeps: deps,
+                logger:           deps.RootLogger.WithGroup("local-storage"),
+        }
 }</span>
 </pre>
 		
@@ -5151,34 +5158,58 @@ type ItemEventsKafkaWriter struct {
         *kafka.Writer
 }
 
+// We may want to remove this once below PR is merged and new version is released:
+// https://github.com/segmentio/kafka-go/pull/1341
+func (w ItemEventsKafkaWriter) Close() error <span class="cov7" title="3">{
+        err := w.Writer.Close()
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to close kafka writer: %w", err)
+        }</span>
+        <span class="cov7" title="3">errorsCount := w.Writer.Stats().Errors
+        if errorsCount &gt; 0 </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to close writer gracefully, %d errors occurred", errorsCount)
+        }</span>
+        <span class="cov7" title="3">return err</span>
+}
+
 type ItemEventsKafkaWriterDeps struct {
         dig.In
 
         RootLogger *slog.Logger
 
         // config
-        KafkaTopic                  string `name:"config.kafka.itemEventsTopic"`
-        KafkaAddress                string `name:"config.kafka.address"`
-        KafkaAllowAutoTopicCreation bool   `name:"config.kafka.allowAutoTopicCreation"`
+        KafkaTopic                  string        `name:"config.kafka.itemEventsTopic"`
+        KafkaAddress                string        `name:"config.kafka.address"`
+        KafkaAllowAutoTopicCreation bool          `name:"config.kafka.allowAutoTopicCreation"`
+        KafkaWriteTimeout           time.Duration `name:"config.kafka.writeTimeout"`
+        KafkaMaxWriteAttempts       int           `name:"config.kafka.maxWriteAttempts"`
 
         // services
         *ShutdownHooks
 }
 
-func NewItemEventsKafkaWriter(deps ItemEventsKafkaWriterDeps) ItemEventsKafkaWriter <span class="cov7" title="3">{
+func NewItemEventsKafkaWriter(deps ItemEventsKafkaWriterDeps) ItemEventsKafkaWriter <span class="cov8" title="4">{
+        logger := deps.RootLogger.WithGroup("kafka-writer")
         writer := &amp;kafka.Writer{
                 Topic:                  deps.KafkaTopic,
                 AllowAutoTopicCreation: deps.KafkaAllowAutoTopicCreation,
                 Addr:                   kafka.TCP(deps.KafkaAddress),
+                ErrorLogger: kafka.LoggerFunc(func(s string, i ...interface{}) </span><span class="cov0" title="0">{ // coverage-ignore
+                        // no context here
+                        logger.ErrorContext(context.Background(), fmt.Sprintf(s, i...))
+                }</span>),
+
+                MaxAttempts:  deps.KafkaMaxWriteAttempts,
+                WriteTimeout: deps.KafkaWriteTimeout,
 
                 // TODO: This may need some thinking
                 Async: true,
         }
 
-        deps.ShutdownHooks.RegisterNoCtx("item-events-writer", writer.Close)
+        <span class="cov8" title="4">deps.ShutdownHooks.RegisterNoCtx("item-events-writer", writer.Close)
 
-        return ItemEventsKafkaWriter{Writer: writer}
-}</span>
+        return ItemEventsKafkaWriter{Writer: writer}</span>
+}
 
 type kafkaConn interface {
         ReadLastOffset() (int64, error)
@@ -5902,11 +5933,11 @@ func (h *ShutdownHooks) HasHook(name string, method any) bool <span class="cov5"
         <span class="cov3" title="2">return false</span>
 }
 
-func (h *ShutdownHooks) Register(name string, shutdown func(ctx context.Context) error) <span class="cov10" title="20">{
+func (h *ShutdownHooks) Register(name string, shutdown func(ctx context.Context) error) <span class="cov10" title="21">{
         h.hooks = append(h.hooks, shutdownHook{name: name, shutdownFn: shutdown})
 }</span>
 
-func (h *ShutdownHooks) RegisterNoCtx(name string, shutdown func() error) <span class="cov8" title="11">{
+func (h *ShutdownHooks) RegisterNoCtx(name string, shutdown func() error) <span class="cov8" title="12">{
         h.Register(name, func(_ context.Context) error </span><span class="cov6" title="6">{
                 return shutdown()
         }</span>)
@@ -5950,7 +5981,7 @@ type ShutdownHooksRegistryDeps struct {
         GracefulShutdownTimeout time.Duration `name:"config.gracefulShutdownTimeout"`
 }
 
-func NewShutdownHooks(deps ShutdownHooksRegistryDeps) *ShutdownHooks <span class="cov8" title="12">{
+func NewShutdownHooks(deps ShutdownHooksRegistryDeps) *ShutdownHooks <span class="cov8" title="13">{
         return &amp;ShutdownHooks{
                 logger: deps.RootLogger.WithGroup("shutdown"),
                 deps:   deps,
@@ -5999,7 +6030,7 @@ func MockNowValue(p TimeProvider) time.Time <span class="cov0" title="0">{
 
 const defaultTestShutdownTimeout = 30 * time.Second
 
-func NewTestShutdownHooks() *ShutdownHooks <span class="cov5" title="4">{
+func NewTestShutdownHooks() *ShutdownHooks <span class="cov6" title="5">{
         return NewShutdownHooks(ShutdownHooksRegistryDeps{
                 RootLogger:              diag.RootTestLogger(),
                 GracefulShutdownTimeout: defaultTestShutdownTimeout,
