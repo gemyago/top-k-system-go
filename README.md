@@ -137,6 +137,8 @@ Build local docker image:
 make docker-local-image
 ```
 
+See `deploy/k8s/README.md` for more details on how to deploy the service to k8s.
+
 ## Testing
 
 When generating random data for testing, it is useful to have a fixed set of random itemIDs. Please use a command below to generate the list of random itemIDs:
