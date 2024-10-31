@@ -60,14 +60,12 @@ func newSendTestEventCmd(container *dig.Container) *cobra.Command {
 		Use:   "send-test-events",
 		Short: "Send test item events",
 		RunE: func(cmd *cobra.Command, _ []string) error {
-			if err := di.ProvideAll(
+			lo.Must0(di.ProvideAll(
 				container,
 				newDefaultEventsSender,
 				di.ProvideAs[*ingestion.Commands, ingestionCommands],
 				di.ProvideValue(randIntN(rand.IntN)),
-			); err != nil {
-				return fmt.Errorf("failed to provide dependencies: %w", err)
-			}
+			))
 
 			lo.Must0(container.Decorate(func(rootLogger *slog.Logger, sender eventsSender) eventsSender {
 				return newNoopEventsSender(rootLogger, sender, noop)
