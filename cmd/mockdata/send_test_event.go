@@ -5,8 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"math/rand/v2"
 
+	"github.com/gemyago/top-k-system-go/internal/app/ingestion"
 	"github.com/gemyago/top-k-system-go/internal/app/models"
+	"github.com/gemyago/top-k-system-go/internal/di"
 	"github.com/gemyago/top-k-system-go/internal/services"
 	"github.com/gofrs/uuid/v5"
 	"github.com/samber/lo"
@@ -57,6 +60,15 @@ func newSendTestEventCmd(container *dig.Container) *cobra.Command {
 		Use:   "send-test-events",
 		Short: "Send test item events",
 		RunE: func(cmd *cobra.Command, _ []string) error {
+			if err := di.ProvideAll(
+				container,
+				newDefaultEventsSender,
+				di.ProvideAs[*ingestion.Commands, ingestionCommands],
+				di.ProvideValue(randIntN(rand.IntN)),
+			); err != nil {
+				return fmt.Errorf("failed to provide dependencies: %w", err)
+			}
+
 			lo.Must0(container.Decorate(func(rootLogger *slog.Logger, sender eventsSender) eventsSender {
 				return newNoopEventsSender(rootLogger, sender, noop)
 			}))
