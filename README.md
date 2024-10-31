@@ -171,3 +171,12 @@ Create checkpoint:
 ```sh
 go run ./cmd/checkpointer/ create-check-point
 ```
+
+In order to generate test data inside of the kubernetes cluster, all above commands can be executed as jobs. Examples:
+```sh
+# Generate 10k random itemIDs
+./scripts/invoke-k8s-job.sh -c mockdata -a generate-item-ids -a "-n" -a "10000" -a "-o" -a "10k-items.txt"
+
+# Send from 5 to 15 test events for each item in 10k-items.txt
+./scripts/invoke-k8s-job.sh -c mockdata -a send-test-events -a "--item-ids-file" -a "10k-items.txt" -a "-n" -a "5"
+```

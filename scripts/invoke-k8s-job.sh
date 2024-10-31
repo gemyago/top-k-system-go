@@ -79,6 +79,7 @@ if [ -n "${DRY_RUN}" ]; then
 fi
 
 # Create a job based on the pod template
+# We will keep the job for 5 minutes after it's finished
 kubectl apply ${DRY_RUN} -n "${NAMESPACE}" -f - <<EOF
 {
   "apiVersion": "batch/v1",
@@ -88,7 +89,8 @@ kubectl apply ${DRY_RUN} -n "${NAMESPACE}" -f - <<EOF
   },
   "spec": {
     "template": ${POD_TEMPLATE},
-    "backoffLimit": 0
+    "backoffLimit": 0,
+    "ttlSecondsAfterFinished": 300
   }
 }
 EOF
