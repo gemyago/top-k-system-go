@@ -50,7 +50,7 @@ func NewItemEventsKafkaWriter(deps ItemEventsKafkaWriterDeps) ItemEventsKafkaWri
 		Topic:                  deps.KafkaTopic,
 		AllowAutoTopicCreation: deps.KafkaAllowAutoTopicCreation,
 		Addr:                   kafka.TCP(deps.KafkaAddress),
-		ErrorLogger: kafka.LoggerFunc(func(s string, i ...interface{}) {
+		ErrorLogger: kafka.LoggerFunc(func(s string, i ...interface{}) { // coverage-ignore
 			// no context here
 			logger.ErrorContext(context.Background(), fmt.Sprintf(s, i...))
 		}),

@@ -14,6 +14,26 @@ import (
 )
 
 func TestKafka(t *testing.T) {
+	t.Run("ItemEventsKafkaWriter", func(t *testing.T) {
+		makeMockDeps := func() ItemEventsKafkaWriterDeps {
+			return ItemEventsKafkaWriterDeps{
+				RootLogger:        diag.RootTestLogger(),
+				KafkaAddress:      faker.DomainName(),
+				KafkaTopic:        faker.DomainName(),
+				KafkaWriteTimeout: 1 * time.Millisecond,
+				ShutdownHooks:     NewTestShutdownHooks(),
+			}
+		}
+
+		t.Run("Close", func(t *testing.T) {
+			t.Run("should close the writer", func(t *testing.T) {
+				deps := makeMockDeps()
+				mockWriter := NewItemEventsKafkaWriter(deps)
+				require.NoError(t, mockWriter.Close())
+			})
+		})
+	})
+
 	t.Run("ItemEventsKafkaReader", func(t *testing.T) {
 		makeMockDeps := func() ItemEventsKafkaReaderDeps {
 			return ItemEventsKafkaReaderDeps{
